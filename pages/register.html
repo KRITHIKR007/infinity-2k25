@@ -141,6 +141,45 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+
+        /* Add styles to improve file uploader appearance */
+        .upload-container {
+            transition: all 0.3s ease;
+        }
+        
+        .upload-container:hover {
+            border-color: #a855f7;
+        }
+        
+        .upload-container.drag-active {
+            border-color: #9333ea;
+            background-color: rgba(147, 51, 234, 0.1);
+        }
+        
+        /* Improve payment section */
+        .payment-option {
+            transition: all 0.3s ease;
+        }
+        
+        .payment-option:hover {
+            border-color: #9333ea;
+        }
+        
+        .payment-option.selected {
+            border-color: #9333ea;
+            background-color: rgba(147, 51, 234, 0.1);
+        }
+        
+        /* Add animation for successful upload */
+        @keyframes uploadSuccess {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .upload-success {
+            animation: uploadSuccess 0.5s ease;
+        }
     </style>
 </head>
 <body class="bg-gray-900 min-h-screen">
@@ -418,9 +457,6 @@
                         <button type="button" class="payment-btn btn btn-secondary" data-method="qr">
                             <i class="fas fa-qrcode mr-2"></i>Pay via QR Code
                         </button>
-                        <button type="button" class="payment-btn btn btn-secondary" data-method="venue">
-                            <i class="fas fa-store mr-2"></i>Pay at Venue
-                        </button>
                     </div>
                 </div>
 
@@ -457,14 +493,6 @@
                             <i class="fas fa-info-circle mr-1"></i> 
                             Please ensure the transaction ID is clearly visible in the screenshot
                         </p>
-                    </div>
-                </div>
-
-                <div id="venuePayment" class="hidden">
-                    <div class="bg-gray-800/50 p-4 rounded-lg">
-                        <h4 class="text-lg font-medium text-purple-400 mb-2">Venue Payment Instructions</h4>
-                        <p class="text-gray-300">Please complete your payment at the registration desk on the day of the event.</p>
-                        <p class="text-gray-300 mt-2">Bring your registration ID and payment amount in cash.</p>
                     </div>
                 </div>
             </div>
@@ -908,7 +936,6 @@
                 
                 // Show appropriate payment section
                 document.getElementById('qrPayment').classList.toggle('hidden', method !== 'qr');
-                document.getElementById('venuePayment').classList.toggle('hidden', method !== 'venue');
                 
                 // Update QR code visibility when QR payment method is selected
                 if (method === 'qr') {

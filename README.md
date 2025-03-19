@@ -1,80 +1,88 @@
-# Infinity 2025 Event Registration Website
+# Infinity 2025 Tech Fest Website
 
-A modern, responsive website for managing event registrations for Infinity 2025. Built with HTML, Tailwind CSS, and Supabase for backend functionality.
+A dynamic website for the Infinity 2025 technical and cultural festival, built with modern web technologies and integrated with Supabase for backend functionality.
 
 ## Features
 
-- 🎯 Modern, responsive design
-- 📝 User registration form with file upload
-- 🔒 Secure admin dashboard
-- 🔍 Real-time search and filtering
-- 💳 Payment verification system
-- 📱 Mobile-friendly interface
+- **Event Management**: Create, update, and manage technical and cultural events
+- **Registration System**: Online registration for participants with payment integration
+- **Admin Dashboard**: Comprehensive dashboard for event organizers
+- **Responsive Design**: Works seamlessly on all devices - mobile, tablet, and desktop
+- **Dark Mode**: Modern dark theme with neon accents
+- **Payment Integration**: Support for QR-based payments with verification system
+- **Authentication**: Secure admin login system
 
 ## Tech Stack
 
-- HTML5
-- Tailwind CSS
-- JavaScript (ES6+)
-- Supabase (Backend & Authentication)
-- Vercel (Deployment)
+- **Frontend**: HTML, CSS, JavaScript, TailwindCSS
+- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **Deployment**: Vercel/Netlify
+- **Tools**: Node.js, npm
 
-## Prerequisites
+## Getting Started
 
-- Node.js (v14 or higher)
+### Prerequisites
+
+- Node.js (v14+)
 - npm or yarn
 - Supabase account
-- Vercel account (for deployment)
 
-## Setup Instructions
+### Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/infinity2025.git
-   cd infinity2025
+   git clone https://github.com/yourusername/infinity-2025.git
+   cd infinity-2025
    ```
 
-2. Install dependencies:
+2. Run the setup script:
+   ```bash
+   node setup.js
+   ```
+   
+   The setup script will:
+   - Create a `.env` file with your Supabase credentials
+   - Install all dependencies
+   - Optionally set up the database schema
+
+3. Or install manually:
    ```bash
    npm install
    ```
-
-3. Create a Supabase project and get your credentials:
-   - Go to [Supabase](https://supabase.com)
-   - Create a new project
-   - Get your project URL and anon key
-
-4. Set up environment variables:
-   Create a `.env` file in the root directory:
+   
+   Then create a `.env` file in the project root with:
    ```
-   SUPABASE_URL=your_supabase_project_url
-   SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_URL=your_supabase_url
+   SUPABASE_KEY=your_supabase_anon_key
+   EVENT_DATE=Mar 27, 2025 09:00:00
+   REGISTRATION_DEADLINE=Mar 26, 2025 23:59:59
+   NODE_ENV=development
    ```
 
-5. Set up Supabase database:
-   - Create a `registrations` table with the following columns:
-     - id (uuid, primary key)
-     - name (text)
-     - university (text)
-     - phone (text)
-     - team_members (array)
-     - payment_proof_url (text)
-     - payment_status (text)
-     - created_at (timestamp)
+### Development
 
-6. Set up Supabase storage:
-   - Create a `payment-proofs` bucket
-   - Set appropriate storage policies
+Start the development server:
 
-7. Deploy to Vercel:
-   ```bash
-   vercel
-   ```
+```bash
+npm run dev
+```
+
+The site will be available at `http://localhost:3000`.
+
+### Building for Production
+
+To build the site for production:
+
+```bash
+npm run build
+```
+
+The output will be in the `dist` directory, ready for deployment.
 
 ## Project Structure
 
 ```
-/infinity2025
+/infinity-2025
 │── public/
 │   ├── images/   → Event images & assets
 │   ├── styles/   → Tailwind CSS styles
@@ -109,4 +117,4 @@ For support, email support@infinity2025.com or create an issue in the repository
 
 - [Tailwind CSS](https://tailwindcss.com)
 - [Supabase](https://supabase.com)
-- [Vercel](https://vercel.com) 
+- [Vercel](https://vercel.com)

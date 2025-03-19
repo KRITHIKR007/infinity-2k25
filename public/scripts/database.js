@@ -1,5 +1,16 @@
-import { supabase, TABLES } from '../../supabase.js';
+import { supabase } from '../../supabase.js';
 import { PhotoService } from './services/photo-service.js';
+
+// Database tables constants
+export const TABLES = {
+    REGISTRATIONS: 'registrations',
+    EVENTS: 'events',
+    PAYMENTS: 'payments',
+    PARTICIPANTS: 'participants',
+    STORAGE: {
+        PAYMENT_PROOFS: 'payment_proofs'
+    }
+};
 
 /**
  * Database operations for registrations and events
@@ -30,7 +41,11 @@ export async function fetchEvents() {
     }
 }
 
-// Submit a new registration
+/**
+ * Submit registration data to the database
+ * @param {Object} registrationData - The registration data to submit
+ * @returns {Promise<Object>} - Result of the operation
+ */
 export async function submitRegistration(registrationData) {
     try {
         // Upload payment proof if QR payment
@@ -70,16 +85,20 @@ export async function submitRegistration(registrationData) {
             paymentId = paymentData[0].id;
         }
         
+        // Generate registration ID
+        const registrationId = `INF-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
+        
         // Create registration record
         const { data: registrationResult, error: registrationError } = await supabase
             .from(TABLES.REGISTRATIONS)
             .insert([
                 {
+                    registration_id: registrationId,
                     name: registrationData.name,
                     email: registrationData.email,
                     phone: registrationData.phone,
                     university: registrationData.university,
-                    events: JSON.stringify(registrationData.selectedEvents),
+                    events: registrationData.selectedEvents,
                     event_name: registrationData.eventNames,
                     payment_status: registrationData.paymentMethod === 'qr' ? 'pending' : 'awaiting_payment',
                     payment_id: paymentId,
@@ -118,7 +137,8 @@ export async function submitRegistration(registrationData) {
         
         return {
             success: true,
-            registrationId: registrationResult[0].id
+            registrationId: registrationResult[0].registration_id,
+            data: registrationResult[0]
         };
     } catch (error) {
         console.error('Error submitting registration:', error);
@@ -129,38 +149,185 @@ export async function submitRegistration(registrationData) {
     }
 }
 
-// Get registration details by ID
-export async function getRegistrationById(registrationId) {
+/**
+ * Get registration details by ID
+ * @param {string} id - Registration ID or UUID
+ * @returns {Promise<Object>} - Registration details
+ */
+export async function getRegistrationById(id) {
     try {
-        const { data, error } = await supabase
+        // First try to get by registration_id
+        const { data: idData, error: idError } = await supabase
             .from(TABLES.REGISTRATIONS)
             .select('*')
-            .eq('id', registrationId)
-            .single();
-            
-        if (error) throw error;
+            .eq('registration_id', id)
+            .maybeSingle();
         
-        return { success: true, data };
+        // If not found, try UUID
+        if (!idData && !idError) {
+            const { data: uuidData, error: uuidError } = await supabase
+                .from(TABLES.REGISTRATIONS)
+                .select('*')
+                .eq('id', id)
+                .single();
+                
+            if (uuidError) throw uuidError;
+            return { success: true, data: uuidData };
+        }
+        
+        if (idError) throw idError;
+        return { success: true, data: idData };
     } catch (error) {
         console.error('Error fetching registration:', error);
-        return { success: false, error: error.message };
+        return {
+            success: false,
+            error: error.message || 'Failed to fetch registration'
+        };
     }
 }
 
-// Update payment status
-export async function updatePaymentStatus(registrationId, status) {
+/**
+ * Update registration payment status
+ * @param {string} id - Registration ID
+ * @param {string} status - New payment status
+ * @returns {Promise<Object>} - Result of the operation
+ */
+export async function updatePaymentStatus(id, status) {
     try {
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from(TABLES.REGISTRATIONS)
-            .update({ payment_status: status })
-            .eq('id', registrationId)
-            .select();
+            .update({ 
+                payment_status: status,
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', id);
             
         if (error) throw error;
         
-        return { success: true, data };
+        return { success: true };
     } catch (error) {
         console.error('Error updating payment status:', error);
-        return { success: false, error: error.message };
+        return {
+            success: false,
+            error: error.message || 'Failed to update payment status'
+        };
+    }
+}
+
+/**
+ * Upload payment proof to Supabase storage
+ */
+export async function uploadPaymentProof(file) {
+    try {
+        if (!file) {
+            throw new Error('No file selected');
+        }
+        
+        // Create a unique file path
+        const timestamp = new Date().getTime();
+        const sanitizedFilename = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+        const filePath = `payment-proofs/${timestamp}-${sanitizedFilename}`;
+        
+        // Upload file
+        const { data, error } = await supabase.storage
+            .from(TABLES.STORAGE.PAYMENT_PROOFS)
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+            
+        if (error) throw error;
+        
+        // Get public URL
+        const { data: urlData } = supabase.storage
+            .from(TABLES.STORAGE.PAYMENT_PROOFS)
+            .getPublicUrl(filePath);
+            
+        return {
+            success: true,
+            path: filePath,
+            url: urlData.publicUrl
+        };
+    } catch (error) {
+        console.error('Error uploading payment proof:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to upload payment proof'
+        };
+    }
+}
+
+/**
+ * Get events from the database
+ */
+export async function getEvents(category = null) {
+    try {
+        let query = supabase
+            .from(TABLES.EVENTS)
+            .select('*')
+            .eq('status', 'active');
+            
+        if (category) {
+            query = query.eq('category', category);
+        }
+        
+        const { data, error } = await query;
+        
+        if (error) throw error;
+        
+        return {
+            success: true,
+            data
+        };
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to fetch events'
+        };
+    }
+}
+
+/**
+ * Verify that the database is properly configured
+ */
+export async function verifyDatabaseSetup() {
+    try {
+        // Check if we can connect to Supabase
+        const { data, error } = await supabase
+            .from(TABLES.EVENTS)
+            .select('id')
+            .limit(1);
+            
+        if (error) throw error;
+        
+        // Check storage buckets
+        const { data: buckets, error: bucketsError } = await supabase
+            .storage
+            .listBuckets();
+            
+        if (bucketsError) throw bucketsError;
+        
+        // Check if payment_proofs bucket exists
+        const paymentProofsBucket = buckets.find(bucket => bucket.name === TABLES.STORAGE.PAYMENT_PROOFS);
+        
+        return {
+            success: true,
+            connected: true,
+            tables: {
+                events: true,
+                registrations: true
+            },
+            storage: {
+                paymentProofs: !!paymentProofsBucket
+            }
+        };
+    } catch (error) {
+        console.error('Database verification error:', error);
+        return {
+            success: false,
+            connected: false,
+            error: error.message || 'Failed to verify database setup'
+        };
     }
 }

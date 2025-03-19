@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Management - Infinity 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="../../public/styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glass-effect {
+            background-color: rgba(31, 41, 55, 0.4);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background-color: #9333ea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #7e22ce;
+        }
+        
+        .btn-secondary {
+            background-color: rgba(75, 85, 99, 0.5);
+            color: #d1d5db;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(75, 85, 99, 0.7);
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen bg-[url('../../public/images/admin-bg.jpg')] bg-cover bg-fixed">
+    <div class="absolute inset-0 bg-black bg-opacity-70"></div>
+
+    <!-- Sidebar -->
+    <div class="fixed h-full w-64 bg-gray-800/80 backdrop-blur-sm border-r border-gray-700 left-0 top-0 z-40 transition-all transform">
+        <div class="p-4 flex items-center border-b border-gray-700">
+            <img src="../../public/images/INFINITY GOLD LOGO 24.png" alt="Infinity 2025 Logo" class="h-8 w-auto">
+            <span class="text-xl font-bold gradient-text ml-2">Admin Panel</span>
+        </div>
+        
+        <nav class="mt-6">
+            <div class="px-4 mb-2 text-xs text-gray-400 uppercase">Main</div>
+            
+            <a href="../dashboard.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white">
+                <i class="fas fa-tachometer-alt w-5 h-5 mr-3 text-center"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="../events/index.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white">
+                <i class="fas fa-calendar-alt w-5 h-5 mr-3 text-center"></i>
+                <span>Events</span>
+            </a>
+            
+            <a href="./index.html" class="flex items-center px-4 py-3 text-white bg-purple-600 bg-opacity-40">
+                <i class="fas fa-user-check w-5 h-5 mr-3 text-center"></i>
+                <span>Registrations</span>
+            </a>
+            
+            <a href="../payments/index.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white">
+                <i class="fas fa-credit-card w-5 h-5 mr-3 text-center"></i>
+                <span>Payments</span>
+            </a>
+            
+            <div class="px-4 mt-6 mb-2 text-xs text-gray-400 uppercase">Settings</div>
+            
+            <a href="../settings/account.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white">
+                <i class="fas fa-user-cog w-5 h-5 mr-3 text-center"></i>
+                <span>Account</span>
+            </a>
+            
+            <a href="../settings/users.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white">
+                <i class="fas fa-users-cog w-5 h-5 mr-3 text-center"></i>
+                <span>Users</span>
+            </a>
+            
+            <a href="../login.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white mt-12" id="logoutBtn">
+                <i class="fas fa-sign-out-alt w-5 h-5 mr-3 text-center"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-64 p-6 relative z-10">
+        <!-- Top bar with user menu dropdown -->
+        <div class="fixed top-0 left-64 right-0 bg-gray-800/80 backdrop-blur-sm border-b border-gray-700 z-30">
+            <div class="flex justify-between items-center px-6 h-16">
+                <h1 class="text-xl font-semibold text-white">Registration Management</h1>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="notificationButton" class="text-gray-300 hover:text-white relative">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span id="notificationCount" class="absolute -top-1 -right-1 bg-purple-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">0</span>
+                    </button>
+                    
+                    <div class="relative">
+                        <button id="userMenuButton" class="flex items-center text-sm focus:outline-none">
+                            <div class="h-8 w-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-semibold mr-2" id="userInitials">KB</div>
+                            <span class="hidden md:block text-gray-300 mr-1" id="adminName">Admin User</span>
+                            <i class="fas fa-chevron-down text-xs text-gray-300"></i>
+                        </button>
+                        
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 glass-effect rounded-md shadow-lg py-1 z-50">
+                            <div class="px-4 py-2 border-b border-gray-700">
+                                <p class="text-sm text-white" id="dropdownUsername">Admin User</p>
+                                <p class="text-xs text-gray-400" id="dropdownUserEmail">admin@example.com</p>
+                            </div>
+                            <a href="../settings/account.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+                                <i class="fas fa-user-cog mr-2"></i>Account Settings
+                            </a>
+                            <a href="../login.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white" id="logoutButton">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-20">
+            <!-- Action Bar -->
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-2xl font-bold text-white mr-4">Registrations</h2>
+                    <button id="refreshBtn" class="btn btn-secondary">
+                        <i class="fas fa-sync-alt mr-2"></i>Refresh
+                    </button>
+                </div>
+                
+                <div class="flex items-center space-x-4 w-full md:w-auto">
+                    <div class="relative flex-grow md:flex-grow-0">
+                        <input type="text" id="searchInput" placeholder="Search registrations..." 
+                            class="bg-gray-800 bg-opacity-60 text-white rounded-lg px-4 py-2 pl-10 w-full md:w-64 border border-gray-700 focus:outline-none focus:border-purple-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    
+                    <select id="statusFilter" class="bg-gray-800 bg-opacity-60 text-white rounded-lg px-4 py-2 border border-gray-700 focus:outline-none focus:border-purple-500">
+                        <option value="all">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="paid">Paid</option>
+                        <option value="awaiting_payment">Awaiting Payment</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    
+                    <select id="categoryFilter" class="bg-gray-800 bg-opacity-60 text-white rounded-lg px-4 py-2 border border-gray-700 focus:outline-none focus:border-purple-500">
+                        <option value="all">All Categories</option>
+                        <option value="tech">Technical</option>
+                        <option value="cultural">Cultural</option>
+                    </select>
+                    
+                    <a href="export.html" class="btn btn-primary">
+                        <i class="fas fa-file-export mr-2"></i>Export
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Registrations Table -->
+            <div class="bg-gray-800 bg-opacity-50 rounded-lg overflow-hidden shadow-lg">
+                <div class="relative overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-700 bg-opacity-50 text-gray-300 text-sm uppercase">
+                            <tr>
+                                <th class="px-6 py-3">Name</th>
+                                <th class="px-6 py-3">Event(s)</th>
+                                <th class="px-6 py-3">Fee</th>
+                                <th class="px-6 py-3">University</th>
+                                <th class="px-6 py-3">Date</th>
+                                <th class="px-6 py-3">Status</th>
+                                <th class="px-6 py-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registrationsTableBody">
+                            <!-- Registration rows will be populated here -->
+                            <tr>
+                                <td colspan="7" class="px-6 py-10 text-center text-gray-400">
+                                    <div id="tableLoading" class="flex justify-center items-center">
+                                        <div class="loading mr-3"></div>
+                                        <span>Loading registrations...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="flex justify-between items-center mt-6">
+                <div class="text-gray-400 text-sm">
+                    Showing <span id="shownCount">0</span> of <span id="totalCount">0</span> registrations
+                </div>
+                
+                <div class="flex space-x-2">
+                    <button id="prevPageBtn" class="btn btn-secondary disabled:opacity-50" disabled>
+                        <i class="fas fa-chevron-left mr-2"></i>Previous
+                    </button>
+                    <button id="nextPageBtn" class="btn btn-secondary disabled:opacity-50" disabled>
+                        Next<i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Details Modal (Hidden by default) -->
+    <div id="registrationModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-75" id="modalOverlay"></div>
+        
+        <div class="glass-effect rounded-lg w-full max-w-3xl max-h-[90vh] overflow-auto relative z-10">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-white" id="modalTitle">Registration Details</h3>
+                    <button id="closeModalBtn" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+                
+                <div id="registrationDetails" class="space-y-6">
+                    <!-- Basic Info Section -->
+                    <div class="glass-effect p-5 rounded-lg">
+                        <h4 class="text-lg font-semibold text-purple-400 mb-4">Basic Information</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-400">Registration ID</p>
+                                <p class="text-white" id="detailsRegistrationId">INF-2025-12345</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Status</p>
+                                <p class="text-white" id="detailsStatus">
+                                    <span id="detailsStatusBadge" class="px-2 py-1 text-xs rounded-full bg-yellow-900 bg-opacity-50 text-yellow-300">
+                                        Pending
+                                    </span>
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Name</p>
+                                <p class="text-white" id="detailsName">John Doe</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Email</p>
+                                <p class="text-white" id="detailsEmail">john.doe@example.com</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Phone</p>
+                                <p class="text-white" id="detailsPhone">+91 9876543210</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">University</p>
+                                <p class="text-white" id="detailsUniversity">Example University</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Category</p>
+                                <p class="text-white" id="detailsCategory">Technical</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Registration Date</p>
+                                <p class="text-white" id="detailsDate">Mar 15, 2025</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Events Section -->
+                    <div class="glass-effect p-5 rounded-lg">
+                        <h4 class="text-lg font-semibold text-purple-400 mb-4">Registered Events</h4>
+                        <div id="detailsEvents" class="space-y-3">
+                            <!-- Event cards will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Team Section -->
+                    <div class="glass-effect p-5 rounded-lg">
+                        <h4 class="text-lg font-semibold text-purple-400 mb-4">Team Information</h4>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <p class="text-sm text-gray-400">Team Name</p>
+                                <p class="text-white" id="detailsTeamName">N/A</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Team Size</p>
+                                <p class="text-white" id="detailsTeamSize">1</p>
+                            </div>
+                        </div>
+                        <div id="detailsTeamMembers" class="space-y-2">
+                            <!-- Team members will be listed here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Section -->
+                    <div class="glass-effect p-5 rounded-lg">
+                        <h4 class="text-lg font-semibold text-purple-400 mb-4">Payment Details</h4>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <p class="text-sm text-gray-400">Fee Amount</p>
+                                <p class="text-white" id="detailsFee">₹500</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-400">Payment Method</p>
+                                <p class="text-white" id="detailsPaymentMethod">QR Payment</p>
+                            </div>
+                        </div>
+                        
+                        <div id="paymentProofSection" class="mt-4">
+                            <p class="text-sm text-gray-400 mb-2">Payment Proof</p>
+                            <div id="paymentProofContainer" class="bg-gray-900 bg-opacity-50 p-4 rounded-lg">
+                                <div id="noProofMessage" class="text-gray-400 text-center py-4">No payment proof provided</div>
+                                <img id="paymentProofImage" src="" alt="Payment Proof" class="max-w-full max-h-64 mx-auto rounded-lg hidden">
+                                <div class="mt-2 text-right">
+                                    <a id="viewFullProofLink" href="#" target="_blank" class="text-purple-400 hover:text-purple-300 inline-flex items-center hidden">
+                                        <i class="fas fa-external-link-alt mr-1"></i> View Full Image
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions Section -->
+                    <div class="flex justify-end space-x-3 pt-4 border-t border-gray-700">
+                        <button id="cancelModalBtn" class="btn btn-secondary">
+                            Close
+                        </button>
+                        <div id="statusActionButtons" class="space-x-3">
+                            <button id="approvePaymentBtn" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
+                                <i class="fas fa-check mr-2"></i>Approve Payment
+                            </button>
+                            <button id="rejectPaymentBtn" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+                                <i class="fas fa-times mr-2"></i>Reject Payment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay (Initially shown) -->
+    <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-80 z-50">
+        <div class="text-center">
+            <div class="loading mx-auto mb-4"></div>
+            <p class="text-white">Loading registrations...</p>
+        </div>
+    </div>
+
+    <script type="module" src="../../public/scripts/admin-registrations.js"></script>
+</body>
+</html>

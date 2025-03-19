@@ -1,238 +1,244 @@
 /**
- * File Upload Preview Component
- * Creates a nice file upload experience with preview capability
+ * FileUpload - A reusable component for handling file uploads
+ * with validation, drag and drop support, and preview capabilities
  */
 export class FileUpload {
-    constructor(inputElement, previewContainer, options = {}) {
-        // Store references to DOM elements
-        this.input = typeof inputElement === 'string' ? document.getElementById(inputElement) : inputElement;
-        this.previewContainer = typeof previewContainer === 'string' ? document.getElementById(previewContainer) : previewContainer;
-        
-        // Set default options
+    constructor(inputElement, containerElement, options = {}) {
+        this.input = inputElement;
+        this.container = containerElement;
         this.options = {
-            maxFileSize: 5 * 1024 * 1024, // 5MB
-            acceptedTypes: ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'],
-            previewWidth: 200,
-            previewHeight: 200,
-            showFileName: true,
-            showFileSize: true,
-            ...options
+            maxFileSize: options.maxFileSize || 2 * 1024 * 1024, // Default 2MB
+            acceptedTypes: options.acceptedTypes || ['image/jpeg', 'image/png'],
+            showFileName: options.showFileName !== undefined ? options.showFileName : true,
+            showFileSize: options.showFileSize !== undefined ? options.showFileSize : true,
+            showPreview: options.showPreview !== undefined ? options.showPreview : false,
+            previewClass: options.previewClass || ''
         };
         
-        // Initialize the component
-        this.initialize();
+        this.file = null;
+        this.fileInfo = null;
+        this.preview = null;
+        
+        this.setupListeners();
+        this.createUI();
     }
     
-    initialize() {
-        if (!this.input || !this.previewContainer) {
-            console.error('Input element or preview container not found');
-            return;
-        }
+    setupListeners() {
+        this.input.addEventListener('change', this.handleFileSelect.bind(this));
         
-        // Set accept attribute on input if not already set
-        if (!this.input.hasAttribute('accept')) {
-            this.input.setAttribute('accept', this.options.acceptedTypes.join(','));
-        }
+        // Setup drag and drop
+        this.container.addEventListener('dragover', this.handleDragOver.bind(this));
+        this.container.addEventListener('dragleave', this.handleDragLeave.bind(this));
+        this.container.addEventListener('drop', this.handleDrop.bind(this));
         
-        // Add change event listener
-        this.input.addEventListener('change', (e) => this.handleFileChange(e));
-        
-        // Add drag and drop functionality
-        this.setupDragAndDrop();
-        
-        // Clear existing content
-        this.previewContainer.innerHTML = '';
-        
-        // Add base styling
-        this.previewContainer.classList.add('file-upload-preview');
-        
-        // Initial state - placeholder
-        this.renderPlaceholder();
-    }
-    
-    setupDragAndDrop() {
-        // Add event listeners for drag and drop
-        this.previewContainer.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            this.previewContainer.classList.add('drag-over');
-        });
-        
-        this.previewContainer.addEventListener('dragleave', () => {
-            this.previewContainer.classList.remove('drag-over');
-        });
-        
-        this.previewContainer.addEventListener('drop', (e) => {
-            e.preventDefault();
-            this.previewContainer.classList.remove('drag-over');
-            
-            // Check if files were dropped
-            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                // Update the file input value
-                this.input.files = e.dataTransfer.files;
-                this.handleFileChange({ target: this.input });
-            }
-        });
-        
-        // Make the preview container clickable to open file dialog
-        this.previewContainer.addEventListener('click', () => {
-            if (!this.input.disabled) {
+        // Setup click to select
+        this.container.addEventListener('click', () => {
+            if (!this.file) {
                 this.input.click();
             }
         });
     }
     
-    renderPlaceholder() {
-        this.previewContainer.innerHTML = `
-            <div class="file-upload-placeholder">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <p>Drag & drop your payment proof here<br>or click to browse</p>
-                <p class="file-upload-hint">Maximum file size: ${this.formatFileSize(this.options.maxFileSize)}</p>
-            </div>
-        `;
-    }
-    
-    handleFileChange(event) {
-        const file = event.target.files[0];
-        
-        if (!file) {
-            this.renderPlaceholder();
-            return;
-        }
-        
-        // Validate file type
-        if (!this.options.acceptedTypes.includes(file.type)) {
-            this.showError(`Invalid file type. Please upload ${this.options.acceptedTypes.map(t => t.replace('image/', '')).join(', ')}`);
-            this.input.value = '';
-            return;
-        }
-        
-        // Validate file size
-        if (file.size > this.options.maxFileSize) {
-            this.showError(`File is too large. Maximum size is ${this.formatFileSize(this.options.maxFileSize)}`);
-            this.input.value = '';
-            return;
-        }
-        
-        // File is valid, create preview
-        this.createPreview(file);
-    }
-    
-    createPreview(file) {
+    createUI() {
         // Clear container
-        this.previewContainer.innerHTML = '';
+        this.container.innerHTML = '';
         
-        // Create preview wrapper
-        const previewWrapper = document.createElement('div');
-        previewWrapper.className = 'file-upload-preview-wrapper';
+        // Add classes to container
+        this.container.classList.add('border-2', 'border-dashed', 'border-gray-700', 'rounded-lg', 'p-4', 'text-center', 'cursor-pointer', 'transition-all');
         
-        // Create image preview
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            
-            reader.onload = (e) => {
-                const previewImage = document.createElement('img');
-                previewImage.className = 'file-upload-image';
-                previewImage.src = e.target.result;
-                previewImage.alt = file.name;
-                previewWrapper.appendChild(previewImage);
-                
-                // Add file info if needed
-                if (this.options.showFileName || this.options.showFileSize) {
-                    const fileInfo = document.createElement('div');
-                    fileInfo.className = 'file-upload-info';
-                    
-                    if (this.options.showFileName) {
-                        const fileName = document.createElement('div');
-                        fileName.className = 'file-upload-name';
-                        fileName.textContent = file.name;
-                        fileInfo.appendChild(fileName);
-                    }
-                    
-                    if (this.options.showFileSize) {
-                        const fileSize = document.createElement('div');
-                        fileSize.className = 'file-upload-size';
-                        fileSize.textContent = this.formatFileSize(file.size);
-                        fileInfo.appendChild(fileSize);
-                    }
-                    
-                    previewWrapper.appendChild(fileInfo);
-                }
-                
-                // Add remove button
-                const removeButton = document.createElement('button');
-                removeButton.className = 'file-upload-remove';
-                removeButton.innerHTML = '<i class="fas fa-times"></i>';
-                removeButton.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent opening file dialog
-                    this.clearPreview();
-                });
-                previewWrapper.appendChild(removeButton);
-            };
-            
-            reader.readAsDataURL(file);
-        } else {
-            // For non-image files (shouldn't happen with our validation, but just in case)
-            const fileIcon = document.createElement('div');
-            fileIcon.className = 'file-upload-icon';
-            fileIcon.innerHTML = '<i class="fas fa-file"></i>';
-            previewWrapper.appendChild(fileIcon);
-            
-            const fileName = document.createElement('div');
-            fileName.className = 'file-upload-name';
-            fileName.textContent = file.name;
-            previewWrapper.appendChild(fileName);
-            
-            const fileSize = document.createElement('div');
-            fileSize.className = 'file-upload-size';
-            fileSize.textContent = this.formatFileSize(file.size);
-            previewWrapper.appendChild(fileSize);
+        // Create instruction text
+        const instructions = document.createElement('div');
+        instructions.innerHTML = `
+            <div class="text-gray-400 mb-2">
+                <i class="fas fa-cloud-upload-alt text-2xl"></i>
+            </div>
+            <p class="text-gray-300">Drag & drop your payment proof here or <span class="text-purple-400">browse</span></p>
+            <p class="text-gray-400 text-sm mt-1">Supported formats: ${this.options.acceptedTypes.map(type => type.split('/')[1].toUpperCase()).join(', ')} (Max ${this.formatFileSize(this.options.maxFileSize)})</p>
+        `;
+        this.container.appendChild(instructions);
+        
+        // Create file info element (initially hidden)
+        this.fileInfo = document.createElement('div');
+        this.fileInfo.className = 'mt-2 hidden';
+        this.container.appendChild(this.fileInfo);
+        
+        // Create preview element if enabled
+        if (this.options.showPreview) {
+            this.preview = document.createElement('img');
+            this.preview.className = this.options.previewClass + ' hidden';
+            this.container.appendChild(this.preview);
         }
-        
-        // Add preview wrapper to container
-        this.previewContainer.appendChild(previewWrapper);
     }
     
-    clearPreview() {
-        // Clear the file input
+    handleFileSelect(e) {
+        const file = e.target.files[0];
+        if (file) {
+            this.validateAndProcessFile(file);
+        }
+    }
+    
+    handleDragOver(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.container.classList.add('border-purple-500', 'bg-purple-900/20');
+    }
+    
+    handleDragLeave(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.container.classList.remove('border-purple-500', 'bg-purple-900/20');
+    }
+    
+    handleDrop(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        this.container.classList.remove('border-purple-500', 'bg-purple-900/20');
+        
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            this.validateAndProcessFile(file);
+        }
+    }
+    
+    validateAndProcessFile(file) {
+        // Check file type
+        if (!this.options.acceptedTypes.includes(file.type)) {
+            this.showError(`Invalid file type. Please upload ${this.options.acceptedTypes.map(type => type.split('/')[1].toUpperCase()).join(', ')}`);
+            return;
+        }
+        
+        // Check file size
+        if (file.size > this.options.maxFileSize) {
+            const maxSizeMB = this.options.maxFileSize / (1024 * 1024);
+            this.showError(`File is too large. Maximum size is ${maxSizeMB}MB`);
+            return;
+        }
+        
+        // File is valid
+        this.file = file;
+        this.updateUI();
+        
+        // Clear any previous error
+        const errorMsg = document.getElementById('paymentProofError');
+        if (errorMsg) {
+            errorMsg.remove();
+        }
+    }
+    
+    updateUI() {
+        // Update container styling
+        this.container.classList.add('border-purple-500');
+        this.container.classList.remove('border-dashed');
+        
+        // Update file info
+        if (this.options.showFileName || this.options.showFileSize) {
+            this.fileInfo.classList.remove('hidden');
+            this.fileInfo.innerHTML = '';
+            
+            const fileDetails = document.createElement('div');
+            fileDetails.className = 'flex items-center justify-between bg-gray-800 p-2 rounded';
+            
+            const leftSide = document.createElement('div');
+            leftSide.className = 'flex items-center';
+            
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-file-image text-purple-400 mr-2';
+            leftSide.appendChild(icon);
+            
+            const textInfo = document.createElement('div');
+            if (this.options.showFileName) {
+                const fileName = document.createElement('p');
+                fileName.className = 'text-gray-200 text-sm font-medium';
+                fileName.textContent = this.file.name;
+                textInfo.appendChild(fileName);
+            }
+            
+            if (this.options.showFileSize) {
+                const fileSize = document.createElement('p');
+                fileSize.className = 'text-gray-400 text-xs';
+                fileSize.textContent = this.formatFileSize(this.file.size);
+                textInfo.appendChild(fileSize);
+            }
+            
+            leftSide.appendChild(textInfo);
+            fileDetails.appendChild(leftSide);
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'text-gray-400 hover:text-red-400';
+            removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.removeFile();
+            });
+            
+            fileDetails.appendChild(removeBtn);
+            this.fileInfo.appendChild(fileDetails);
+        }
+        
+        // Update preview if enabled
+        if (this.options.showPreview && this.preview) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.preview.src = e.target.result;
+                this.preview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(this.file);
+        }
+        
+        // Add success animation
+        this.container.classList.add('upload-success');
+        setTimeout(() => {
+            this.container.classList.remove('upload-success');
+        }, 500);
+    }
+    
+    removeFile() {
+        this.file = null;
         this.input.value = '';
         
-        // Render placeholder again
-        this.renderPlaceholder();
+        // Reset UI
+        this.createUI();
+        this.container.classList.add('border-dashed');
+        this.container.classList.remove('border-purple-500');
     }
     
     showError(message) {
-        // Clear container first
-        this.previewContainer.innerHTML = '';
+        // Remove file
+        this.removeFile();
         
-        // Create error message
-        const errorElement = document.createElement('div');
-        errorElement.className = 'file-upload-error';
-        errorElement.innerHTML = `
-            <i class="fas fa-exclamation-circle"></i>
-            <p>${message}</p>
-            <button class="file-upload-try-again">Try Again</button>
-        `;
+        // Create or update error message
+        let errorMsg = document.getElementById('paymentProofError');
+        if (!errorMsg) {
+            errorMsg = document.createElement('p');
+            errorMsg.id = 'paymentProofError';
+            errorMsg.className = 'text-red-400 text-sm mt-1';
+            this.container.parentNode.appendChild(errorMsg);
+        }
         
-        // Add click handler for try again button
-        errorElement.querySelector('.file-upload-try-again').addEventListener('click', () => {
-            this.renderPlaceholder();
-        });
-        
-        this.previewContainer.appendChild(errorElement);
+        errorMsg.textContent = message;
     }
     
     formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(1024));
-        
-        return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + ' ' + sizes[i];
+        if (bytes < 1024) {
+            return bytes + ' bytes';
+        } else if (bytes < 1024 * 1024) {
+            return (bytes / 1024).toFixed(1) + ' KB';
+        } else {
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
     }
     
-    // Get the selected file
+    hasFile() {
+        return !!this.file;
+    }
+    
     getFile() {
-        return this.input.files[0] || null;
+        return this.file;
+    }
+    
+    clearPreview() {
+        this.removeFile();
     }
 }
 

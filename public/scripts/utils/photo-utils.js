@@ -71,35 +71,48 @@ export function resizeImage(file, maxWidth = 800, maxHeight = 800, quality = 0.8
  * @returns {Promise<Blob>} - A promise that resolves to a Blob containing the optimized image
  */
 export async function optimizeImageForUpload(file, options = {}) {
-    const defaultOptions = {
-        maxWidth: 1200,
-        maxHeight: 1200,
-        quality: 0.8,
-        maxSizeMB: 2
-    };
+    const { maxWidth = 1200, maxHeight = 1200, quality = 0.8, maxSizeMB = 1 } = options;
     
-    const { maxWidth, maxHeight, quality, maxSizeMB } = { ...defaultOptions, ...options };
-    
-    // Check if file is already small enough
-    if (file.size <= maxSizeMB * 1024 * 1024) {
-        return file;
-    }
-    
-    try {
-        // Resize the image
-        const resizedBlob = await resizeImage(file, maxWidth, maxHeight, quality);
+    return new Promise((resolve, reject) => {
+        // Create an image element to load the file
+        const img = new Image();
+        img.onload = () => {
+            // Calculate new dimensions maintaining aspect ratio
+            let width = img.width;
+            let height = img.height;
+            
+            if (width > maxWidth) {
+                height = Math.round(height * (maxWidth / width));
+                width = maxWidth;
+            }
+            
+            if (height > maxHeight) {
+                width = Math.round(width * (maxHeight / height));
+                height = maxHeight;
+            }
+            
+            // Create canvas for resizing
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Draw image on canvas
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // Convert to blob with quality setting
+            canvas.toBlob(
+                blob => resolve(blob),
+                file.type,
+                quality
+            );
+        };
         
-        // If still too large, reduce quality further
-        if (resizedBlob.size > maxSizeMB * 1024 * 1024) {
-            const lowerQuality = quality * 0.8;
-            return await resizeImage(file, maxWidth, maxHeight, lowerQuality);
-        }
+        img.onerror = () => reject(new Error('Failed to load image for optimization'));
         
-        return resizedBlob;
-    } catch (error) {
-        console.error('Error optimizing image:', error);
-        return file; // Return original file if optimization fails
-    }
+        // Load image from file
+        img.src = URL.createObjectURL(file);
+    });
 }
 
 /**
@@ -132,4 +145,50 @@ export function blobToFile(blob, fileName) {
         type: blob.type,
         lastModified: new Date().getTime()
     });
+}
+
+/**
+ * Get image dimensions from a File or Blob
+ * @param {File|Blob} file - The image file
+ * @returns {Promise<{width: number, height: number}>} - Image dimensions
+ */
+export function getImageDimensions(file) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            resolve({
+                width: img.width,
+                height: img.height
+            });
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = URL.createObjectURL(file);
+    });
+}
+
+/**
+ * Check if a file is an image
+ * @param {File} file - The file to check
+ * @returns {boolean} - True if file is an image
+ */
+export function isImageFile(file) {
+    return file && file.type && file.type.startsWith('image/');
+}
+
+/**
+ * Format file size for display
+ * @param {number} bytes - File size in bytes
+ * @param {number} decimals - Number of decimal places
+ * @returns {string} - Formatted file size
+ */
+export function formatFileSize(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }

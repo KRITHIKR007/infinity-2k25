@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Confirmation - Infinity 2025</title>
+    <title>Registration Confirmed - INFINITY-2K25</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="../public/styles/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -41,14 +40,47 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
         
+        .success-animation {
+            animation: successPulse 2s ease-in-out;
+        }
+        
+        @keyframes successPulse {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .countdown-animation {
+            animation: countdownFade 0.5s ease-in-out;
+        }
+        
+        @keyframes countdownFade {
+            0% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-            border-radius: 0.375rem;
-            transition: all 0.2s;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
             cursor: pointer;
         }
         
@@ -59,79 +91,28 @@
         
         .btn-primary:hover {
             background-color: #7e22ce;
-        }
-        
-        .loading {
-            display: inline-block;
-            width: 1.5rem;
-            height: 1.5rem;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #ffffff;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-in-out forwards;
-        }
-        
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            line-height: 1;
-            border-radius: 9999px;
-        }
-        
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-            
-            body {
-                background-color: white;
-                color: black;
-            }
-            
-            .glass-effect {
-                background-color: white;
-                box-shadow: none;
-                border: 1px solid #eee;
-            }
-            
-            .print-dark-text {
-                color: #111827 !important;
-            }
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
         }
     </style>
 </head>
-<body class="bg-gray-900 min-h-screen">
+<body class="bg-gray-900 min-h-screen bg-[url('../public/images/gradient-bg.jpg')] bg-cover bg-fixed">
+    <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
+    
     <!-- Navigation -->
-    <nav class="glass-effect floating-navbar no-print">
+    <nav class="floating-navbar">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
                     <a href="../index.html" class="flex items-center space-x-2">
-                        <img src="../public/images/INFINITY GOLD LOGO 24.png" alt="Infinity 2025 Logo" class="h-8 w-auto animate-float">
-                        <span class="text-xl font-bold gradient-text">Infinity 2025</span>
+                        <img src="../public/images/INFINITY GOLD LOGO 24.png" alt="INFINITY-2K25 Logo" class="h-8 w-auto animate-float">
+                        <span class="text-xl font-bold gradient-text">INFINITY-2K25</span>
                     </a>
                 </div>
                 <div class="hidden md:flex space-x-8">
-                    <a href="../index.html" class="text-gray-300 hover:text-purple-400 transition-colors">Home</a>
-                    <a href="tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech</a>
-                    <a href="cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural</a>
+                    <a href="../index.html#about" class="text-gray-300 hover:text-purple-400 transition-colors">About</a>
+                    <a href="tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech Events</a>
+                    <a href="cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural Events</a>
                     <a href="contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">Contact</a>
                 </div>
             </div>
@@ -139,483 +120,234 @@
     </nav>
 
     <!-- Confirmation Content -->
-    <div class="flex justify-center items-center min-h-screen px-4 pb-20 pt-32">
-        <div class="w-full max-w-3xl">
-            <!-- Loading State -->
-            <div id="loadingState" class="text-center py-20">
-                <div class="loading mx-auto mb-6"></div>
-                <h2 class="text-2xl font-semibold text-gray-200 mb-2">Loading your registration details...</h2>
-                <p class="text-gray-400">Please wait while we fetch your information.</p>
+    <div class="flex justify-center items-center min-h-screen px-4 relative z-10">
+        <div class="max-w-3xl w-full glass-effect p-8 rounded-xl shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="success-animation inline-flex items-center justify-center w-24 h-24 bg-green-900 bg-opacity-30 rounded-full border-4 border-green-500 mb-6">
+                    <i class="fas fa-check text-green-400 text-5xl"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-white mb-2">Registration Confirmed!</h1>
+                <p class="text-xl text-gray-300">Your spot at INFINITY-2K25 is secured.</p>
             </div>
             
-            <!-- Error State -->
-            <div id="errorState" class="text-center py-20 hidden">
-                <div class="mb-6 text-red-400 text-6xl">
-                    <i class="fas fa-exclamation-circle"></i>
+            <!-- Registration Details -->
+            <div class="glass-effect rounded-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-purple-400 mb-4">Registration Details</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <p class="text-gray-400 text-sm">Name</p>
+                        <p class="text-white font-medium" id="participantName">Loading...</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">Email</p>
+                        <p class="text-white font-medium" id="participantEmail">Loading...</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">University/College</p>
+                        <p class="text-white font-medium" id="participantUniversity">Loading...</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-400 text-sm">Phone</p>
+                        <p class="text-white font-medium" id="participantPhone">Loading...</p>
+                    </div>
                 </div>
-                <h2 class="text-2xl font-semibold text-red-400 mb-4">Registration Not Found</h2>
-                <p class="text-gray-300 mb-6">We couldn't locate your registration details. This could be due to:</p>
-                <ul class="text-gray-400 list-disc list-inside mb-8 text-left max-w-md mx-auto">
-                    <li>An invalid registration ID</li>
-                    <li>The registration may have been cancelled</li>
-                    <li>A temporary system issue</li>
-                </ul>
-                <div class="space-y-3">
-                    <a href="register.html" class="btn btn-primary">
-                        <i class="fas fa-pen-to-square mr-2"></i>New Registration
-                    </a>
-                    <p class="text-gray-400">or</p>
-                    <a href="contact.html" class="text-purple-400 hover:text-purple-300 transition-colors">
-                        Contact Support <i class="fas fa-arrow-right ml-1"></i>
-                    </a>
+                
+                <div class="mb-4">
+                    <p class="text-gray-400 text-sm">Registration ID</p>
+                    <p class="text-purple-300 font-bold text-lg" id="registrationId">INF-2025-#####</p>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-gray-400 text-sm">Registered Events</p>
+                    <div class="flex flex-wrap gap-2 mt-1" id="eventsList">
+                        <span class="text-xs px-2 py-1 bg-purple-900/40 rounded-full text-purple-200">Loading events...</span>
+                    </div>
+                </div>
+                
+                <div>
+                    <p class="text-gray-400 text-sm">Total Amount</p>
+                    <p class="text-white font-bold text-lg" id="totalAmount">₹0</p>
                 </div>
             </div>
             
-            <!-- Success State: Registration Confirmation Card -->
-            <div id="confirmationCard" class="hidden fade-in">
-                <div class="text-center mb-10">
-                    <div class="mb-4 text-green-400 text-6xl">
-                        <i class="fas fa-circle-check"></i>
-                    </div>
-                    <h1 class="text-4xl font-bold text-white mb-2">Registration Confirmed!</h1>
-                    <p class="text-xl text-gray-300">Your registration for INFINITY-2K25 is successful.</p>
+            <!-- Important Information -->
+            <div class="glass-effect rounded-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold text-purple-400 mb-4">Important Information</h2>
+                
+                <div class="mb-4">
+                    <h3 class="text-white font-medium mb-2 flex items-center">
+                        <i class="fas fa-envelope text-purple-400 mr-2"></i>Confirmation Email
+                    </h3>
+                    <p class="text-gray-300">A confirmation email has been sent to your registered email address with all the details and instructions.</p>
                 </div>
                 
-                <!-- Confirmation Details Card -->
-                <div class="glass-effect p-8 rounded-lg mb-8">
-                    <!-- Header with Logo and Event Name -->
-                    <div class="flex justify-between items-center border-b border-gray-700 pb-4 mb-6 print-dark-text">
-                        <div class="flex items-center">
-                            <img src="../public/images/INFINITY GOLD LOGO 24.png" alt="Infinity 2025 Logo" class="h-12 w-auto mr-4">
-                            <div>
-                                <h2 class="text-2xl font-bold text-white print-dark-text">INFINITY-2K25</h2>
-                                <p class="text-gray-400 print-dark-text">March 27-28, 2025</p>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <span id="regStatusBadge" class="badge bg-yellow-600 text-yellow-200">Pending</span>
-                            <div class="text-xs text-gray-400 mt-1">Registration ID: <span id="regId" class="font-mono">Loading...</span></div>
-                        </div>
+                <div class="mb-4">
+                    <h3 class="text-white font-medium mb-2 flex items-center">
+                        <i class="fas fa-credit-card text-purple-400 mr-2"></i>Payment Status
+                    </h3>
+                    <div class="px-3 py-2 rounded-lg bg-yellow-900 bg-opacity-30 border border-yellow-700 flex items-center" id="paymentPending">
+                        <i class="fas fa-clock text-yellow-500 mr-2"></i>
+                        <span class="text-yellow-300">Payment Pending</span>
                     </div>
-                    
-                    <!-- Registration Info -->
-                    <div class="mb-8">
-                        <div class="mb-6">
-                            <h3 class="text-lg font-medium text-purple-400 mb-3">Participant Information</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-sm text-gray-500">Name</p>
-                                    <p id="regName" class="text-gray-300">Loading...</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Email</p>
-                                    <p id="regEmail" class="text-gray-300">Loading...</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Phone</p>
-                                    <p id="regPhone" class="text-gray-300">Loading...</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">University/College</p>
-                                    <p id="regUniversity" class="text-gray-300">Loading...</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-6">
-                            <h3 class="text-lg font-medium text-purple-400 mb-3">Event Details</h3>
-                            <div id="regEventsList" class="space-y-3">
-                                <div class="flex items-center justify-between bg-gray-800/40 p-3 rounded-lg">
-                                    <div>
-                                        <p class="text-gray-300">Loading events...</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div id="teamSection" class="mb-6 hidden">
-                            <h3 class="text-lg font-medium text-purple-400 mb-3">Team Information</h3>
-                            <div>
-                                <p class="text-sm text-gray-500">Team Name</p>
-                                <p id="regTeamName" class="text-gray-300">Loading...</p>
-                            </div>
-                            <div class="mt-3">
-                                <p class="text-sm text-gray-500">Team Members</p>
-                                <ul id="regTeamList" class="list-disc list-inside text-gray-300 mt-1">
-                                    <li>Loading team members...</li>
-                                </ul>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <h3 class="text-lg font-medium text-purple-400 mb-3">Payment Details</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-sm text-gray-500">Total Fee</p>
-                                    <p id="regFee" class="text-xl font-semibold text-white">Loading...</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Payment Status</p>
-                                    <p id="regPaymentStatus" class="text-gray-300">Loading...</p>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-500">Registration Date</p>
-                                    <p id="regDate" class="text-gray-300">Loading...</p>
-                                </div>
-                                <div id="paymentMethodContainer">
-                                    <p class="text-sm text-gray-500">Payment Method</p>
-                                    <p id="regPaymentMethod" class="text-gray-300">Loading...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Call to Action Buttons -->
-                    <div class="flex flex-wrap gap-4 justify-between items-center border-t border-gray-700 pt-6 mt-6">
-                        <div>
-                            <p class="text-gray-400 mb-2"><i class="fas fa-info-circle mr-2"></i> Please keep this registration ID for reference</p>
-                            <p class="text-sm text-gray-500">For any questions, contact <a href="mailto:support@infinity2025.org" class="text-purple-400 hover:underline">support@infinity2025.org</a></p>
-                        </div>
-                        <div class="no-print">
-                            <button onclick="window.print()" class="btn bg-gray-700 text-gray-300 hover:bg-gray-600">
-                                <i class="fas fa-print mr-2"></i>Print Receipt
-                            </button>
-                        </div>
+                    <div class="px-3 py-2 rounded-lg bg-green-900 bg-opacity-30 border border-green-700 flex items-center hidden" id="paymentComplete">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        <span class="text-green-300">Payment Complete</span>
                     </div>
                 </div>
                 
-                <!-- Next Steps Card -->
-                <div class="glass-effect p-6 rounded-lg mb-8">
-                    <h3 class="text-xl font-semibold text-white mb-4">Next Steps</h3>
-                    <ol class="space-y-4">
-                        <li class="flex">
-                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-purple-900 flex items-center justify-center text-white font-bold mr-3">
-                                1
-                            </div>
-                            <div>
-                                <p class="text-gray-300">Check your email for a confirmation letter with additional details.</p>
-                            </div>
-                        </li>
-                        <li class="flex">
-                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-purple-900 flex items-center justify-center text-white font-bold mr-3">
-                                2
-                            </div>
-                            <div>
-                                <p class="text-gray-300">Follow our social media channels for event updates and announcements.</p>
-                            </div>
-                        </li>
-                        <li class="flex">
-                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-purple-900 flex items-center justify-center text-white font-bold mr-3">
-                                3
-                            </div>
-                            <div>
-                                <p class="text-gray-300"><span id="paymentInstructions">If you selected pay at venue, please arrive 30 minutes early to complete your payment.</span></p>
-                            </div>
-                        </li>
-                        <li class="flex">
-                            <div class="flex-shrink-0 h-8 w-8 rounded-full bg-purple-900 flex items-center justify-center text-white font-bold mr-3">
-                                4
-                            </div>
-                            <div>
-                                <p class="text-gray-300">Arrive at the venue with your registration ID and ID proof on event day.</p>
-                            </div>
-                        </li>
-                    </ol>
+                <div>
+                    <h3 class="text-white font-medium mb-2 flex items-center">
+                        <i class="fas fa-calendar-alt text-purple-400 mr-2"></i>Next Steps
+                    </h3>
+                    <ul class="text-gray-300 space-y-2 list-disc pl-5">
+                        <li>Complete your payment within 24 hours to secure your registration</li>
+                        <li>Watch for event updates via email</li>
+                        <li>Join our social media channels for announcements</li>
+                        <li>Prepare for your events as per the guidelines</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Countdown -->
+            <div class="glass-effect rounded-lg p-6 mb-6 text-center">
+                <h2 class="text-xl font-semibold text-purple-400 mb-4">INFINITY-2K25 Starts In</h2>
+                
+                <div class="flex justify-center space-x-6 text-white">
+                    <div class="text-center">
+                        <div id="countDays" class="text-4xl font-bold countdown-animation">--</div>
+                        <div class="text-sm text-gray-400">Days</div>
+                    </div>
+                    <div class="text-4xl font-bold">:</div>
+                    <div class="text-center">
+                        <div id="countHours" class="text-4xl font-bold countdown-animation">--</div>
+                        <div class="text-sm text-gray-400">Hours</div>
+                    </div>
+                    <div class="text-4xl font-bold">:</div>
+                    <div class="text-center">
+                        <div id="countMinutes" class="text-4xl font-bold countdown-animation">--</div>
+                        <div class="text-sm text-gray-400">Minutes</div>
+                    </div>
                 </div>
                 
-                <!-- Action Buttons -->
-                <div class="flex flex-wrap gap-4 justify-center no-print">
-                    <a href="tech.html" class="btn btn-primary">
-                        <i class="fas fa-calendar-alt mr-2"></i>View Events
-                    </a>
-                    <a href="contact.html" class="btn bg-gray-700 text-gray-300 hover:bg-gray-600">
-                        <i class="fas fa-question-circle mr-2"></i>Need Help?
-                    </a>
-                    <a href="register.html" class="btn bg-gray-700 text-gray-300 hover:bg-gray-600">
-                        <i class="fas fa-user-plus mr-2"></i>Register for More Events
-                    </a>
-                </div>
+                <p class="text-gray-300 mt-4">March 27-28, 2025 at Jain University, Bangalore</p>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="../index.html" class="btn btn-primary">
+                    <i class="fas fa-home mr-2"></i>Return to Home Page
+                </a>
+                <a href="#" id="paymentBtn" class="btn btn-primary bg-green-600 hover:bg-green-700">
+                    <i class="fas fa-credit-card mr-2"></i>Complete Payment
+                </a>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 border-t border-gray-700 py-12 no-print">
+    <footer class="bg-transparent py-8 relative z-10">
         <div class="max-w-7xl mx-auto px-4">
-            <!-- Main footer content with 3 columns -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                <!-- Column 1: About -->
-                <div class="glass-effect p-6 rounded-lg">
-                    <div class="flex items-center mb-4">
-                        <img src="../public/images/INFINITY GOLD LOGO 24.png" alt="Infinity 2025 Logo" class="h-10 w-auto mr-3">
-                        <h3 class="text-xl font-semibold text-white">INFINITY-2K25</h3>
-                    </div>
-                    <p class="text-gray-300 mb-4">The premier techno-cultural fest organized by Faculty of Engineering and Technology, Jain (Deemed-to-be University), bringing together the brightest minds for competition, learning, and networking.</p>
-                    <div class="flex items-center">
-                        <a href="https://www.instagram.com/culturalclub.fet/?igsh=ZDJ5aHExd3YwOWs4#" target="_blank" class="text-purple-400 hover:text-purple-300 transition-colors flex items-center">
-                            <i class="fab fa-instagram text-2xl"></i>
-                            <span class="ml-2">Follow us on Instagram</span>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Column 2: Quick Links -->
-                <div class="glass-effect p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold text-purple-400 mb-4">Quick Links</h3>
-                    <div class="grid grid-cols-2 gap-2">
-                        <a href="../index.html" class="text-gray-300 hover:text-purple-400 transition-colors">Home</a>
-                        <a href="tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech Events</a>
-                        <a href="cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural Events</a>
-                        <a href="register.html" class="text-gray-300 hover:text-purple-400 transition-colors">Register</a>
-                        <a href="contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">Contact Us</a>
-                        <a href="../admin/login.html" class="text-gray-300 hover:text-purple-400 transition-colors">Admin Portal</a>
-                    </div>
-                </div>
-                
-                <!-- Column 3: Contact Info -->
-                <div class="glass-effect p-6 rounded-lg">
-                    <h3 class="text-xl font-semibold text-purple-400 mb-4">Contact Information</h3>
-                    <div class="space-y-3">
-                        <p class="flex items-start">
-                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-purple-400"></i>
-                            <span class="text-gray-300">Jain University, Jakkasandra Post, Kanakapura Road, Bangalore - 562112</span>
-                        </p>
-                        <p class="flex items-start">
-                            <i class="fas fa-envelope mt-1 mr-3 text-purple-400"></i>
-                            <span class="text-gray-300">infinity2025@jainuniversity.ac.in</span>
-                        </p>
-                        <p class="flex items-start">
-                            <i class="fas fa-phone-alt mt-1 mr-3 text-purple-400"></i>
-                            <span class="text-gray-300">+91 8296019911</span>
-                        </p>
-                        <p class="flex items-start">
-                            <i class="fas fa-calendar-alt mt-1 mr-3 text-purple-400"></i>
-                            <span class="text-gray-300">March 27-28, 2025</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Copyright -->
-            <div class="border-t border-gray-800 pt-6 mt-6">
-                <p class="text-center text-gray-400 mb-2">&copy; 2025 Krithik R. All rights reserved. | Designed & Developed by <a href="https://krithikr007.github.io/krithik-r/portfolio/index.html" target="_blank" class="text-purple-400 hover:text-purple-300">Krithik R.</a></p>
-                <p class="text-center text-gray-500 mb-2">Organized by Faculty of Engineering and Technology, Jain (Deemed-to-be University), Bangalore</p>
-                <p class="text-center text-gray-400 mb-2">Contact: Technical Events - Dhrub Kumar Jha (+91 8296019911) | Cultural Events - Rohan (+91 9353074448)</p>
-                <p class="text-center text-gray-500 text-sm">
-                    <a href="https://github.com/KRITHIKR007" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">GitHub</a> | 
-                    <a href="https://www.linkedin.com/in/krithik-r124/" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">LinkedIn</a> | 
-                    <span class="text-gray-500 mx-2">Discord: krithik.r007</span>
-                </p>
-            </div>
+            <p class="text-center text-gray-400 mb-2">&copy; 2025 Krithik R. All rights reserved. | Designed & Developed by <a href="https://krithikr007.github.io/krithik-r/portfolio/index.html" target="_blank" class="text-purple-400 hover:text-purple-300">Krithik R.</a></p>
+            <p class="text-center text-gray-500 mb-2">Organized by Faculty of Engineering and Technology, Jain (Deemed-to-be University), Bangalore</p>
+            <p class="text-center text-gray-400 mb-2">Contact: Technical Events - Dhrub Kumar Jha (+91 8296019911) | Cultural Events - Rohan (+91 9353074448)</p>
+            <p class="text-center text-gray-400 mt-4">
+                <a href="../admin/login.html" class="text-gray-400 hover:text-purple-400 transition-colors">
+                    <i class="fas fa-lock mr-1"></i> Admin Login
+                </a>
+            </p>
         </div>
     </footer>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-        import { getRegistrationById } from '../public/scripts/database.js';
-        
-        // Initialize Supabase client
-        const supabaseUrl = 'https://ceickbodqhwfhcpabfdq.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8';
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        
-        // DOM elements
-        const loadingState = document.getElementById('loadingState');
-        const errorState = document.getElementById('errorState');
-        const confirmationCard = document.getElementById('confirmationCard');
-        const teamSection = document.getElementById('teamSection');
-        
-        // Get registration ID from URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const registrationId = urlParams.get('id');
-        
-        // Load registration details on page load
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (!registrationId) {
-                showError();
-                return;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get URL parameters to retrieve registration data
+            const urlParams = new URLSearchParams(window.location.search);
+            const registrationId = urlParams.get('registration_id') || 'INF-2025-' + Math.floor(10000 + Math.random() * 90000);
+            
+            // Populate with registration data
+            // This would normally come from your database via an API
+            // For this example, we're using URL parameters or dummy data
+            document.getElementById('registrationId').textContent = registrationId;
+            document.getElementById('participantName').textContent = urlParams.get('name') || 'John Doe';
+            document.getElementById('participantEmail').textContent = urlParams.get('email') || 'john.doe@example.com';
+            document.getElementById('participantUniversity').textContent = urlParams.get('university') || 'Jain University';
+            document.getElementById('participantPhone').textContent = urlParams.get('phone') || '+91 98765 43210';
+            
+            // Example events display
+            const events = urlParams.get('events') ? urlParams.get('events').split(',') : ['Model Blitz', 'CTRL+Z'];
+            const eventsList = document.getElementById('eventsList');
+            eventsList.innerHTML = ''; // Clear loading message
+            
+            // Add event badges
+            events.forEach(event => {
+                const badge = document.createElement('span');
+                badge.className = 'text-xs px-2 py-1 bg-purple-900/40 rounded-full text-purple-200';
+                badge.textContent = event.trim();
+                eventsList.appendChild(badge);
+            });
+            
+            // Set total amount
+            const amount = urlParams.get('amount') || '650';
+            document.getElementById('totalAmount').textContent = '₹' + amount;
+            
+            // Set payment status based on URL param
+            const paymentStatus = urlParams.get('payment_status') || 'pending';
+            if (paymentStatus === 'complete') {
+                document.getElementById('paymentPending').classList.add('hidden');
+                document.getElementById('paymentComplete').classList.remove('hidden');
+                document.getElementById('paymentBtn').classList.add('hidden');
             }
             
-            try {
-                // Fetch registration details using the database helper
-                const { success, data: registration, error } = await getRegistrationById(registrationId);
-                
-                if (!success || error) throw new Error(error || 'Failed to load registration');
-                if (!registration) throw new Error('Registration not found');
-                
-                // Populate registration details
-                populateRegistrationDetails(registration);
-                
-                // Hide loading state and show confirmation card
-                loadingState.classList.add('hidden');
-                confirmationCard.classList.remove('hidden');
-                
-            } catch (error) {
-                console.error('Error loading registration:', error);
-                showError();
-            }
+            // Initialize countdown
+            initCountdown();
+            
+            // Payment button action
+            document.getElementById('paymentBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Redirecting to payment gateway...\n\nThis would normally take you to a secure payment page.');
+                // window.location.href = 'payment.html?registration_id=' + registrationId + '&amount=' + amount;
+            });
         });
         
-        // Show error state
-        function showError() {
-            loadingState.classList.add('hidden');
-            errorState.classList.remove('hidden');
+        // Countdown function
+        function initCountdown() {
+            // Set the date for INFINITY-2K25 - March 27, 2025
+            const eventDate = new Date("Mar 27, 2025 09:00:00").getTime();
+            
+            // Update the countdown every second
+            const countdownTimer = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = eventDate - now;
+                
+                // Time calculations
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                
+                // Update countdown display with animation
+                updateCountElement('countDays', days);
+                updateCountElement('countHours', hours);
+                updateCountElement('countMinutes', minutes);
+                
+                // If the countdown is finished
+                if (distance < 0) {
+                    clearInterval(countdownTimer);
+                    document.getElementById('countDays').textContent = "0";
+                    document.getElementById('countHours').textContent = "0";
+                    document.getElementById('countMinutes').textContent = "0";
+                }
+            }, 1000);
         }
         
-        // Format date string
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-        
-        // Format currency
-        function formatCurrency(amount) {
-            return `₹${parseFloat(amount).toLocaleString('en-IN')}`;
-        }
-        
-        // Get status badge class
-        function getStatusBadgeClass(status) {
-            switch (status?.toLowerCase()) {
-                case 'paid':
-                    return 'bg-green-600 text-green-200';
-                case 'pending':
-                    return 'bg-yellow-600 text-yellow-200';
-                case 'awaiting_payment':
-                    return 'bg-blue-600 text-blue-200';
-                case 'rejected':
-                    return 'bg-red-600 text-red-200';
-                default:
-                    return 'bg-gray-600 text-gray-200';
-            }
-        }
-        
-        // Populate registration details in the UI
-        function populateRegistrationDetails(registration) {
-            // Set registration ID
-            document.getElementById('regId').textContent = registration.id;
-            
-            // Set participant information
-            document.getElementById('regName').textContent = registration.name || 'N/A';
-            document.getElementById('regEmail').textContent = registration.email || 'N/A';
-            document.getElementById('regPhone').textContent = registration.phone || 'N/A';
-            document.getElementById('regUniversity').textContent = registration.university || registration.college || 'N/A';
-            
-            // Set payment details
-            document.getElementById('regFee').textContent = formatCurrency(registration.fee || registration.total_fee || 0);
-            document.getElementById('regDate').textContent = formatDate(registration.created_at);
-            
-            // Set payment status
-            const paymentStatus = registration.payment_status || 'Pending';
-            document.getElementById('regPaymentStatus').textContent = paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1).replace('_', ' ');
-            
-            // Set status badge
-            const statusBadge = document.getElementById('regStatusBadge');
-            statusBadge.textContent = paymentStatus.charAt(0).toUpperCase() + paymentStatus.slice(1).replace('_', ' ');
-            statusBadge.className = `badge ${getStatusBadgeClass(paymentStatus)}`;
-            
-            // Set payment method
-            if (registration.payment_method) {
-                document.getElementById('regPaymentMethod').textContent = registration.payment_method.charAt(0).toUpperCase() + registration.payment_method.slice(1);
-                
-                // Update payment instructions based on payment method
-                const paymentInstructions = document.getElementById('paymentInstructions');
-                if (registration.payment_method === 'qr' && paymentStatus.toLowerCase() === 'pending') {
-                    paymentInstructions.textContent = 'Your payment is being verified. If there are any issues, we will contact you.';
-                } else if (registration.payment_method === 'venue') {
-                    paymentInstructions.textContent = 'Please arrive 30 minutes early to complete your payment at the venue.';
-                } else if (paymentStatus.toLowerCase() === 'paid') {
-                    paymentInstructions.textContent = 'Your payment is confirmed. No further payment action is needed.';
-                }
-            } else {
-                document.getElementById('paymentMethodContainer').classList.add('hidden');
-            }
-            
-            // Set events list
-            const eventsListContainer = document.getElementById('regEventsList');
-            let events = [];
-            
-            // Handle different formats of events storage
-            if (typeof registration.events === 'string') {
-                try {
-                    events = JSON.parse(registration.events);
-                } catch (e) {
-                    events = [registration.events];
-                }
-            } else if (Array.isArray(registration.events)) {
-                events = registration.events;
-            }
-            
-            if (events.length > 0) {
-                eventsListContainer.innerHTML = '';
-                
-                // Try to get event names from registration
-                let eventNames = [];
-                if (registration.event_name) {
-                    if (typeof registration.event_name === 'string') {
-                        eventNames = registration.event_name.split(',').map(name => name.trim());
-                    } else {
-                        eventNames = registration.event_name;
-                    }
-                }
-                
-                // Create event items
-                events.forEach((eventId, index) => {
-                    const eventName = eventNames[index] || `Event ${index + 1}`;
-                    const eventCategory = registration.category || 'Not specified';
-                    
-                    const eventItem = document.createElement('div');
-                    eventItem.className = 'flex items-center justify-between bg-gray-800/40 p-3 rounded-lg';
-                    eventItem.innerHTML = `
-                        <div>
-                            <p class="text-white font-medium">${eventName}</p>
-                            <p class="text-sm text-gray-400">Category: ${eventCategory.charAt(0).toUpperCase() + eventCategory.slice(1)}</p>
-                        </div>
-                        <div>
-                            <span class="badge bg-purple-900 text-purple-200">Registered</span>
-                        </div>
-                    `;
-                    eventsListContainer.appendChild(eventItem);
-                });
-            }
-            
-            // Handle team information
-            if (registration.team_name || (registration.team_members && registration.team_members.length > 0)) {
-                teamSection.classList.remove('hidden');
-                document.getElementById('regTeamName').textContent = registration.team_name || 'Not specified';
-                
-                // Parse team members
-                let teamMembers = [];
-                if (typeof registration.team_members === 'string') {
-                    try {
-                        teamMembers = JSON.parse(registration.team_members);
-                    } catch (e) {
-                        teamMembers = [registration.team_members];
-                    }
-                } else if (Array.isArray(registration.team_members)) {
-                    teamMembers = registration.team_members;
-                }
-                
-                // Add team members to list
-                const teamList = document.getElementById('regTeamList');
-                if (teamMembers.length > 0) {
-                    teamList.innerHTML = '';
-                    teamMembers.forEach(member => {
-                        if (member) {
-                            const li = document.createElement('li');
-                            li.textContent = member;
-                            teamList.appendChild(li);
-                        }
-                    });
-                } else {
-                    teamList.innerHTML = '<li>No team members specified</li>';
-                }
+        // Update countdown element with animation
+        function updateCountElement(elementId, value) {
+            const element = document.getElementById(elementId);
+            if (element.textContent !== String(value)) {
+                element.textContent = value;
+                element.classList.remove('countdown-animation');
+                void element.offsetWidth; // Trigger reflow to restart animation
+                element.classList.add('countdown-animation');
             }
         }
     </script>
