@@ -119,8 +119,96 @@
 
     <!-- Main Content -->
     <div class="ml-64 p-6">
-        <!-- Top bar -->
-        <div class="flex justify-between items-center mb-8">
+        <!-- Top bar with user menu dropdown -->
+        <div class="fixed top-0 left-64 right-0 bg-gray-800 border-b border-gray-700 z-30">
+            <div class="flex justify-between items-center px-6 h-16">
+                <div class="flex items-center">
+                    <button id="menuToggle" class="hidden md:block text-gray-400 hover:text-white mr-4">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-xl font-bold text-white">Dashboard</h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="btn btn-secondary relative" id="notificationButton">
+                        <i class="fas fa-bell"></i>
+                        <span id="notificationBadge" class="bg-red-500 text-xs rounded-full h-5 w-5 flex items-center justify-center absolute -mt-3 -mr-3 top-0 right-0">5</span>
+                    </button>
+                    
+                    <!-- Notifications Dropdown (Hidden by default) -->
+                    <div id="notificationsDropdown" class="absolute right-20 top-16 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50 hidden">
+                        <div class="p-3 border-b border-gray-700 flex justify-between items-center">
+                            <h3 class="font-medium text-white">Notifications</h3>
+                            <button class="text-gray-400 hover:text-white text-xs">
+                                Mark all as read
+                            </button>
+                        </div>
+                        <div class="max-h-96 overflow-y-auto">
+                            <div class="p-3 border-b border-gray-700 hover:bg-gray-700 cursor-pointer">
+                                <div class="flex">
+                                    <div class="flex-shrink-0 mr-3">
+                                        <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                                            <i class="fas fa-user-plus"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-white">New registration for Drone Xtreme</p>
+                                        <p class="text-xs text-gray-400">15 minutes ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 border-b border-gray-700 hover:bg-gray-700 cursor-pointer">
+                                <div class="flex">
+                                    <div class="flex-shrink-0 mr-3">
+                                        <div class="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white">
+                                            <i class="fas fa-rupee-sign"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-white">Payment received from Rohit Sharma</p>
+                                        <p class="text-xs text-gray-400">2 hours ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 text-center">
+                            <a href="#" class="text-purple-400 hover:text-purple-300 text-sm">View all notifications</a>
+                        </div>
+                    </div>
+                    
+                    <!-- User Menu -->
+                    <div class="relative">
+                        <div class="flex items-center cursor-pointer" id="userMenuButton">
+                            <span id="adminUsername" class="text-gray-300 mr-3 hidden md:block">Admin User</span>
+                            <div id="avatarInitials" class="h-10 w-10 rounded-full border-2 border-purple-600 bg-purple-900 flex items-center justify-center text-white font-bold">
+                                AU
+                            </div>
+                        </div>
+                        
+                        <!-- User Dropdown (Hidden by default) -->
+                        <div id="userDropdown" class="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50 hidden">
+                            <div class="p-3 border-b border-gray-700">
+                                <p class="font-medium text-white" id="dropdownUsername">Admin User</p>
+                                <p class="text-sm text-gray-400" id="dropdownUserEmail">admin@example.com</p>
+                            </div>
+                            <div class="py-1">
+                                <a href="settings/account.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+                                    <i class="fas fa-user-cog mr-2"></i>Account Settings
+                                </a>
+                                <a href="settings/security.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+                                    <i class="fas fa-shield-alt mr-2"></i>Security
+                                </a>
+                                <a href="#" id="logoutButton" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-8 mt-16">
             <h1 class="text-3xl font-bold text-white">Dashboard</h1>
             
             <div class="flex items-center space-x-4">
@@ -261,7 +349,8 @@
                 </a>
             </div>
             <p class="text-center text-gray-400 mb-2">&copy; 2025 Krithik R. All rights reserved. | Designed & Developed by <a href="https://krithikr007.github.io/krithik-r/portfolio/index.html" target="_blank" class="text-purple-400 hover:text-purple-300">Krithik R.</a></p>
-            <p class="text-center text-gray-500 mb-2">Organized by Jain (Deemed-to-be University), Bangalore</p>
+            <p class="text-center text-gray-500 mb-2">Organized by Faculty of Engineering and Technology, Jain (Deemed-to-be University), Bangalore</p>
+            <p class="text-center text-gray-400 mb-2">Contact: Technical Events - Dhrub Kumar Jha (+91 8296019911) | Cultural Events - Rohan (+91 9353074448)</p>
             <p class="text-center text-gray-500 text-sm">
                 <a href="https://github.com/KRITHIKR007" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">GitHub</a> | 
                 <a href="https://www.linkedin.com/in/krithik-r124/" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">LinkedIn</a> | 
@@ -710,6 +799,80 @@
         // Make functions available globally
         window.viewRegistration = viewRegistration;
         window.updatePaymentStatus = updatePaymentStatus;
+    </script>
+
+    <script>
+        // User dropdown toggle
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userDropdown = document.getElementById('userDropdown');
+        const notificationButton = document.getElementById('notificationButton');
+        const notificationsDropdown = document.getElementById('notificationsDropdown');
+        
+        userMenuButton.addEventListener('click', function() {
+            userDropdown.classList.toggle('hidden');
+            notificationsDropdown.classList.add('hidden'); // Hide notifications dropdown
+        });
+        
+        notificationButton.addEventListener('click', function() {
+            notificationsDropdown.classList.toggle('hidden');
+            userDropdown.classList.add('hidden'); // Hide user dropdown
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
+                userDropdown.classList.add('hidden');
+            }
+            
+            if (!notificationButton.contains(event.target) && !notificationsDropdown.contains(event.target)) {
+                notificationsDropdown.classList.add('hidden');
+            }
+        });
+        
+        // Logout functionality
+        document.getElementById('logoutButton').addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            try {
+                await supabase.auth.signOut();
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Failed to log out. Please try again.');
+            }
+        });
+        
+        // Update user info
+        async function updateUserInfo() {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                
+                if (session && session.user) {
+                    const user = session.user;
+                    const userName = user.user_metadata?.full_name || user.email.split('@')[0];
+                    
+                    // Update username and email in navbar and dropdown
+                    document.getElementById('adminUsername').textContent = userName;
+                    document.getElementById('dropdownUsername').textContent = userName;
+                    document.getElementById('dropdownUserEmail').textContent = user.email;
+                    
+                    // Set avatar initials
+                    const initials = userName
+                        .split(' ')
+                        .map(name => name[0])
+                        .join('')
+                        .toUpperCase()
+                        .substring(0, 2);
+                    
+                    document.getElementById('avatarInitials').textContent = initials;
+                }
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+            }
+        }
+        
+        // Call on page load
+        updateUserInfo();
     </script>
 </body></html>
 </html>

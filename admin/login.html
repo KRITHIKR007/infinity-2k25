@@ -172,6 +172,7 @@
                     <input type="email" id="email" name="email" required
                         class="form-input"
                         placeholder="Enter your admin email">
+                    <p id="emailError" class="text-xs text-red-400 mt-1 hidden"></p>
                 </div>
 
                 <div class="form-field">
@@ -188,6 +189,7 @@
                     </div>
                     <div id="passwordStrength" class="password-strength hidden"></div>
                     <p id="passwordFeedback" class="text-xs text-gray-400 mt-1 hidden"></p>
+                    <p id="passwordError" class="text-xs text-red-400 mt-1 hidden"></p>
                 </div>
 
                 <div class="flex items-center justify-between">
@@ -352,7 +354,8 @@
             <!-- Copyright -->
             <div class="border-t border-gray-800 pt-6">
                 <p class="text-center text-gray-400 mb-2">&copy; 2025 Krithik R. All rights reserved. | Designed & Developed by <a href="https://krithikr007.github.io/krithik-r/portfolio/index.html" target="_blank" class="text-purple-400 hover:text-purple-300">Krithik R.</a></p>
-                <p class="text-center text-gray-500 mb-2">Organized by Jain (Deemed-to-be University), Bangalore</p>
+                <p class="text-center text-gray-500 mb-2">Organized by Faculty of Engineering and Technology, Jain (Deemed-to-be University), Bangalore</p>
+                <p class="text-center text-gray-400 mb-2">Contact: Technical Events - Dhrub Kumar Jha (+91 8296019911) | Cultural Events - Rohan (+91 9353074448)</p>
                 <p class="text-center text-gray-500 text-sm">
                     <a href="https://github.com/KRITHIKR007" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">GitHub</a> | 
                     <a href="https://www.linkedin.com/in/krithik-r124/" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">LinkedIn</a> | 
@@ -745,5 +748,88 @@
         window.toggleConfirmPasswordVisibility = toggleConfirmPasswordVisibility;
         window.checkPasswordStrength = checkPasswordStrength;
     </script>
+
+<script>
+  // Form validation functions
+  function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  // Add form submission handler
+  document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    let isValid = true;
+    
+    // Reset errors
+    document.getElementById('emailError').classList.add('hidden');
+    document.getElementById('passwordError').classList.add('hidden');
+    
+    // Validate email
+    if (!validateEmail(email)) {
+      document.getElementById('emailError').textContent = 'Please enter a valid email address';
+      document.getElementById('emailError').classList.remove('hidden');
+      isValid = false;
+    }
+    
+    // Validate password
+    if (!password || password.length < 8) {
+      document.getElementById('passwordError').textContent = 'Password must be at least 8 characters';
+      document.getElementById('passwordError').classList.remove('hidden');
+      isValid = false;
+    }
+    
+    if (isValid) {
+      // Show loading state
+      document.getElementById('loginBtnText').classList.add('hidden');
+      document.getElementById('loginBtnLoading').classList.remove('hidden');
+      
+      try {
+        // Perform login (replace with actual implementation)
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+        
+        if (error) throw error;
+        
+        // Redirect to dashboard on success
+        window.location.href = 'dashboard.html';
+      } catch (error) {
+        // Show error message
+        const errorElement = document.getElementById('errorMessage');
+        errorElement.querySelector('span').textContent = error.message || 'Login failed. Please try again.';
+        errorElement.classList.remove('hidden');
+        
+        // Reset button state
+        document.getElementById('loginBtnText').classList.remove('hidden');
+        document.getElementById('loginBtnLoading').classList.add('hidden');
+      }
+    }
+  });
+  
+  // Add rate limiting for login attempts
+  let loginAttempts = 0;
+  const MAX_ATTEMPTS = 5;
+  const LOCKOUT_TIME = 15 * 60 * 1000; // 15 minutes
+  
+  function checkLoginAttempts() {
+    if (loginAttempts >= MAX_ATTEMPTS) {
+      const lockoutElement = document.getElementById('attemptMessage');
+      lockoutElement.textContent = `Too many failed attempts. Please try again later.`;
+      lockoutElement.classList.remove('hidden');
+      document.getElementById('loginButton').disabled = true;
+      
+      setTimeout(() => {
+        loginAttempts = 0;
+        document.getElementById('loginButton').disabled = false;
+        lockoutElement.classList.add('hidden');
+      }, LOCKOUT_TIME);
+    }
+  }
+</script>
 </body>
 </html>
