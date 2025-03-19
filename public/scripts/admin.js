@@ -1,4 +1,4 @@
-import { supabase, TABLES } from '../../supabase.js'
+import { supabase, TABLES } from '../../../supabase.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const loginSection = document.getElementById('loginSection')
@@ -166,4 +166,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial auth check
     checkAuth()
-}) 
+})

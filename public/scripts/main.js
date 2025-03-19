@@ -39,6 +39,9 @@ async function initializeSupabase() {
     }
 }
 
+// Call the initialization function when the page loads
+document.addEventListener('DOMContentLoaded', initializeSupabase);
+
 // Registration form handling
 const registerForm = document.getElementById('register-form');
 if (registerForm) {
@@ -60,10 +63,10 @@ if (registerForm) {
                         name, 
                         email, 
                         phone, 
-                        college, 
+                        university: college, 
                         events,
-                        status: 'pending',
-                        created_at: new Date()
+                        payment_status: 'awaiting_payment',
+                        created_at: new Date().toISOString()
                     }
                 ]);
                 
@@ -94,18 +97,17 @@ if (contactForm) {
             const { data, error } = await supabase
                 .from('contact_messages')
                 .insert([
-                    { 
-                        name, 
-                        email, 
+                    {
+                        name,
+                        email,
                         message,
-                        status: 'unread',
-                        created_at: new Date()
+                        created_at: new Date().toISOString()
                     }
                 ]);
                 
             if (error) throw error;
             
-            alert('Thank you for your message! We will get back to you soon.');
+            alert('Message sent successfully! We will get back to you soon.');
             contactForm.reset();
             
         } catch (error) {
@@ -252,4 +254,4 @@ if (culturalEventsContainer) {
         const events = await fetchEvents('cultural');
         displayEvents(events, 'cultural-events-container');
     })();
-} 
+}

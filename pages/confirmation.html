@@ -411,6 +411,7 @@
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        import { getRegistrationById } from '../public/scripts/database.js';
         
         // Initialize Supabase client
         const supabaseUrl = 'https://ceickbodqhwfhcpabfdq.supabase.co';
@@ -435,14 +436,10 @@
             }
             
             try {
-                // Fetch registration details
-                const { data: registration, error } = await supabase
-                    .from('registrations')
-                    .select('*')
-                    .eq('id', registrationId)
-                    .single();
+                // Fetch registration details using the database helper
+                const { success, data: registration, error } = await getRegistrationById(registrationId);
                 
-                if (error) throw error;
+                if (!success || error) throw new Error(error || 'Failed to load registration');
                 if (!registration) throw new Error('Registration not found');
                 
                 // Populate registration details
