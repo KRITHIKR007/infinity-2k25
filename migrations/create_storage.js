@@ -56,13 +56,13 @@ async function setupStoragePolicies() {
             throw readPolicyError;
         }
         
-        // Allow authenticated users to upload to payment_proofs bucket
+        // Allow anonymous users to upload to payment_proofs bucket
         const { error: insertPolicyError } = await supabase.rpc('create_storage_policy', {
             bucket_id: 'payment_proofs',
-            name: 'Authenticated Upload Access',
-            definition: `bucket_id = 'payment_proofs' AND auth.role() = 'authenticated'`,
+            name: 'Anonymous Upload Access',
+            definition: `bucket_id = 'payment_proofs'`,  // Allow anyone to upload
             operation: 'INSERT',
-            role_name: 'authenticated'
+            role_name: 'anon'  // Change from authenticated to anon
         });
         
         if (insertPolicyError && !insertPolicyError.message.includes('already exists')) {

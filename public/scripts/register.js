@@ -494,25 +494,71 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             // Process payment proof if QR payment selected
+            let paymentId = null;
             if (paymentMethodValue === 'qr') {
-                const paymentProofFile = paymentProofUploader ? paymentProofUploader.getFile() : document.getElementById('paymentProof').files[0];
+                // Get file from the FileUpload component if available
+                let paymentProofFile = null;
+                
+                if (paymentProofUploader) {
+                    paymentProofFile = paymentProofUploader.getFile();
+                } else {
+                    paymentProofFile = document.getElementById('paymentProof').files[0];
+                }
                 
                 if (!paymentProofFile) {
                     throw new Error('Please upload your payment proof');
                 }
                 
-                registrationPayload.paymentProof = paymentProofFile;
+                // Upload payment proof to storage
+                const uploadResult = await uploadPaymentProof(paymentProofFile);
+                
+                if (!uploadResult.success) {
+                    throw new Error(uploadResult.error || 'Failed to upload payment proof');
+                }
+                
+                // Create payment record
+                const { data: paymentData, error: paymentError } = await supabase
+                    .from(TABLES.PAYMENTS)
+                    .insert([{
+                        amount: totalFee,
+                        currency: 'INR',
+                        status: 'pending',
+                        payment_method: 'qr',
+                        proof_url: uploadResult.url,
+                        proof_path: uploadResult.path,
+                        created_at: new Date().toISOString()
+                    }])
+                    .select();
+                    
+                if (paymentError) throw paymentError;
+                
+                paymentId = paymentData[0].id;
             }
             
-            // Submit registration
-            const result = await submitRegistration(registrationPayload);
+            // Create registration record in database
+            const { data: registrationData, error: registrationError } = await supabase
+                .from(TABLES.REGISTRATIONS)
+                .insert([{
+                    name,
+                    email,
+                    phone,
+                    university,
+                    events: selectedEventsArray,
+                    event_name: eventNames,
+                    payment_status: paymentMethodValue === 'qr' ? 'pending' : 'awaiting_payment',
+                    payment_id: paymentId,
+                    created_at: new Date().toISOString(),
+                    team_name: teamName,
+                    team_members: JSON.stringify(teamMembers),
+                    category: selectedCategory,
+                    fee: totalFee
+                }])
+                .select();
+                
+            if (registrationError) throw registrationError;
             
-            if (!result.success) {
-                throw new Error(result.error || 'Failed to submit registration');
-            }
-            
-            // Show success message and redirect
-            showSuccess('Registration successful! Your registration ID is ' + result.registrationId);
+            // Show success message
+            showSuccess('Registration successful! Your registration ID is ' + registrationData[0].id);
             
             // Hide form and show success message
             form.classList.add('hidden');
@@ -523,7 +569,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Redirect to confirmation page after 3 seconds
             setTimeout(() => {
-                window.location.href = `confirmation.html?id=${result.registrationId}`;
+                window.location.href = `confirmation.html?id=${registrationData[0].id}`;
             }, 3000);
 
         } catch (error) {
@@ -536,19 +582,72 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Utility Functions
-    function showSuccess(message) {
-        successMessage.textContent = message;
-        successMessage.classList.remove('hidden');
-        errorMessage.classList.add('hidden');
-    }
-
-    function showError(message) {
-        errorMessage.textContent = message;
-        errorMessage.classList.remove('hidden');
-        successMessage.classList.add('hidden');
-    }
-
-    // Initialize form
-    showStep(1);
+    // ... existing code ...
 });
+
+// Upload payment proof to Supabase storage
+async function uploadPaymentProof(file) {
+    try {
+        if (!file) {
+            throw new Error('No file selected');
+        }
+        
+        // Create a unique file path
+        const timestamp = new Date().getTime();
+        const sanitizedFilename = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+        const filePath = `payment-proofs/${timestamp}-${sanitizedFilename}`;
+        
+        // Show upload progress
+        const uploadStatus = document.createElement('div');
+        uploadStatus.className = 'text-sm text-gray-300 mt-2';
+        uploadStatus.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Uploading payment proof...';
+        document.getElementById('paymentProofContainer').appendChild(uploadStatus);
+        
+        // Upload file
+        const { data, error } = await supabase.storage
+            .from('payment_proofs')
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+            
+        if (error) {
+            console.error('Upload error details:', error);
+            throw new Error(`Upload failed: ${error.message}`);
+        }
+        
+        // Get public URL
+        const { data: urlData } = supabase.storage
+            .from('payment_proofs')
+            .getPublicUrl(filePath);
+            
+        // Update status
+        uploadStatus.innerHTML = '<i class="fas fa-check-circle text-green-500 mr-1"></i> Upload successful';
+        
+        return {
+            success: true,
+            path: filePath,
+            url: urlData.publicUrl
+        };
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to upload file'
+        };
+    }
+}
+
+// Show success message
+function showSuccess(message) {
+    successMessage.textContent = message;
+    successMessage.classList.remove('hidden');
+    errorMessage.classList.add('hidden');
+}
+
+// Show error message
+function showError(message) {
+    errorMessage.textContent = message;
+    errorMessage.classList.remove('hidden');
+    successMessage.classList.add('hidden');
+}
