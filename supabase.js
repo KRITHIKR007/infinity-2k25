@@ -1,22 +1,20 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
 // Initialize Supabase client
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-
-// Replace these with your actual Supabase URL and anon key
-const supabaseUrl = 'https://ceickbodqhwfhcpabfdq.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8'
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabaseUrl = 'https://ceickbodqhwfhcpabfdq.supabase.co';
+export const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8';
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Define database tables and constants
 export const TABLES = {
-    USERS: 'users',
     EVENTS: 'events',
     REGISTRATIONS: 'registrations',
-    TEAMS: 'teams',
-    PARTICIPANTS: 'participants',
     PAYMENTS: 'payments',
-    NOTIFICATIONS: 'notifications',
-    CONTACTS: 'contacts'
+    PARTICIPANTS: 'participants',
+    CONTACT_MESSAGES: 'contact_messages',
+    STORAGE: {
+        PAYMENT_PROOFS: 'payment_proofs'
+    }
 }
 
 // Define storage buckets
@@ -209,4 +207,4 @@ export const storage = {
     async remove(bucket, filePath) {
         return await supabase.storage.from(bucket).remove([filePath]);
     }
-} 
+}

@@ -255,9 +255,18 @@
                 <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
                     <i class="fab fa-youtube text-xl"></i>
                 </a>
+                <a href="https://www.instagram.com/culturalclub.fet/?igsh=ZDJ5aHExd3YwOWs4#" target="_blank" class="text-purple-400 hover:text-purple-300 transition-colors flex items-center">
+                    <i class="fab fa-instagram text-xl"></i>
+                    <span class="ml-2">Follow us</span>
+                </a>
             </div>
-            <p class="text-center text-gray-400 mb-2">&copy; 2024 Infinity 2025. All rights reserved.</p>
-            <p class="text-center text-gray-500 text-sm">Organized by Department of Computer Science, FCRIT</p>
+            <p class="text-center text-gray-400 mb-2">&copy; 2025 Krithik R. All rights reserved. | Designed & Developed by <a href="https://krithikr007.github.io/krithik-r/portfolio/index.html" target="_blank" class="text-purple-400 hover:text-purple-300">Krithik R.</a></p>
+            <p class="text-center text-gray-500 mb-2">Organized by Jain (Deemed-to-be University), Bangalore</p>
+            <p class="text-center text-gray-500 text-sm">
+                <a href="https://github.com/KRITHIKR007" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">GitHub</a> | 
+                <a href="https://www.linkedin.com/in/krithik-r124/" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">LinkedIn</a> | 
+                <span class="text-gray-500 mx-2">Discord: krithik.r007</span>
+            </p>
         </div>
     </div>
 
@@ -462,6 +471,7 @@
                 
             } catch (error) {
                 console.error('Error loading statistics:', error);
+                alert('Failed to load statistics. Please try again.');
             }
         }
         
@@ -513,6 +523,7 @@
                 
             } catch (error) {
                 console.error('Error loading registrations:', error);
+                alert('Failed to load registrations. Please try again.');
                 registrationsTableBody.innerHTML = `
                     <tr>
                         <td colspan="6" class="px-4 py-8 text-center text-red-400">
@@ -700,5 +711,5 @@
         window.viewRegistration = viewRegistration;
         window.updatePaymentStatus = updatePaymentStatus;
     </script>
-</body>
-</html> 
+</body></html>
+</html>

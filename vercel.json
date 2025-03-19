@@ -1,35 +1,67 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "*.html",
-            "use": "@vercel/static"
-        },
-        {
-            "src": "public/**/*",
-            "use": "@vercel/static"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/",
-            "dest": "/index.html"
-        },
-        {
-            "src": "/admin",
-            "dest": "/admin/login.html"
-        },
-        {
-            "src": "/pages/(.*)",
-            "dest": "/pages/$1"
-        },
-        {
-            "src": "/public/(.*)",
-            "dest": "/public/$1"
-        }
-    ],
-    "env": {
-        "SUPABASE_URL": "@supabase_url",
-        "SUPABASE_ANON_KEY": "@supabase_anon_key"
+  "version": 2,
+  "builds": [
+    { 
+      "src": "**/*.html", 
+      "use": "@vercel/static" 
+    },
+    { 
+      "src": "**/*.js", 
+      "use": "@vercel/node" 
+    },
+    { 
+      "src": "**/*.css", 
+      "use": "@vercel/static" 
+    },
+    { 
+      "src": "public/**", 
+      "use": "@vercel/static" 
     }
-} 
+  ],
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/admin", "dest": "/admin/login.html" },
+    { 
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
+    },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    },
+    {
+      "source": "/public/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
+  "env": {
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key"
+  }
+}

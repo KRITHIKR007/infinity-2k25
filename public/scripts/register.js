@@ -372,6 +372,7 @@ function addTeamMember() {
 document.querySelectorAll('.payment-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const method = btn.dataset.method;
+        paymentMethod = method; // Store the selected payment method in the global variable
         
         // Reset all buttons
         document.querySelectorAll('.payment-btn').forEach(b => {
@@ -458,15 +459,31 @@ function validateStep(step) {
             }
             break;
         case 4:
-            const paymentMethod = document.querySelector('.payment-btn.bg-purple-600');
-            if (!paymentMethod) {
+            const paymentMethodSelected = document.querySelector('.payment-btn.bg-purple-600');
+            if (!paymentMethodSelected) {
                 showError('Please select a payment method');
                 return false;
             }
-            if (paymentMethod.dataset.method === 'qr') {
+            
+            const selectedMethod = paymentMethodSelected.dataset.method;
+            if (selectedMethod === 'qr') {
                 const paymentProof = document.getElementById('paymentProof');
-                if (!paymentProof.files.length) {
+                if (!paymentProof || !paymentProof.files.length) {
                     showError('Please upload your payment proof');
+                    return false;
+                }
+                
+                // Check file size (max 5MB)
+                const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                if (paymentProof.files[0].size > maxSize) {
+                    showError('Payment proof file is too large (maximum 5MB)');
+                    return false;
+                }
+                
+                // Check file type (only images)
+                const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+                if (!validTypes.includes(paymentProof.files[0].type)) {
+                    showError('Please upload an image file (JPG, PNG, or GIF)');
                     return false;
                 }
             }
@@ -501,6 +518,11 @@ form.addEventListener('submit', async (e) => {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
 
     try {
+        // Check if payment method is selected
+        if (!document.querySelector('.payment-btn.bg-purple-600')) {
+            throw new Error('Please select a payment method');
+        }
+
         // Get form data
         const formData = new FormData(form);
         const name = document.getElementById('name').value;
@@ -509,105 +531,58 @@ form.addEventListener('submit', async (e) => {
         const university = document.getElementById('university').value;
         const teamName = document.getElementById('teamName').value || null;
         
-        // Get selected events data
-        const selectedEventsData = Array.from(selectedEvents).map(eventId => {
+        // Get selected events data and event names
+        const selectedEventsArray = Array.from(selectedEvents);
+        const eventNames = selectedEventsArray.map(eventId => {
             const event = events[selectedCategory].find(e => e.id === eventId);
-            return {
-                id: eventId,
-                name: event.name,
-                fee: event.fee
-            };
-        });
+            return event ? event.name : 'Unknown Event';
+        }).join(', ');
         
         // Get payment method
         const paymentMethodElement = document.querySelector('.payment-btn.bg-purple-600');
         const paymentMethodValue = paymentMethodElement ? paymentMethodElement.dataset.method : null;
         
-        // Process payment if QR payment selected
-        let paymentId = null;
+        // Get team members if applicable
+        const teamMembersInputs = document.querySelectorAll('input[name="teamMembers[]"]');
+        const teamMembers = Array.from(teamMembersInputs)
+            .map(input => input.value.trim())
+            .filter(value => value);
+        
+        // Create registration payload
+        const registrationPayload = {
+            name,
+            email,
+            phone,
+            university,
+            selectedEvents: selectedEventsArray,
+            eventNames,
+            paymentMethod: paymentMethodValue,
+            teamName,
+            teamMembers,
+            category: selectedCategory,
+            totalFee
+        };
+        
+        // Process payment proof if QR payment selected
         if (paymentMethodValue === 'qr') {
             const paymentProofFile = document.getElementById('paymentProof').files[0];
             
-            if (paymentProofFile) {
-                // Upload payment proof to Supabase storage
-                const filePath = `payment-proofs/${Date.now()}-${paymentProofFile.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-                const { data: uploadData, error: uploadError } = await supabase.storage
-                    .from(TABLES.STORAGE.PAYMENT_PROOFS)
-                    .upload(filePath, paymentProofFile);
-                    
-                if (uploadError) throw uploadError;
-                
-                // Get public URL for the uploaded file
-                const proofUrl = supabase.storage
-                    .from(TABLES.STORAGE.PAYMENT_PROOFS)
-                    .getPublicUrl(filePath).data.publicUrl;
-                    
-                // Create payment record
-                const { data: paymentData, error: paymentError } = await supabase
-                    .from(TABLES.PAYMENTS)
-                    .insert([
-                        {
-                            amount: totalFee,
-                            currency: 'INR',
-                            status: 'pending',
-                            payment_method: 'qr',
-                            proof_url: proofUrl,
-                            created_at: new Date().toISOString()
-                        }
-                    ])
-                    .select();
-                    
-                if (paymentError) throw paymentError;
-                
-                paymentId = paymentData[0].id;
+            if (!paymentProofFile) {
+                throw new Error('Please upload your payment proof');
             }
-        }
-        
-        // Get team members
-        const teamMembersInputs = document.querySelectorAll('input[name="teamMembers[]"]');
-        const teamMembers = Array.from(teamMembersInputs).map(input => input.value).filter(value => value);
-        
-        // Create registration record in Supabase
-        const { data: registrationData, error: registrationError } = await supabase
-            .from(TABLES.REGISTRATIONS)
-            .insert([
-                {
-                    name,
-                    email,
-                    phone,
-                    college: university,
-                    events: JSON.stringify(Array.from(selectedEvents)),
-                    status: paymentMethodValue === 'qr' ? 'pending' : 'awaiting_payment',
-                    payment_id: paymentId,
-                    created_at: new Date().toISOString(),
-                    team_name: teamName,
-                    team_members: JSON.stringify(teamMembers),
-                    category: selectedCategory,
-                    total_fee: totalFee
-                }
-            ])
-            .select();
             
-        if (registrationError) throw registrationError;
-        
-        // Create participant records for each selected event
-        for (const eventId of selectedEvents) {
-            const { error: participantError } = await supabase
-                .from(TABLES.PARTICIPANTS)
-                .insert([
-                    {
-                        registration_id: registrationData[0].id,
-                        event_id: eventId,
-                        status: 'registered',
-                        created_at: new Date().toISOString()
-                    }
-                ]);
-                
-            if (participantError) throw participantError;
+            registrationPayload.paymentProof = paymentProofFile;
         }
         
-        // Show success message
-        showSuccess('Registration successful! Your registration ID is ' + registrationData[0].id);
+        // Submit registration
+        const result = await submitRegistration(registrationPayload);
+        
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to submit registration');
+        }
+        
+        // Show success message and redirect
+        showSuccess('Registration successful! Your registration ID is ' + result.registrationId);
         
         // Hide form and show success message
         form.classList.add('hidden');
@@ -616,14 +591,14 @@ form.addEventListener('submit', async (e) => {
         // Scroll to success message
         successMessage.scrollIntoView({ behavior: 'smooth' });
         
-        // Redirect to confirmation page after 5 seconds
+        // Redirect to confirmation page after 3 seconds
         setTimeout(() => {
-            window.location.href = `confirmation.html?id=${registrationData[0].id}`;
-        }, 5000);
+            window.location.href = `confirmation.html?id=${result.registrationId}`;
+        }, 3000);
 
     } catch (error) {
         console.error('Registration error:', error);
-        showError('An error occurred during registration: ' + (error.message || 'Please try again.'));
+        showError('An error occurred: ' + (error.message || 'Please try again.'));
         
         // Reset submit button
         submitBtn.disabled = false;
@@ -645,4 +620,4 @@ function showError(message) {
 }
 
 // Initialize form
-showStep(1); 
+showStep(1);

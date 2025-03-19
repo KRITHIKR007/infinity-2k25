@@ -89,6 +89,50 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        .password-strength {
+            height: 5px;
+            border-radius: 2px;
+            margin-top: 5px;
+            transition: all 0.3s;
+        }
+        
+        .strength-weak {
+            background-color: #ef4444;
+            width: 30%;
+        }
+        
+        .strength-medium {
+            background-color: #f59e0b;
+            width: 60%;
+        }
+        
+        .strength-strong {
+            background-color: #10b981;
+            width: 100%;
+        }
+        
+        .form-container {
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-field {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6b7280;
+        }
     </style>
 </head>
 <body class="bg-gray-900 min-h-screen">
@@ -114,7 +158,7 @@
 
     <!-- Login Form -->
     <div class="flex justify-center items-center min-h-screen px-4">
-        <div class="w-full max-w-md">
+        <div class="w-full max-w-md form-container">
             <div class="text-center mb-8">
                 <h1 class="text-4xl font-bold gradient-text mb-4">Admin Login</h1>
                 <p class="text-gray-300">Enter your credentials to access the admin panel</p>
@@ -130,13 +174,20 @@
                         placeholder="Enter your admin email">
                 </div>
 
-                <div>
+                <div class="form-field">
                     <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
                         <i class="fas fa-lock mr-2"></i>Password
                     </label>
-                    <input type="password" id="password" name="password" required
-                        class="form-input"
-                        placeholder="Enter your password">
+                    <div class="relative">
+                        <input type="password" id="password" name="password" required
+                            class="form-input pr-10"
+                            placeholder="Enter your password">
+                        <span class="toggle-password" onclick="togglePasswordVisibility()">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                    <div id="passwordStrength" class="password-strength hidden"></div>
+                    <p id="passwordFeedback" class="text-xs text-gray-400 mt-1 hidden"></p>
                 </div>
 
                 <div class="flex items-center justify-between">
@@ -147,9 +198,9 @@
                             Remember me
                         </label>
                     </div>
-                    <a href="#" class="text-sm text-purple-400 hover:underline">
+                    <button type="button" id="forgotPasswordBtn" class="text-sm text-purple-400 hover:underline">
                         Forgot password?
-                    </a>
+                    </button>
                 </div>
 
                 <div>
@@ -164,56 +215,298 @@
             <div id="errorMessage" class="hidden mt-4 p-4 bg-red-900/50 text-red-200 rounded-lg fade-in">
                 <div class="flex items-center">
                     <i class="fas fa-exclamation-circle mr-2"></i>
-                    Invalid username or password. Please try again.
+                    <span>Invalid username or password. Please try again.</span>
+                </div>
+            </div>
+            
+            <!-- Reset Password Form (initially hidden) -->
+            <form id="resetPasswordForm" class="glass-effect rounded-lg p-8 space-y-6 mt-4 hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-medium text-white">Reset Password</h3>
+                    <button type="button" id="closeResetForm" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div>
+                    <label for="resetEmail" class="block text-sm font-medium text-gray-300 mb-2">
+                        <i class="fas fa-envelope mr-2"></i>Email
+                    </label>
+                    <input type="email" id="resetEmail" name="resetEmail" required
+                        class="form-input"
+                        placeholder="Enter your admin email">
+                </div>
+                <div>
+                    <button type="submit" class="w-full btn btn-primary flex justify-center">
+                        <span id="resetBtnText"><i class="fas fa-paper-plane mr-2"></i>Send Reset Link</span>
+                        <span id="resetBtnLoading" class="loading hidden"></span>
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Success Message -->
+            <div id="successMessage" class="hidden mt-4 p-4 bg-green-900/50 text-green-200 rounded-lg fade-in">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span>Password reset link sent successfully! Check your email.</span>
+                </div>
+            </div>
+            
+            <!-- Create Admin Section -->
+            <div class="mt-6 text-center">
+                <p class="text-gray-400 mb-3">Need admin access? Create a new admin account:</p>
+                <button id="createAdminBtn" class="btn btn-primary">
+                    <i class="fas fa-user-plus mr-2"></i>Create New Admin Account
+                </button>
+            </div>
+            
+            <!-- Create Admin Modal (initially hidden) -->
+            <div id="adminModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+                <div class="absolute inset-0 bg-black bg-opacity-70"></div>
+                <div class="relative bg-gray-800 rounded-lg w-full max-w-md p-8 z-10 form-container">
+                    <button type="button" id="closeAdminModal" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                    <h3 class="text-xl font-bold text-white mb-6">Create Admin Account</h3>
+                    
+                    <form id="createAdminForm" class="space-y-6">
+                        <div>
+                            <label for="adminName" class="block text-sm font-medium text-gray-300 mb-2">
+                                <i class="fas fa-user mr-2"></i>Full Name
+                            </label>
+                            <input type="text" id="adminName" name="adminName" required
+                                class="form-input"
+                                placeholder="Enter your full name">
+                        </div>
+                        <div>
+                            <label for="adminEmail" class="block text-sm font-medium text-gray-300 mb-2">
+                                <i class="fas fa-envelope mr-2"></i>Email
+                            </label>
+                            <input type="email" id="adminEmail" name="adminEmail" required
+                                class="form-input"
+                                placeholder="Enter your admin email">
+                        </div>
+                        <div class="form-field">
+                            <label for="adminPassword" class="block text-sm font-medium text-gray-300 mb-2">
+                                <i class="fas fa-lock mr-2"></i>Password
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="adminPassword" name="adminPassword" required
+                                    class="form-input pr-10"
+                                    placeholder="Create a strong password"
+                                    oninput="checkPasswordStrength(this.value)">
+                                <span class="toggle-password" onclick="toggleAdminPasswordVisibility()">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                            <div id="adminPasswordStrength" class="password-strength"></div>
+                            <p id="adminPasswordFeedback" class="text-xs text-gray-400 mt-1"></p>
+                        </div>
+                        <div class="form-field">
+                            <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-2">
+                                <i class="fas fa-lock mr-2"></i>Confirm Password
+                            </label>
+                            <div class="relative">
+                                <input type="password" id="confirmPassword" name="confirmPassword" required
+                                    class="form-input pr-10"
+                                    placeholder="Confirm your password">
+                                <span class="toggle-password" onclick="toggleConfirmPasswordVisibility()">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <button type="submit" id="submitAdminBtn" class="w-full btn btn-primary flex justify-center">
+                            <span id="createAdminBtnText"><i class="fas fa-user-plus mr-2"></i>Create Admin Account</span>
+                            <span id="createAdminBtnLoading" class="loading hidden"></span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 border-t border-gray-800 py-8 mt-12">
+    <footer class="bg-gray-900 border-t border-gray-700 py-12 mt-12">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="flex flex-wrap justify-center gap-4 mb-4">
-                <a href="../index.html" class="inline-block py-2 px-4 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors">
-                    <i class="fas fa-home mr-2"></i>Back to Home
-                </a>
+            <!-- Admin footer - Simplified -->
+            <div class="glass-effect p-6 rounded-lg mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <img src="../public/images/INFINITY GOLD LOGO 24.png" alt="Infinity 2025 Logo" class="h-10 w-auto mr-3">
+                        <h3 class="text-xl font-semibold text-white">Admin Portal</h3>
+                    </div>
+                    <div class="flex items-center space-x-6">
+                        <a href="../index.html" class="text-gray-300 hover:text-purple-400 transition-colors">
+                            <i class="fas fa-home mr-2"></i>Main Site
+                        </a>
+                        <a href="../pages/contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">
+                            <i class="fas fa-question-circle mr-2"></i>Help
+                        </a>
+                        <a href="https://www.instagram.com/culturalclub.fet/?igsh=ZDJ5aHExd3YwOWs4#" target="_blank" class="text-purple-400 hover:text-purple-300 transition-colors flex items-center">
+                            <i class="fab fa-instagram text-xl"></i>
+                            <span class="ml-2">Follow us</span>
+                        </a>
+                    </div>
+                </div>
             </div>
             
-            <hr class="border-gray-800 my-6">
-            
-            <div class="flex justify-center space-x-6 mb-6">
-                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
-                    <i class="fab fa-facebook-f text-xl"></i>
-                </a>
-                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
-                    <i class="fab fa-twitter text-xl"></i>
-                </a>
-                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
-                    <i class="fab fa-instagram text-xl"></i>
-                </a>
-                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
-                    <i class="fab fa-linkedin-in text-xl"></i>
-                </a>
-                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
-                    <i class="fab fa-youtube text-xl"></i>
-                </a>
+            <!-- Copyright -->
+            <div class="border-t border-gray-800 pt-6">
+                <p class="text-center text-gray-400 mb-2">&copy; 2025 Krithik R. All rights reserved. | Designed & Developed by <a href="https://krithikr007.github.io/krithik-r/portfolio/index.html" target="_blank" class="text-purple-400 hover:text-purple-300">Krithik R.</a></p>
+                <p class="text-center text-gray-500 mb-2">Organized by Jain (Deemed-to-be University), Bangalore</p>
+                <p class="text-center text-gray-500 text-sm">
+                    <a href="https://github.com/KRITHIKR007" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">GitHub</a> | 
+                    <a href="https://www.linkedin.com/in/krithik-r124/" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">LinkedIn</a> | 
+                    <span class="text-gray-500 mx-2">Discord: krithik.r007</span>
+                </p>
             </div>
-            
-            <p class="text-center text-gray-400 mb-2">&copy; 2024 Infinity 2025. All rights reserved.</p>
-            <p class="text-center text-gray-500 text-sm">Organized by Department of Computer Science, FCRIT</p>
         </div>
     </footer>
 
-    <script>
+    <script></script>
         // Initialize Supabase client
         const supabaseUrl = 'https://ceickbodqhwfhcpabfdq.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
         
+        // Form elements
         const loginForm = document.getElementById('loginForm');
+        const resetPasswordForm = document.getElementById('resetPasswordForm');
+        const createAdminForm = document.getElementById('createAdminForm');
         const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
         const loginBtnText = document.getElementById('loginBtnText');
         const loginBtnLoading = document.getElementById('loginBtnLoading');
+        const resetBtnText = document.getElementById('resetBtnText');
+        const resetBtnLoading = document.getElementById('resetBtnLoading');
+        const createAdminBtnText = document.getElementById('createAdminBtnText');
+        const createAdminBtnLoading = document.getElementById('createAdminBtnLoading');
+        
+        // Modal elements
+        const adminModal = document.getElementById('adminModal');
+        const createAdminBtn = document.getElementById('createAdminBtn');
+        const closeAdminModal = document.getElementById('closeAdminModal');
+        const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+        const closeResetForm = document.getElementById('closeResetForm');
+        
+        // Password UI elements
+        const passwordStrength = document.getElementById('passwordStrength');
+        const passwordFeedback = document.getElementById('passwordFeedback');
+        const adminPasswordStrength = document.getElementById('adminPasswordStrength');
+        const adminPasswordFeedback = document.getElementById('adminPasswordFeedback');
+        
+        // Toggle password visibility functions
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById('password');
+            const icon = document.querySelector('.toggle-password i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+        
+        function toggleAdminPasswordVisibility() {
+            const passwordField = document.getElementById('adminPassword');
+            const icon = passwordField.parentElement.querySelector('.toggle-password i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+        
+        function toggleConfirmPasswordVisibility() {
+            const passwordField = document.getElementById('confirmPassword');
+            const icon = passwordField.parentElement.querySelector('.toggle-password i');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+        
+        // Check password strength
+        function checkPasswordStrength(password) {
+            const strengthElement = document.getElementById('adminPasswordStrength');
+            const feedbackElement = document.getElementById('adminPasswordFeedback');
+            
+            // Show the strength bar
+            strengthElement.classList.remove('hidden');
+            feedbackElement.classList.remove('hidden');
+            
+            // Check password strength
+            let strength = 0;
+            let feedback = '';
+            
+            // Length check
+            if (password.length >= 8) {
+                strength += 1;
+            } else {
+                feedback = 'Password should be at least 8 characters long';
+            }
+            
+            // Contains uppercase
+            if (/[A-Z]/.test(password)) {
+                strength += 1;
+            } else if (!feedback) {
+                feedback = 'Add uppercase letters for stronger password';
+            }
+            
+            // Contains lowercase
+            if (/[a-z]/.test(password)) {
+                strength += 1;
+            } else if (!feedback) {
+                feedback = 'Add lowercase letters for stronger password';
+            }
+            
+            // Contains numbers
+            if (/[0-9]/.test(password)) {
+                strength += 1;
+            } else if (!feedback) {
+                feedback = 'Add numbers for stronger password';
+            }
+            
+            // Contains special characters
+            if (/[^A-Za-z0-9]/.test(password)) {
+                strength += 1;
+            } else if (!feedback) {
+                feedback = 'Add special characters for stronger password';
+            }
+            
+            // Update UI based on strength
+            strengthElement.className = 'password-strength';
+            if (password.length === 0) {
+                strengthElement.classList.add('hidden');
+                feedbackElement.classList.add('hidden');
+            } else if (strength < 3) {
+                strengthElement.classList.add('strength-weak');
+                feedbackElement.textContent = feedback || 'Weak password';
+                feedbackElement.className = 'text-xs text-red-400 mt-1';
+            } else if (strength < 5) {
+                strengthElement.classList.add('strength-medium');
+                feedbackElement.textContent = feedback || 'Medium strength password';
+                feedbackElement.className = 'text-xs text-yellow-400 mt-1';
+            } else {
+                strengthElement.classList.add('strength-strong');
+                feedbackElement.textContent = 'Strong password';
+                feedbackElement.className = 'text-xs text-green-400 mt-1';
+            }
+        }
         
         // Check if user is already signed in
         async function checkSession() {
@@ -231,13 +524,14 @@
         // Call session check on page load
         checkSession();
         
-        // Handle form submission
+        // Login form submission
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Show loading state
             loginBtnText.classList.add('hidden');
             loginBtnLoading.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
             
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -255,7 +549,24 @@
                 
                 if (data.user) {
                     // Check if user has admin role (can be implemented with Supabase RLS policies)
-                    window.location.href = 'dashboard.html';
+                    const { data: userData, error: userError } = await supabase
+                        .from('profiles')
+                        .select('role')
+                        .eq('id', data.user.id)
+                        .single();
+                    
+                    if (userError) {
+                        // If no role found, assume they're an admin for now
+                        // In a real app, you'd want to strictly check this
+                        window.location.href = 'dashboard.html';
+                        return;
+                    }
+                    
+                    if (userData?.role === 'admin') {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        throw new Error('You do not have admin privileges');
+                    }
                 } else {
                     // If not admin, show error
                     throw new Error('Not authorized as admin');
@@ -264,94 +575,175 @@
                 console.error('Login error:', error);
                 
                 // Show error message
-                errorMessage.querySelector('div').innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${error.message || 'Login failed. Please try again.'}`;
+                errorMessage.querySelector('span').textContent = error.message || 'Login failed. Please try again.';
                 errorMessage.classList.remove('hidden');
                 
                 // Reset button state
                 loginBtnText.classList.remove('hidden');
                 loginBtnLoading.classList.add('hidden');
+                
+                // Shake the form slightly to indicate error
+                loginForm.classList.add('animate-shake');
+                setTimeout(() => {
+                    loginForm.classList.remove('animate-shake');
+                }, 500);
             }
         });
         
-        // Alternative login using New Admin credentials
-        // This will create a Supabase account if it doesn't exist
-        async function createNewAdmin() {
-            const adminEmail = "infinity2025admin@gmail.com";
-            const adminPassword = "Infinity@Admin2025";
+        // Reset password form
+        resetPasswordForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
             
-            // Show loading state
-            loginBtnText.classList.add('hidden');
-            loginBtnLoading.classList.remove('hidden');
-            errorMessage.classList.add('hidden');
+            resetBtnText.classList.add('hidden');
+            resetBtnLoading.classList.remove('hidden');
+            
+            const email = document.getElementById('resetEmail').value;
             
             try {
-                // Try to create the account first
-                const { data: signUpData, error: signUpError } = 
-                    await supabase.auth.signUp({
-                        email: adminEmail,
-                        password: adminPassword,
-                        options: {
-                            data: {
-                                full_name: "Infinity Admin",
-                                role: "admin"
-                            }
-                        }
-                    });
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/admin/reset-password.html',
+                });
                 
-                if (signUpError) {
-                    // If account creation fails because it exists, try to sign in
-                    if (signUpError.message.includes("already registered")) {
-                        const { data: signInData, error: signInError } = 
-                            await supabase.auth.signInWithPassword({
-                                email: adminEmail,
-                                password: adminPassword
-                            });
-                        
-                        if (signInError) throw signInError;
-                        
-                        // Successfully signed in
-                        window.location.href = 'dashboard.html';
-                        return;
-                    } else {
-                        throw signUpError;
-                    }
-                }
+                if (error) throw error;
                 
-                // If we made it here, account was created successfully
-                alert(`Created new admin account! Email: ${adminEmail}, Password: ${adminPassword}`);
-                
-                // Login automatically
-                window.location.href = 'dashboard.html';
+                // Show success message
+                successMessage.classList.remove('hidden');
+                resetPasswordForm.classList.add('hidden');
                 
             } catch (error) {
-                console.error('Admin creation error:', error);
+                console.error('Reset password error:', error);
+                errorMessage.querySelector('span').textContent = error.message || 'Failed to send reset link. Please try again.';
+                errorMessage.classList.remove('hidden');
+            } finally {
+                resetBtnText.classList.remove('hidden');
+                resetBtnLoading.classList.add('hidden');
+            }
+        });
+        
+        // Create Admin form submission
+        createAdminForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            createAdminBtnText.classList.add('hidden');
+            createAdminBtnLoading.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            
+            const name = document.getElementById('adminName').value;
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorMessage.querySelector('span').textContent = 'Passwords do not match!';
+                errorMessage.classList.remove('hidden');
+                createAdminBtnText.classList.remove('hidden');
+                createAdminBtnLoading.classList.add('hidden');
+                return;
+            }
+            
+            try {
+                // Create new user with Supabase
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: name,
+                            role: 'admin'
+                        }
+                    }
+                });
+                
+                if (error) throw error;
+                
+                if (data.user) {
+                    // Create record in profiles table with admin role
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .insert([
+                            {
+                                id: data.user.id,
+                                full_name: name,
+                                email: email,
+                                role: 'admin',
+                                created_at: new Date().toISOString()
+                            }
+                        ]);
+                    
+                    if (profileError) throw profileError;
+                    
+                    // Show success message and close modal
+                    alert('Admin account created successfully! You can now log in.');
+                    adminModal.classList.add('hidden');
+                    
+                    // Set email field in login form for convenience
+                    document.getElementById('email').value = email;
+                    document.getElementById('password').focus();
+                }
+            } catch (error) {
+                console.error('Create admin error:', error);
                 
                 // Show error message
-                errorMessage.querySelector('div').innerHTML = `<i class="fas fa-exclamation-circle mr-2"></i>${error.message || 'Failed to create admin account.'}`;
+                errorMessage.querySelector('span').textContent = error.message || 'Failed to create admin account. Please try again.';
                 errorMessage.classList.remove('hidden');
-                
+            } finally {
                 // Reset button state
-                loginBtnText.classList.remove('hidden');
-                loginBtnLoading.classList.add('hidden');
+                createAdminBtnText.classList.remove('hidden');
+                createAdminBtnLoading.classList.add('hidden');
             }
-        }
+        });
         
-        // Create easy access button for admin creation
-        const adminCreationDiv = document.createElement('div');
-        adminCreationDiv.className = 'mt-6 text-center';
-        adminCreationDiv.innerHTML = `
-            <p class="text-gray-400 mb-3">Can't log in? Create a new admin account:</p>
-            <button id="createAdminBtn" class="btn btn-primary">
-                <i class="fas fa-user-plus mr-2"></i>Create New Admin Account
-            </button>
-            <p class="text-gray-500 text-xs mt-2">Email: infinity2025admin@gmail.com<br>Password: Infinity@Admin2025</p>
-        `;
+        // Modal interactions
+        createAdminBtn.addEventListener('click', () => {
+            adminModal.classList.remove('hidden');
+            document.getElementById('adminName').focus();
+        });
         
-        // Add click handler
-        adminCreationDiv.querySelector('#createAdminBtn').onclick = createNewAdmin;
+        closeAdminModal.addEventListener('click', () => {
+            adminModal.classList.add('hidden');
+        });
         
-        // Add the button section after the form
-        loginForm.parentNode.insertAdjacentElement('afterend', adminCreationDiv);
+        // Close modal when clicking outside
+        adminModal.addEventListener('click', (e) => {
+            if (e.target === adminModal) {
+                adminModal.classList.add('hidden');
+            }
+        });
+        
+        // Forgot password interactions
+        forgotPasswordBtn.addEventListener('click', () => {
+            loginForm.classList.add('hidden');
+            resetPasswordForm.classList.remove('hidden');
+            document.getElementById('resetEmail').value = document.getElementById('email').value;
+            document.getElementById('resetEmail').focus();
+        });
+        
+        closeResetForm.addEventListener('click', () => {
+            resetPasswordForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        });
+        
+        // Password input events
+        document.getElementById('adminPassword').addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+        });
+        
+        // Password confirmation validation
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('adminPassword').value;
+            if (this.value && this.value !== password) {
+                this.setCustomValidity('Passwords do not match');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+        
+        // Make functions available globally
+        window.togglePasswordVisibility = togglePasswordVisibility;
+        window.toggleAdminPasswordVisibility = toggleAdminPasswordVisibility;
+        window.toggleConfirmPasswordVisibility = toggleConfirmPasswordVisibility;
+        window.checkPasswordStrength = checkPasswordStrength;
     </script>
 </body>
-</html> 
+</html>

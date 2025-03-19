@@ -359,8 +359,13 @@
                     <i class="fab fa-youtube text-xl"></i>
                 </a>
             </div>
-            <p class="text-center text-gray-400 mb-2">&copy; 2024 Infinity 2025. All rights reserved.</p>
-            <p class="text-center text-gray-500 text-sm">Organized by Department of Computer Science, FCRIT</p>
+            <p class="text-center text-gray-400 mb-2">&copy; 2025 Krithik R. All rights reserved. | Designed & Developed by <a href="https://krithikr007.github.io/krithik-r/portfolio/index.html" target="_blank" class="text-purple-400 hover:text-purple-300">Krithik R.</a></p>
+            <p class="text-center text-gray-500 mb-2">Organized by Jain (Deemed-to-be University), Bangalore</p>
+            <p class="text-center text-gray-500 text-sm">
+                <a href="https://github.com/KRITHIKR007" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">GitHub</a> | 
+                <a href="https://www.linkedin.com/in/krithik-r124/" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">LinkedIn</a> | 
+                <span class="text-gray-500 mx-2">Discord: krithik.r007</span>
+            </p>
         </div>
     </div>
 
@@ -525,10 +530,12 @@
                         .from(TABLES.REGISTRATIONS)
                         .select('event_id, count')
                         .in('event_id', eventIds)
-                        .select('event_id, count')
                         .group('event_id');
-                    
-                    if (!regError && registrations) {
+                    if (regError) {
+                        console.error('Error fetching registrations:', regError);
+                        return;
+                    }
+                    if (registrations) {
                         registrationCounts = registrations.reduce((acc, item) => {
                             acc[item.event_id] = item.count;
                             return acc;
@@ -638,7 +645,6 @@
                     loadEvents();
                 }
             });
-            
             nextPageBtn.addEventListener('click', () => {
                 if ((currentPage + 1) * pageSize < totalEvents) {
                     currentPage++;
@@ -657,7 +663,6 @@
                 currentPage = 0;
                 loadEvents();
             });
-            
             statusFilter.addEventListener('change', () => {
                 currentPage = 0;
                 loadEvents();
@@ -730,9 +735,8 @@
         
         // Open edit event modal
         async function editEvent(eventId) {
+            modalTitle.textContent = 'Edit Event';
             try {
-                modalTitle.textContent = 'Edit Event';
-                
                 // Get event data
                 const { data: event, error } = await supabase
                     .from(TABLES.EVENTS)
@@ -778,9 +782,9 @@
                     name: document.getElementById('eventName').value,
                     category: document.getElementById('eventCategory').value,
                     venue: document.getElementById('eventVenue').value,
-                    fee: parseInt(document.getElementById('eventFee').value),
-                    min_team_size: parseInt(document.getElementById('minTeamSize').value),
-                    max_team_size: parseInt(document.getElementById('maxTeamSize').value),
+                    fee: parseInt(document.getElementById('eventFee').value) || 0,
+                    min_team_size: parseInt(document.getElementById('minTeamSize').value) || 1,
+                    max_team_size: parseInt(document.getElementById('maxTeamSize').value) || 1,
                     description: document.getElementById('eventDescription').value,
                     event_date: document.getElementById('eventDate').value,
                     status: document.getElementById('eventStatus').value,
@@ -821,7 +825,6 @@
         // Delete event
         async function deleteEvent(eventId) {
             if (!confirm('Are you sure you want to delete this event?')) return;
-            
             try {
                 const { error } = await supabase
                     .from(TABLES.EVENTS)
@@ -960,4 +963,4 @@
         window.viewEvent = viewEvent;
     </script>
 </body>
-</html> 
+</html>
