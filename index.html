@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinity 2025 - Event Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="public/styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .floating-navbar {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1280px;
+            z-index: 100;
+            border-radius: 1rem;
+            animation: navbarFloat 2s ease-in-out infinite alternate;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            background-color: rgba(17, 24, 39, 0.7);
+        }
+        
+        @keyframes navbarFloat {
+            from {
+                transform: translateX(-50%) translateY(0px);
+            }
+            to {
+                transform: translateX(-50%) translateY(5px);
+            }
+        }
+        
+        .glass-effect {
+            background-color: rgba(31, 41, 55, 0.4);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .hero-bg {
+            background-image: url('public/images/hero-bg.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        /* Slower Infinite Scroll Animation */
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        
+        .animate-marquee {
+            animation: marquee 60s linear infinite; /* Slowed down from 30s to 60s */
+        }
+        
+        /* Add hover effect to cards */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(147, 51, 234, 0.2);
+            border-color: rgba(147, 51, 234, 0.5);
+        }
+        
+        /* Gradient background for sections */
+        .gradient-bg {
+            background: linear-gradient(to bottom, rgba(17, 24, 39, 0.8), rgba(17, 24, 39, 1));
+        }
+    </style>
+</head>
+<body class="bg-gray-900">
+    <!-- Navigation -->
+    <nav class="glass-effect floating-navbar">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <img src="public/images/INFINITY GOLD LOGO 24.png" alt="INFINITY-2K25 Logo" class="h-8 w-auto animate-float">
+                        <span class="text-xl font-bold gradient-text">INFINITY-2K25</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#about" class="text-gray-300 hover:text-purple-400 transition-colors">About Us</a>
+                    <a href="pages/tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech Events</a>
+                    <a href="pages/cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural Events</a>
+                    <a href="pages/contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">Contact Us</a>
+                    <a href="pages/register.html" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">Register</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+            <h1 class="text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-200">
+                INFINITY-2K25
+            </h1>
+            <p class="text-2xl mb-4 text-gray-300 font-light">National Level Techno-Cultural Fest</p>
+            <p class="text-lg mb-8 text-gray-300 font-semibold">March 27-28, 2025 | Jain University, Bangalore</p>
+            <a href="pages/register.html" class="inline-block bg-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 text-lg">
+                Register Now
+            </a>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent"></div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-gray-900 gradient-bg">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-purple-400">About INFINITY-2K25</h2>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="glass-effect p-8 rounded-lg card-hover">
+                    <p class="text-gray-300 text-lg">
+                        INFINITY-2K25 is a premier national-level techno-cultural college fest organized by Jain University in Bangalore. 
+                        Join us for an unforgettable experience of innovation, competition, and networking on March 27-28, 2025.
+                    </p>
+                    <p class="text-gray-300 text-lg mt-4">
+                        This year's theme <span class="text-purple-400 font-semibold">"Past to Future"</span> celebrates the fusion of tradition and innovation, bringing together the brightest minds from across the country.
+                    </p>
+                    <p class="text-gray-300 text-lg mt-4">
+                        Since 2018, INFINITY has grown to become one of South India's leading college festivals, attracting talented participants from over 100 colleges nationwide. Our mission is to create a vibrant platform where students showcase their skills, exchange ideas, and build lasting connections.
+                    </p>
+                    <p class="text-gray-300 text-lg mt-4">
+                        With a prize pool of <span class="text-yellow-400 font-semibold">₹2 Lakhs</span> and industry-recognized certifications, INFINITY-2K25 offers both competitive challenges and professional growth opportunities at Jain University's state-of-the-art campus.
+                    </p>
+                </div>
+                <div class="glass-effect p-8 rounded-lg card-hover">
+                    <h3 class="text-2xl font-semibold mb-4 text-purple-400">Why Participate in INFINITY-2K25?</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-purple-400 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <div>
+                                <h4 class="font-semibold text-white">Challenge the Best Talent</h4>
+                                <p class="text-gray-300">Compete against top students from universities across India in a wide range of technical and cultural competitions.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-purple-400 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <div>
+                                <h4 class="font-semibold text-white">Win Prestigious Prizes</h4>
+                                <p class="text-gray-300">Compete for cash prizes, tech gadgets, internship opportunities, and certificates of achievement.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-purple-400 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <div>
+                                <h4 class="font-semibold text-white">Build Valuable Connections</h4>
+                                <p class="text-gray-300">Meet industry leaders, professionals, and talented peers to expand your network and discover career opportunities.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-purple-400 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <div>
+                                <h4 class="font-semibold text-white">Develop New Skills</h4>
+                                <p class="text-gray-300">Participate in workshops, panel discussions, and hands-on sessions to enhance your professional and technical abilities.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events" class="py-20 bg-gray-900 gradient-bg">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-purple-400">Our Events</h2>
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- Tech Events Card -->
+                <div class="glass-effect rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 card-hover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-purple-400">Technical Events</h3>
+                        <p class="text-gray-300 mb-4">Challenge yourself with coding contests, hackathons, drone competitions, and more.</p>
+                        <div class="flex items-center justify-between">
+                            <a href="pages/tech.html" class="block text-center bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
+                                Explore Tech Events
+                            </a>
+                            <div class="flex flex-col items-center">
+                                <img src="public/images/IMG_1787.PNG" alt="Tech QR Code" class="w-20 h-20 mb-2">
+                                <span class="text-xs text-gray-400">Scan to Register</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cultural Events Card -->
+                <div class="glass-effect rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 card-hover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-4 text-purple-400">Cultural Events</h3>
+                        <p class="text-gray-300 mb-4">Showcase your talents in dance, music, fashion shows, and creative competitions.</p>
+                        <div class="flex items-center justify-between">
+                            <a href="pages/cultural.html" class="block text-center bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
+                                Explore Cultural Events
+                            </a>
+                            <div class="flex flex-col items-center">
+                                <img src="public/images/GooglePay_QR (2).png" alt="Cultural QR Code" class="w-20 h-20 mb-2">
+                                <span class="text-xs text-gray-400">Scan to Register</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <p class="text-gray-300 mb-4">Don't miss out on this extraordinary opportunity!</p>
+                <a href="pages/register.html" class="inline-block bg-purple-600 text-white px-8 py-3 rounded-md hover:bg-purple-700 transition-all duration-300 font-semibold">
+                    Register Now
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Posters Infinite Scroll Section -->
+    <section class="py-16 bg-gray-900 overflow-hidden gradient-bg">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8 text-purple-400">Event Showcase</h2>
+            <p class="text-center text-gray-300 mb-12">Explore our exciting lineup of events for INFINITY-2K25</p>
+            
+            <!-- Single Infinite Scroll Container - Left to Right -->
+            <div class="relative overflow-hidden glass-effect p-6 rounded-lg">
+                <div class="flex animate-marquee space-x-8">
+                    <img src="public/images/posters/ctrl+z.jpg" alt="CTRL+Z Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/dron etream.jpg" alt="DroneXtreme Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/innovation.jpg" alt="Innovation Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/model blitz.jpg" alt="Model Blitz Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/pitch4sustain.jpg" alt="Pitch4Sustain Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/phnatum hunt.jpg" alt="Phantom Hunt Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/britya veduka.jpg" alt="Nritya Vedika Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/cosmic drift.jpg" alt="Cosmic Drift Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/echoed strangel.jpg" alt="Echoes & Strings Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/just s minut.jpg" alt="Just a Minute Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/resonance.jpg" alt="Resonance Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/stepsynk.jpg" alt="Step Sync Event" class="h-60 rounded-lg shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Highlights Section -->
+    <section class="py-20 bg-gray-900 gradient-bg">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 text-purple-400">Festival Highlights</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Highlight 1 -->
+                <div class="glass-effect rounded-lg p-6 text-center transform hover:scale-105 transition-all duration-300 card-hover">
+                    <div class="text-4xl text-purple-400 mb-4">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-white">₹2 Lakhs+</h3>
+                    <p class="text-gray-300">Prize Pool & Rewards</p>
+                </div>
+                
+                <!-- Highlight 2 -->
+                <div class="glass-effect rounded-lg p-6 text-center transform hover:scale-105 transition-all duration-300 card-hover">
+                    <div class="text-4xl text-purple-400 mb-4">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-white">20+ Events</h3>
+                    <p class="text-gray-300">Tech & Cultural Competitions</p>
+                </div>
+                
+                <!-- Highlight 3 -->
+                <div class="glass-effect rounded-lg p-6 text-center transform hover:scale-105 transition-all duration-300 card-hover">
+                    <div class="text-4xl text-purple-400 mb-4">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-white">1000+ Students</h3>
+                    <p class="text-gray-300">National Participation</p>
+                </div>
+                
+                <!-- Highlight 4 -->
+                <div class="glass-effect rounded-lg p-6 text-center transform hover:scale-105 transition-all duration-300 card-hover">
+                    <div class="text-4xl text-purple-400 mb-4">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-white">100+ Colleges</h3>
+                    <p class="text-gray-300">From Across India</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule Section -->
+    <section class="py-20 bg-gray-900 gradient-bg">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-6 text-purple-400">Event Schedule</h2>
+            <p class="text-center text-gray-300 mb-8">Mark your calendars for two days of excitement and competition</p>
+            
+            <div class="glass-effect p-8 rounded-lg mb-12 card-hover">
+                <!-- Day 1 -->
+                <div class="mb-10">
+                    <h3 class="text-2xl font-bold text-white mb-6">Day 1 - March 27, 2025</h3>
+                    <div class="space-y-6">
+                        <div class="flex flex-col md:flex-row md:items-center">
+                            <div class="md:w-1/4 mb-2 md:mb-0">
+                                <span class="text-purple-400 font-semibold">8:00 AM - 9:30 AM</span>
+                            </div>
+                            <div class="md:w-3/4">
+                                <h4 class="text-xl font-semibold text-white">Registration & Welcome Kit</h4>
+                                <p class="text-gray-300">Main Entrance, Jain University Campus</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row md:items-center">
+                            <div class="md:w-1/4 mb-2 md:mb-0">
+                                <span class="text-purple-400 font-semibold">10:00 AM - 11:30 AM</span>
+                            </div>
+                            <div class="md:w-3/4">
+                                <h4 class="text-xl font-semibold text-white">Grand Inaugural Ceremony</h4>
+                                <p class="text-gray-300">Colosseum Auditorium</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row md:items-center">
+                            <div class="md:w-1/4 mb-2 md:mb-0">
+                                <span class="text-purple-400 font-semibold">12:00 PM - 5:00 PM</span>
+                            </div>
+                            <div class="md:w-3/4">
+                                <h4 class="text-xl font-semibold text-white">Technical Competitions</h4>
+                                <p class="text-gray-300">Multiple Venues - See Tech Events Page</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row md:items-center">
+                            <div class="md:w-1/4 mb-2 md:mb-0">
+                                <span class="text-purple-400 font-semibold">6:00 PM - 9:00 PM</span>
+                            </div>
+                            <div class="md:w-3/4">
+                                <h4 class="text-xl font-semibold text-white">Cultural Night & Concert</h4>
+                                <p class="text-gray-300">Main Ground</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Day 2 -->
+                <div>
+                    <h3 class="text-2xl font-bold text-white mb-6">Day 2 - March 28, 2025</h3>
+                    <div class="space-y-6">
+                        <div class="flex flex-col md:flex-row md:items-center">
+                            <div class="md:w-1/4 mb-2 md:mb-0">
+                                <span class="text-purple-400 font-semibold">9:00 AM - 1:00 PM</span>
+                            </div>
+                            <div class="md:w-3/4">
+                                <h4 class="text-xl font-semibold text-white">Cultural Competitions</h4>
+                                <p class="text-gray-300">Colosseum Auditorium</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row md:items-center">
+                            <div class="md:w-1/4 mb-2 md:mb-0">
+                                <span class="text-purple-400 font-semibold">2:00 PM - 5:00 PM</span>
+                            </div>
+                            <div class="md:w-3/4">
+                                <h4 class="text-xl font-semibold text-white">Technical Competitions</h4>
+                                <p class="text-gray-300">Multiple Venues - See Tech Events Page</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row md:items-center">
+                            <div class="md:w-1/4 mb-2 md:mb-0">
+                                <span class="text-purple-400 font-semibold">6:00 PM - 7:30 PM</span>
+                            </div>
+                            <div class="md:w-3/4">
+                                <h4 class="text-xl font-semibold text-white">Awards & Prize Distribution</h4>
+                                <p class="text-gray-300">Colosseum Auditorium</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row md:items-center">
+                            <div class="md:w-1/4 mb-2 md:mb-0">
+                                <span class="text-purple-400 font-semibold">8:00 PM - 10:00 PM</span>
+                            </div>
+                            <div class="md:w-3/4">
+                                <h4 class="text-xl font-semibold text-white">DJ Night & Finale</h4>
+                                <p class="text-gray-300">Main Ground</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="#" class="inline-block glass-effect px-8 py-3 text-purple-400 hover:text-white transition-colors">
+                    <i class="fas fa-download mr-2"></i>Download Full Schedule
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 py-12 gradient-bg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-effect p-6 rounded-lg card-hover">
+                    <h3 class="text-xl font-semibold mb-4 text-purple-400">Contact Us</h3>
+                    <p class="text-gray-300">General Inquiries: <span class="text-white">infinity2025@jainuniversity.ac.in</span></p>
+                    <p class="text-gray-300">Technical Events: <span class="text-white">tech.infinity2025@jain.ac.in</span></p>
+                    <p class="text-gray-300">Cultural Events: <span class="text-white">cultural.infinity2025@jain.ac.in</span></p>
+                    <a href="pages/contact.html" class="text-purple-400 hover:text-purple-300 transition-colors mt-2 inline-block">Visit Contact Page →</a>
+                </div>
+                <div class="glass-effect p-6 rounded-lg card-hover">
+                    <h3 class="text-xl font-semibold mb-4 text-purple-400">Quick Links</h3>
+                    <div class="flex flex-col space-y-2">
+                        <a href="pages/tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Technical Events</a>
+                        <a href="pages/cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural Events</a>
+                        <a href="pages/register.html" class="text-gray-300 hover:text-purple-400 transition-colors">Registration Portal</a>
+                        <a href="#about" class="text-gray-300 hover:text-purple-400 transition-colors">About INFINITY-2K25</a>
+                    </div>
+                </div>
+                <div class="glass-effect p-6 rounded-lg card-hover">
+                    <h3 class="text-xl font-semibold mb-4 text-purple-400">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-purple-400 transition-colors"><i class="fab fa-facebook-f text-xl"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-purple-400 transition-colors"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-purple-400 transition-colors"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-purple-400 transition-colors"><i class="fab fa-linkedin-in text-xl"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-purple-400 transition-colors"><i class="fab fa-youtube text-xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-4 mt-8 mb-6">
+                <a href="pages/contact.html" class="inline-block py-2 px-6 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors">
+                    <i class="fas fa-envelope mr-2"></i>Contact Us
+                </a>
+                <a href="admin/login.html" class="inline-block py-2 px-6 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors">
+                    <i class="fas fa-lock mr-2"></i>Admin
+                </a>
+            </div>
+            
+            <hr class="border-gray-800 my-6">
+            
+            <p class="text-center text-gray-400 mb-2">&copy; 2024 INFINITY-2K25. All rights reserved.</p>
+            <p class="text-center text-gray-500 text-sm">Organized by Jain University, Bangalore</p>
+        </div>
+    </footer>
+
+    <script src="public/scripts/main.js"></script>
+</body>
+</html> 

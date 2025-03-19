@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Redirect - Infinity 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../public/styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta http-equiv="refresh" content="3;url=../admin/login.html">
+    <style>
+        .floating-navbar {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1280px;
+            z-index: 100;
+            border-radius: 1rem;
+            animation: navbarFloat 2s ease-in-out infinite alternate;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes navbarFloat {
+            from {
+                transform: translateX(-50%) translateY(0px);
+            }
+            to {
+                transform: translateX(-50%) translateY(5px);
+            }
+        }
+        
+        .glass-effect {
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav class="glass-effect floating-navbar">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../public/images/INFINITY GOLD LOGO 24.png" alt="Infinity 2025 Logo" class="h-8 w-auto animate-float">
+                        <span class="text-xl font-bold gradient-text">Infinity 2025</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="../index.html" class="text-gray-300 hover:text-purple-400 transition-colors">Home</a>
+                    <a href="tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech</a>
+                    <a href="cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural</a>
+                    <a href="contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Redirect Message -->
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="max-w-md w-full mx-4 glass-effect p-8 rounded-lg text-center">
+            <div class="text-4xl text-purple-400 mb-4">
+                <i class="fas fa-sync fa-spin"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-white mb-4">Redirecting to Admin Login</h1>
+            <p class="text-gray-300 mb-6">You will be redirected to the admin login page in a few seconds...</p>
+            <a href="../admin/login.html" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt mr-2"></i>Go Now
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 py-8 fixed bottom-0 w-full">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-wrap justify-center gap-4 mb-6">
+                <a href="../index.html" class="inline-block py-2 px-6 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors">
+                    <i class="fas fa-home mr-2"></i>Back to Home
+                </a>
+            </div>
+            
+            <hr class="border-gray-800 my-6">
+            
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
+                    <i class="fab fa-facebook-f text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
+                    <i class="fab fa-twitter text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
+                    <i class="fab fa-instagram text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
+                    <i class="fab fa-linkedin-in text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
+                    <i class="fab fa-youtube text-xl"></i>
+                </a>
+            </div>
+            <p class="text-center text-gray-400 mb-2">&copy; 2024 Infinity 2025. All rights reserved.</p>
+            <p class="text-center text-gray-500 text-sm">Organized by Department of Computer Science, FCRIT</p>
+        </div>
+    </footer>
+
+    <script>
+        // Redirect manually after 3 seconds
+        setTimeout(function() {
+            window.location.href = "../admin/login.html";
+        }, 3000);
+    </script>
+</body>
+</html> 

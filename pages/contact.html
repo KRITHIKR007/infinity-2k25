@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Infinity 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../public/styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .floating-navbar {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1280px;
+            z-index: 100;
+            border-radius: 1rem;
+            animation: navbarFloat 2s ease-in-out infinite alternate;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes navbarFloat {
+            from {
+                transform: translateX(-50%) translateY(0px);
+            }
+            to {
+                transform: translateX(-50%) translateY(5px);
+            }
+        }
+        
+        .glass-effect {
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav class="glass-effect floating-navbar">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../public/images/INFINITY GOLD LOGO 24.png" alt="Infinity 2025 Logo" class="h-8 w-auto animate-float">
+                        <span class="text-xl font-bold gradient-text">Infinity 2025</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="../index.html#about" class="text-gray-300 hover:text-purple-400 transition-colors">About</a>
+                    <a href="cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural</a>
+                    <a href="tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech</a>
+                    <a href="contact.html" class="text-purple-400">Contact</a>
+                <a href="../admin/login.html" class="inline-block py-2 px-6 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors">
+                    <i class="fas fa-lock mr-2"></i>Admin
+                </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="pt-24 pb-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center">
+                <h1 class="text-5xl font-bold gradient-text mb-4">Contact Us</h1>
+                <p class="text-xl text-gray-300 mb-8">Get in touch with the Infinity 2025 team</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Content -->
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div class="glass-effect rounded-xl p-8">
+                    <h2 class="text-3xl font-bold text-purple-400 mb-6">Send Us a Message</h2>
+                    <form id="contact-form" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name" class="block text-white mb-2">Name</label>
+                                <input type="text" id="name" name="name" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-white mb-2">Email</label>
+                                <input type="email" id="email" name="email" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="subject" class="block text-white mb-2">Subject</label>
+                            <input type="text" id="subject" name="subject" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                        </div>
+                        <div>
+                            <label for="message" class="block text-white mb-2">Message</label>
+                            <textarea id="message" name="message" rows="5" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" id="submit-button" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300">
+                                <i class="fas fa-paper-plane mr-2"></i>Send Message
+                            </button>
+                        </div>
+                        <div id="form-status" class="hidden py-3 px-4 rounded-lg text-center"></div>
+                    </form>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="space-y-8">
+                    <!-- Event Information -->
+                    <div class="glass-effect rounded-xl p-8">
+                        <h2 class="text-3xl font-bold text-purple-400 mb-6">Event Information</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="text-purple-400 mt-1 mr-4">
+                                    <i class="fas fa-calendar-alt text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold text-white">Event Dates</h3>
+                                    <p class="text-gray-300">March 27-28, 2025</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="text-purple-400 mt-1 mr-4">
+                                    <i class="fas fa-map-marker-alt text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold text-white">Venue</h3>
+                                    <p class="text-gray-300">Jain (Deemed-to-be University)</p>
+                                    <p class="text-gray-300">Jakkasandra Post, Kanakapura Road</p>
+                                    <p class="text-gray-300">Bangalore - 560082</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="text-purple-400 mt-1 mr-4">
+                                    <i class="fas fa-ticket-alt text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold text-white">Registration</h3>
+                                    <p class="text-gray-300">Registration is open until March 10, 2025</p>
+                                    <p class="text-gray-300">Early bird discounts available until February 15, 2025</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Details -->
+                    <div class="glass-effect rounded-xl p-8">
+                        <h2 class="text-3xl font-bold text-purple-400 mb-6">Reach Out to Us</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="text-purple-400 mt-1 mr-4">
+                                    <i class="fas fa-envelope text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold text-white">Email</h3>
+                                    <p class="text-gray-300">Technical Events: tech.infinity2025@jain.ac.in</p>
+                                    <p class="text-gray-300">Cultural Events: cultural.infinity2025@jain.ac.in</p>
+                                    <p class="text-gray-300">General Inquiries: infinity2025@jainuniversity.ac.in</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="text-purple-400 mt-1 mr-4">
+                                    <i class="fas fa-phone-alt text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold text-white">Phone</h3>
+                                    <p class="text-gray-300">Technical Events: Dhrub Kumar Jha (+91 8296019911)</p>
+                                    <p class="text-gray-300">Cultural Events: Rohan (+91 9353074448)</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="text-purple-400 mt-1 mr-4">
+                                    <i class="fas fa-map-marker-alt text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold text-white">Venue</h3>
+                                    <p class="text-gray-300">Jain (Deemed-to-be University)</p>
+                                    <p class="text-gray-300">Jakkasandra Post, Kanakapura Road</p>
+                                    <p class="text-gray-300">Bangalore - 560082</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="text-purple-400 mt-1 mr-4">
+                                    <i class="fas fa-users text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold text-white">Social Media</h3>
+                                    <div class="flex space-x-4 mt-2">
+                                        <a href="#" class="text-gray-300 hover:text-purple-400 transition-colors">
+                                            <i class="fab fa-instagram text-2xl"></i>
+                                        </a>
+                                        <a href="#" class="text-gray-300 hover:text-purple-400 transition-colors">
+                                            <i class="fab fa-facebook text-2xl"></i>
+                                        </a>
+                                        <a href="#" class="text-gray-300 hover:text-purple-400 transition-colors">
+                                            <i class="fab fa-twitter text-2xl"></i>
+                                        </a>
+                                        <a href="#" class="text-gray-300 hover:text-purple-400 transition-colors">
+                                            <i class="fab fa-linkedin text-2xl"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="mt-16">
+                <h2 class="text-3xl font-bold text-purple-400 mb-8 text-center">Frequently Asked Questions</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-effect rounded-xl p-6">
+                        <h3 class="text-xl font-semibold text-white mb-3">How do I register for an event?</h3>
+                        <p class="text-gray-300">You can register for any event through our online registration portal. Simply go to the specific event page and click the "Register Now" button.</p>
+                    </div>
+                    <div class="glass-effect rounded-xl p-6">
+                        <h3 class="text-xl font-semibold text-white mb-3">Can I participate in multiple events?</h3>
+                        <p class="text-gray-300">Yes, you can participate in multiple events as long as there are no scheduling conflicts. Each event requires separate registration.</p>
+                    </div>
+                    <div class="glass-effect rounded-xl p-6">
+                        <h3 class="text-xl font-semibold text-white mb-3">Is accommodation provided for outstation participants?</h3>
+                        <p class="text-gray-300">Limited accommodation is available on a first-come, first-served basis for outstation participants. Please contact us in advance to arrange accommodation.</p>
+                    </div>
+                    <div class="glass-effect rounded-xl p-6">
+                        <h3 class="text-xl font-semibold text-white mb-3">What are the payment methods available?</h3>
+                        <p class="text-gray-300">We accept online payments through UPI, net banking, and credit/debit cards. Some events also allow cash payment at the venue.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Section -->
+    <div class="py-12 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-purple-400 mb-8 text-center">Find Us</h2>
+            <div class="glass-effect rounded-xl p-4 h-80">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3504.8798252002366!2d77.1907812!3d28.5455328!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDMyJzQzLjkiTiA3N8KwMTEnMjYuOCJF!5e0!3m2!1sen!2sin!4v1625836825644!5m2!1sen!2sin" 
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" class="rounded-lg"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div class="text-center">
+                    <a href="../index.html" class="inline-block py-2 px-4 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors w-full">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a href="tech.html" class="inline-block py-2 px-4 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors w-full">
+                        <i class="fas fa-microchip mr-2"></i>Tech Events
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a href="cultural.html" class="inline-block py-2 px-4 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors w-full">
+                        <i class="fas fa-music mr-2"></i>Cultural Events
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a href="contact.html" class="inline-block py-2 px-6 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors w-full">
+                <a href="../admin/login.html" class="inline-block py-2 px-6 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors">
+                    <i class="fas fa-lock mr-2"></i>Admin
+                </a>
+                        <i class="fas fa-envelope mr-2"></i>Contact Us
+                    </a>
+                </div>
+            </div>
+            
+            <hr class="border-gray-800 my-6">
+
+            <div class="flex justify-center space-x-6 mb-6">
+                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
+                    <i class="fab fa-facebook-f text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
+                    <i class="fab fa-twitter text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
+                    <i class="fab fa-instagram text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
+                    <i class="fab fa-linkedin-in text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
+                    <i class="fab fa-youtube text-xl"></i>
+                </a>
+            </div>
+            <p class="text-center text-gray-400 mb-2">&copy; 2024 INFINITY-2K25. All rights reserved.</p>
+            <p class="text-center text-gray-500 text-sm">Organized by Jain (Deemed-to-be University), Bangalore</p>
+        </div>
+    </footer>
+
+    <script src="../public/scripts/main.js"></script>
+    <script type="module">
+        // Import Supabase client from our helper file
+        import { supabase, TABLES } from '../supabase.js';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const contactForm = document.getElementById('contact-form');
+            const formStatus = document.getElementById('form-status');
+            const submitButton = document.getElementById('submit-button');
+            
+            if (contactForm) {
+                contactForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // Disable submit button and show loading state
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+                    
+                    // Get form data
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const subject = document.getElementById('subject').value;
+                    const message = document.getElementById('message').value;
+                    
+                    try {
+                        // Insert message into Supabase
+                        const { data, error } = await supabase
+                            .from(TABLES.CONTACT_MESSAGES)
+                            .insert([
+                                { 
+                                    name, 
+                                    email, 
+                                    subject,
+                                    message,
+                                    status: 'unread',
+                                    created_at: new Date().toISOString()
+                                }
+                            ]);
+                            
+                        if (error) throw error;
+                        
+                        // Show success message
+                        formStatus.classList.remove('hidden', 'bg-red-500');
+                        formStatus.classList.add('bg-green-600');
+                        formStatus.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Thank you for your message! We will get back to you soon.';
+                        
+                        // Reset form
+                        contactForm.reset();
+                        
+                        // Reset button after 3 seconds
+                        setTimeout(() => {
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send Message';
+                        }, 3000);
+                        
+                    } catch (error) {
+                        console.error('Error sending message:', error);
+                        
+                        // Show error message
+                        formStatus.classList.remove('hidden', 'bg-green-600');
+                        formStatus.classList.add('bg-red-500');
+                        formStatus.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Failed to send message. Please try again.';
+                        
+                        // Reset button
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send Message';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Confirmed - Infinity 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../public/styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .floating-navbar {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1280px;
+            z-index: 100;
+            border-radius: 1rem;
+            animation: navbarFloat 2s ease-in-out infinite alternate;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes navbarFloat {
+            from {
+                transform: translateX(-50%) translateY(0px);
+            }
+            to {
+                transform: translateX(-50%) translateY(5px);
+            }
+        }
+        
+        .glass-effect {
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="glass-effect floating-navbar">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../public/images/INFINITY GOLD LOGO 24.png" alt="Infinity 2025 Logo" class="h-8 w-auto animate-float">
+                        <span class="text-xl font-bold gradient-text">Infinity 2025</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="../index.html#about" class="text-gray-300 hover:text-purple-400 transition-colors">About</a>
+                    <a href="../index.html#events" class="text-gray-300 hover:text-purple-400 transition-colors">Events</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Confirmation Content -->
+    <div class="min-h-screen flex items-center justify-center px-4">
+        <div class="glass-effect rounded-lg p-8 max-w-md w-full text-center">
+            <div class="mb-6">
+                <svg class="mx-auto h-16 w-16 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <h1 class="text-3xl font-bold mb-4 text-purple-400">Registration Confirmed!</h1>
+            <p class="text-gray-300 mb-8">
+                Thank you for registering for Infinity 2025. We've received your application and will contact you soon with further details.
+            </p>
+            <div class="space-y-4">
+                <a href="../index.html" class="block w-full bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">
+                    Return to Home
+                </a>
+                <a href="register.html" class="block w-full bg-gray-800 text-gray-300 px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">
+                    Register Another Team
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-400">
+            <p>&copy; 2024 Infinity 2025. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Redirect to home page if accessed directly without registration
+        if (!document.referrer.includes('register.html')) {
+            window.location.href = '../index.html'
+        }
+    </script>
+</body>
+</html> 
