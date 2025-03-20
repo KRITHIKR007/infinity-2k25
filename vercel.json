@@ -5,27 +5,15 @@
     { "src": "pages/**/*.html", "use": "@vercel/static" },
     { "src": "admin/**/*.html", "use": "@vercel/static" },
     { "src": "public/**/*", "use": "@vercel/static" },
-    { "src": "*.js", "use": "@vercel/node" },
-    { "src": "supabase.js", "use": "@vercel/static" }
+    { "src": "*.js", "use": "@vercel/static" }
   ],
   "routes": [
+    { "src": "/public/(.*)", "dest": "/public/$1" },
     { "src": "/pages/(.*)", "dest": "/pages/$1" },
     { "src": "/admin/(.*)", "dest": "/admin/$1" },
-    { "src": "/public/(.*)", "dest": "/public/$1" },
-    { "src": "/supabase.js", "dest": "/supabase.js" },
+    { "src": "/supabase\\.js", "dest": "/supabase.js" },
+    { "src": "/(.*)\\.js", "dest": "/$1.js" },
     { "src": "/(.*)", "dest": "/$1" }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
-      ]
-    }
   ],
   "env": {
     "SUPABASE_URL": "https://ceickbodqhwfhcpabfdq.supabase.co",
