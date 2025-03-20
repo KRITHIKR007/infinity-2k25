@@ -4,17 +4,15 @@
     { "src": "*.html", "use": "@vercel/static" },
     { "src": "pages/**/*.html", "use": "@vercel/static" },
     { "src": "admin/**/*.html", "use": "@vercel/static" },
-    { "src": "public/**/*", "use": "@vercel/static" }
+    { "src": "public/**/*", "use": "@vercel/static" },
+    { "src": "api/**/*.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/", "dest": "/index.html" },
-    { "src": "/pages/tech", "dest": "/pages/tech.html" },
-    { "src": "/pages/cultural", "dest": "/pages/cultural.html" },
-    { "src": "/pages/register", "dest": "/pages/register.html" },
-    { "src": "/pages/contact", "dest": "/pages/contact.html" },
-    { "src": "/admin", "dest": "/admin/login.html" },
-    { "src": "/admin/dashboard", "dest": "/admin/dashboard.html" },
-    { "handle": "filesystem" }
+    { "src": "/pages/(.*)", "dest": "/pages/$1" },
+    { "src": "/admin/(.*)", "dest": "/admin/$1" },
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/public/(.*)", "dest": "/public/$1" }
   ],
   "headers": [
     {

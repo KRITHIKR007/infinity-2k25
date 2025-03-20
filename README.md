@@ -1,120 +1,60 @@
-# Infinity 2025 Tech Fest Website
+# INFINITY-2K25 Event Website
 
-A dynamic website for the Infinity 2025 technical and cultural festival, built with modern web technologies and integrated with Supabase for backend functionality.
+The official website for INFINITY-2K25, the annual technical and cultural fest organized by the Faculty of Engineering and Technology, Jain (Deemed-to-be University), Bangalore.
 
 ## Features
 
-- **Event Management**: Create, update, and manage technical and cultural events
-- **Registration System**: Online registration for participants with payment integration
-- **Admin Dashboard**: Comprehensive dashboard for event organizers
-- **Responsive Design**: Works seamlessly on all devices - mobile, tablet, and desktop
-- **Dark Mode**: Modern dark theme with neon accents
-- **Payment Integration**: Support for QR-based payments with verification system
-- **Authentication**: Secure admin login system
+- Event showcase and registration
+- Seamless payment integration with QR code
+- Admin dashboard for registration management
+- Responsive design for all devices
 
 ## Tech Stack
 
-- **Frontend**: HTML, CSS, JavaScript, TailwindCSS
-- **Backend**: Supabase (PostgreSQL, Auth, Storage)
-- **Deployment**: Vercel/Netlify
-- **Tools**: Node.js, npm
+- Frontend: HTML, CSS, JavaScript
+- Database: Supabase
+- Authentication: Supabase Auth
+- Storage: Supabase Storage
+- Hosting: Vercel
 
-## Getting Started
+## Setup Instructions
 
-### Prerequisites
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Configure Supabase:
+   - Create a .env file based on .env.example
+   - Add your Supabase URL and API key
+4. Run the development server: `npm run dev`
 
-- Node.js (v14+)
-- npm or yarn
-- Supabase account
+## Deployment
 
-### Installation
+This site is set up for deployment on Vercel. Simply connect your GitHub repository to Vercel and it will automatically deploy when changes are pushed to the main branch.
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/infinity-2025.git
-   cd infinity-2025
-   ```
+## Environment Variables
 
-2. Run the setup script:
-   ```bash
-   node setup.js
-   ```
-   
-   The setup script will:
-   - Create a `.env` file with your Supabase credentials
-   - Install all dependencies
-   - Optionally set up the database schema
-
-3. Or install manually:
-   ```bash
-   npm install
-   ```
-   
-   Then create a `.env` file in the project root with:
-   ```
-   SUPABASE_URL=your_supabase_url
-   SUPABASE_KEY=your_supabase_anon_key
-   EVENT_DATE=Mar 27, 2025 09:00:00
-   REGISTRATION_DEADLINE=Mar 26, 2025 23:59:59
-   NODE_ENV=development
-   ```
-
-### Development
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-The site will be available at `http://localhost:3000`.
-
-### Building for Production
-
-To build the site for production:
-
-```bash
-npm run build
-```
-
-The output will be in the `dist` directory, ready for deployment.
-
-## Project Structure
+Create a `.env` file with the following variables:
 
 ```
-/infinity-2025
-│── public/
-│   ├── images/   → Event images & assets
-│   ├── styles/   → Tailwind CSS styles
-│   ├── scripts/  → JavaScript logic
-│── pages/
-│   ├── register.html  
-│   ├── admin.html  
-│── index.html  → Main home page
-│── app.js      → Handles form submission & Supabase connection
-│── supabase.js → Backend logic for storing data
-│── vercel.json → Vercel deployment config
-│── README.md   → Project documentation
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_KEY=your_supabase_service_key
 ```
 
-## Contributing
+## Database Setup
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Run the database setup scripts to create the necessary tables and storage buckets:
+
+```
+node migrations/create_tables.js
+node migrations/create_storage.js
+```
+
+## Contributors
+
+- Krithik R (Lead Developer)
+- Dhrub Kumar Jha (Technical Events Coordinator)
+- Rohan (Cultural Events Coordinator)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For support, email support@infinity2025.com or create an issue in the repository.
-
-## Acknowledgments
-
-- [Tailwind CSS](https://tailwindcss.com)
-- [Supabase](https://supabase.com)
-- [Vercel](https://vercel.com)
+MIT License

@@ -1,34 +1,24 @@
 {
   "name": "infinity-2k25",
   "version": "1.0.0",
-  "description": "Techno-Cultural College Festival Website",
+  "description": "Website for INFINITY-2K25 tech fest",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "start": "serve",
-    "dev": "serve",
-    "build": "echo 'Static site - no build required'"
+    "dev": "serve -p 3000",
+    "start": "serve -p $PORT",
+    "build": "echo 'No build step required, static site'"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.33.1",
+    "@supabase/supabase-js": "^2.49.1",
     "serve": "^14.2.1"
   },
   "devDependencies": {
-    "dotenv": "^16.3.1",
     "tailwindcss": "^3.3.3"
   },
-  "keywords": [
-    "events",
-    "registration",
-    "supabase"
-  ],
-  "author": "Krithik R",
-  "license": "MIT",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=16.0.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/KRITHIKR007/infinity-2k25"
-  }
+  "private": true,
+  "author": "Krithik R",
+  "license": "MIT"
 }

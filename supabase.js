@@ -1,17 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Supabase configuration
+const SUPABASE_URL = 'https://ceickbodqhwfhcpabfdq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8';
+
 // Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL || 'https://ceickbodqhwfhcpabfdq.supabase.co';
-const supabaseKey = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8';
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Database tables
+// Export table names
 export const TABLES = {
-  EVENTS: 'events',
-  REGISTRATIONS: 'registrations',
-  USERS: 'users',
-  PAYMENTS: 'payments'
+    REGISTRATIONS: 'registrations',
+    EVENTS: 'events',
+    PAYMENTS: 'payments',
+    PARTICIPANTS: 'participants',
+    STORAGE: {
+        PAYMENT_PROOFS: 'payment_proofs',
+        EVENT_IMAGES: 'event_images'
+    }
 };
 
 // Authentication helper functions

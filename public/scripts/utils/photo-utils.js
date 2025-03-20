@@ -192,3 +192,49 @@ export function formatFileSize(bytes, decimals = 2) {
     
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+
+/**
+ * Get a data URL from a file
+ * @param {File} file - The file to convert
+ * @returns {Promise<string>} - Data URL
+ */
+export function fileToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+/**
+ * Convert image from one format to another
+ * @param {File} file - Original image file
+ * @param {string} format - Target format (e.g., 'image/jpeg')
+ * @param {number} quality - Output quality (0-1)
+ * @returns {Promise<Blob>} - Converted image as Blob
+ */
+export async function convertImageFormat(file, format, quality = 0.8) {
+    const dataUrl = await fileToDataUrl(file);
+    
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            
+            canvas.toBlob(
+                blob => resolve(blob),
+                format,
+                quality
+            );
+        };
+        
+        img.onerror = () => reject(new Error('Failed to load image for conversion'));
+        img.src = dataUrl;
+    });
+}

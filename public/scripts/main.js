@@ -1,257 +1,234 @@
-// Main JavaScript file for INFINITY-2K25 website
-document.addEventListener('DOMContentLoaded', function() {
-    // Mobile menu toggle
-    const mobileMenuButton = document.querySelector('.mobile-menu-button');
-    const mobileMenu = document.querySelector('.mobile-menu');
-    
-    if (mobileMenuButton && mobileMenu) {
-        mobileMenuButton.addEventListener('click', function() {
-            mobileMenu.classList.toggle('hidden');
-        });
-    }
+/**
+ * Main JavaScript file for Infinity 2025 website
+ * Contains common functionality used across the site
+ */
+import { supabase } from '../../supabase.js';
+import { verifyDatabaseSetup } from './database.js';
 
-    // Initialize Supabase client
-    initializeSupabase();
+// DOM Elements
+const loadingOverlay = document.getElementById('loadingOverlay');
+const mobileMenuButton = document.getElementById('mobileMenuButton');
+const closeMenuButton = document.getElementById('closeMenuButton');
+const mobileMenu = document.getElementById('mobileMenu');
+
+// Initialize website
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('Initializing website...');
+    
+    // Check database connection
+    try {
+        const result = await verifyDatabaseSetup();
+        
+        if (!result.success) {
+            console.error('Database verification failed:', result.error);
+            showConnectionError(result.error);
+        } else {
+            console.log('Database connection verified successfully');
+            initializeUI();
+        }
+    } catch (error) {
+        console.error('Initialization error:', error);
+        showConnectionError('Failed to connect to the server. Please try again later.');
+    } finally {
+        // Hide loading overlay after a minimum display time
+        setTimeout(() => {
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    loadingOverlay.classList.add('hidden');
+                }, 500);
+            }
+        }, 800);
+    }
 });
 
-// Supabase configuration
-const SUPABASE_URL = 'https://ceickbodqhwfhcpabfdq.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8';
-let supabase;
-
-async function initializeSupabase() {
-    try {
-        // Dynamically import Supabase client
-        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
-        
-        // Initialize the client
-        supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('Supabase initialized successfully');
-        
-        // Check if user is already logged in
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-            console.log('User is logged in:', user.email);
-            updateUIForLoggedInUser(user);
-        }
-    } catch (error) {
-        console.error('Error initializing Supabase:', error);
-    }
-}
-
-// Call the initialization function when the page loads
-document.addEventListener('DOMContentLoaded', initializeSupabase);
-
-// Registration form handling
-const registerForm = document.getElementById('register-form');
-if (registerForm) {
-    registerForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const college = document.getElementById('college').value;
-        const events = document.getElementById('events').value;
-        
-        try {
-            // Insert registration data into Supabase
-            const { data, error } = await supabase
-                .from('registrations')
-                .insert([
-                    { 
-                        name, 
-                        email, 
-                        phone, 
-                        university: college, 
-                        events,
-                        payment_status: 'awaiting_payment',
-                        created_at: new Date().toISOString()
-                    }
-                ]);
-                
-            if (error) throw error;
-            
-            alert('Registration successful! You will receive a confirmation email shortly.');
-            registerForm.reset();
-            
-        } catch (error) {
-            console.error('Error during registration:', error);
-            alert('Registration failed. Please try again.');
-        }
-    });
-}
-
-// Contact form handling
-const contactForm = document.getElementById('contact-form');
-if (contactForm) {
-    contactForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const message = document.getElementById('message').value;
-        
-        try {
-            // Insert contact message into Supabase
-            const { data, error } = await supabase
-                .from('contact_messages')
-                .insert([
-                    {
-                        name,
-                        email,
-                        message,
-                        created_at: new Date().toISOString()
-                    }
-                ]);
-                
-            if (error) throw error;
-            
-            alert('Message sent successfully! We will get back to you soon.');
-            contactForm.reset();
-            
-        } catch (error) {
-            console.error('Error sending message:', error);
-            alert('Failed to send message. Please try again.');
-        }
-    });
-}
-
-// Login form handling
-const loginForm = document.getElementById('login-form');
-if (loginForm) {
-    loginForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        
-        try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email,
-                password
-            });
-            
-            if (error) throw error;
-            
-            // Redirect to admin dashboard or profile page
-            if (data.user.user_metadata.role === 'admin') {
-                window.location.href = '/admin/dashboard.html';
-            } else {
-                window.location.href = '/profile.html';
-            }
-            
-        } catch (error) {
-            console.error('Error during login:', error);
-            alert('Login failed. Please check your credentials.');
-        }
-    });
-}
-
-// UI update for logged-in users
-function updateUIForLoggedInUser(user) {
-    const loginButtons = document.querySelectorAll('.login-button');
-    const profileButtons = document.querySelectorAll('.profile-button');
+// Initialize UI components
+function initializeUI() {
+    // Set up mobile menu
+    setupMobileMenu();
     
-    if (loginButtons.length) {
-        loginButtons.forEach(button => {
-            button.classList.add('hidden');
+    // Set up any interactive elements
+    setupInteractiveElements();
+    
+    // Check if user is logged in (for admin sections)
+    checkAuthStatus();
+}
+
+// Setup mobile menu functionality
+function setupMobileMenu() {
+    if (mobileMenuButton && mobileMenu && closeMenuButton) {
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.remove('hidden');
         });
-    }
-    
-    if (profileButtons.length) {
-        profileButtons.forEach(button => {
-            button.classList.remove('hidden');
-            button.textContent = `Hello, ${user.user_metadata.name || user.email}`;
+        
+        closeMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
         });
     }
 }
 
-// Logout functionality
-const logoutButtons = document.querySelectorAll('.logout-button');
-if (logoutButtons.length) {
-    logoutButtons.forEach(button => {
-        button.addEventListener('click', async function(e) {
+// Setup interactive elements
+function setupInteractiveElements() {
+    // Implement smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
             e.preventDefault();
             
-            try {
-                const { error } = await supabase.auth.signOut();
-                if (error) throw error;
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
                 
-                window.location.href = '/index.html';
-            } catch (error) {
-                console.error('Error during logout:', error);
-                alert('Failed to logout. Please try again.');
+                // Close mobile menu if open
+                if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
+            }
+        });
+    });
+    
+    // Setup lazy loading for images
+    setupLazyLoading();
+    
+    // Setup any tooltips
+    setupTooltips();
+}
+
+// Check authentication status (for admin pages)
+async function checkAuthStatus() {
+    // Check if current page is in admin section
+    const isAdminPage = window.location.pathname.includes('/admin/');
+    
+    if (isAdminPage) {
+        try {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            
+            if (error) throw error;
+            
+            // If not logged in and on admin page (except login), redirect to login
+            if (!session && !window.location.pathname.includes('/admin/login.html')) {
+                window.location.href = '/admin/login.html';
+            }
+        } catch (error) {
+            console.error('Auth check error:', error);
+        }
+    }
+}
+
+// Setup lazy loading for images
+function setupLazyLoading() {
+    if ('IntersectionObserver' in window) {
+        const lazyImages = document.querySelectorAll('img[data-src]');
+        
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                    imageObserver.unobserve(img);
+                }
+            });
+        });
+        
+        lazyImages.forEach(image => {
+            imageObserver.observe(image);
+        });
+    } else {
+        // Fallback for browsers that don't support IntersectionObserver
+        let lazyImages = document.querySelectorAll('img[data-src]');
+        
+        function lazyLoad() {
+            lazyImages.forEach(img => {
+                if (isInViewport(img)) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                }
+            });
+            
+            // Clean up remaining images
+            lazyImages = Array.from(lazyImages).filter(img => img.hasAttribute('data-src'));
+            
+            if (lazyImages.length === 0) {
+                document.removeEventListener('scroll', lazyLoad);
+                window.removeEventListener('resize', lazyLoad);
+                window.removeEventListener('orientationChange', lazyLoad);
+            }
+        }
+        
+        document.addEventListener('scroll', lazyLoad);
+        window.addEventListener('resize', lazyLoad);
+        window.addEventListener('orientationChange', lazyLoad);
+    }
+}
+
+// Setup tooltips
+function setupTooltips() {
+    const tooltips = document.querySelectorAll('[data-tooltip]');
+    
+    tooltips.forEach(element => {
+        const tooltipText = element.getAttribute('data-tooltip');
+        
+        element.addEventListener('mouseenter', () => {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'absolute z-50 px-2 py-1 text-sm text-white bg-gray-800 rounded shadow-lg';
+            tooltip.textContent = tooltipText;
+            tooltip.style.bottom = '100%';
+            tooltip.style.left = '50%';
+            tooltip.style.transform = 'translateX(-50%)';
+            tooltip.style.marginBottom = '5px';
+            tooltip.style.whiteSpace = 'nowrap';
+            
+            element.style.position = 'relative';
+            element.appendChild(tooltip);
+        });
+        
+        element.addEventListener('mouseleave', () => {
+            const tooltip = element.querySelector('div');
+            if (tooltip) {
+                element.removeChild(tooltip);
             }
         });
     });
 }
 
-// Event fetch functionality for event pages
-async function fetchEvents(category) {
-    try {
-        const { data, error } = await supabase
-            .from('events')
-            .select('*')
-            .eq('category', category);
-            
-        if (error) throw error;
-        
-        return data;
-    } catch (error) {
-        console.error(`Error fetching ${category} events:`, error);
-        return [];
-    }
-}
-
-// Function to display events on the page
-function displayEvents(events, containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    events.forEach(event => {
-        const eventCard = document.createElement('div');
-        eventCard.className = 'glass-effect rounded-lg overflow-hidden';
-        
-        eventCard.innerHTML = `
-            <div class="relative">
-                <img src="${event.poster_url}" alt="${event.name}" class="w-full h-48 object-cover">
-                <div class="absolute top-2 right-2 bg-purple-600 text-white px-2 py-1 rounded text-xs font-bold">
-                    ${event.date}
-                </div>
+// Show connection error
+function showConnectionError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-80';
+    errorDiv.innerHTML = `
+        <div class="bg-gray-900 p-6 rounded-lg max-w-md text-center">
+            <div class="text-red-500 text-5xl mb-4">
+                <i class="fas fa-exclamation-circle"></i>
             </div>
-            <div class="p-4">
-                <h3 class="text-xl font-semibold text-white mb-2">${event.name}</h3>
-                <p class="text-gray-300 text-sm mb-3">${event.short_description}</p>
-                <div class="flex justify-between items-center">
-                    <span class="text-purple-400">${event.time}</span>
-                    <a href="events/${event.slug}.html" class="bg-purple-600 text-white px-3 py-1 rounded-md text-sm hover:bg-purple-700 transition-colors">
-                        View Details
-                    </a>
-                </div>
-            </div>
-        `;
-        
-        container.appendChild(eventCard);
-    });
+            <h2 class="text-xl font-bold text-white mb-4">Connection Error</h2>
+            <p class="text-gray-300 mb-6">${message}</p>
+            <button onclick="location.reload()" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
+                Try Again
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(errorDiv);
 }
 
-// Load tech events if on tech page
-const techEventsContainer = document.getElementById('tech-events-container');
-if (techEventsContainer) {
-    (async function() {
-        const events = await fetchEvents('technical');
-        displayEvents(events, 'tech-events-container');
-    })();
+// Check if an element is in the viewport
+function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
 }
 
-// Load cultural events if on cultural page
-const culturalEventsContainer = document.getElementById('cultural-events-container');
-if (culturalEventsContainer) {
-    (async function() {
-        const events = await fetchEvents('cultural');
-        displayEvents(events, 'cultural-events-container');
-    })();
-}
+// Export functions for use in other modules
+export {
+    isInViewport,
+    showConnectionError
+};
