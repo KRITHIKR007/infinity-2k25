@@ -792,3 +792,122 @@ document.addEventListener('DOMContentLoaded', async function() {
   // Helper functions
   // ...existing code...
 });
+
+// Use the global Supabase client if available, or import it
+const supabase = window.supabase || (await import('../../supabase.js')).supabase;
+
+// Constants
+const QR_CODE_URL = 'public/images/qr-code.png';
+const TECHNICAL_CATEGORY = 'tech';
+const CULTURAL_CATEGORY = 'cultural';
+
+// State management
+const state = {
+    category: null,
+    selectedEvents: [],
+    eventDetails: {},
+    totalFee: 0,
+    formStep: 1,
+    paymentMethod: 'qr',
+    teamMembers: [],
+    isTeamEvent: false,
+    maxTeamSize: 1,
+    fileUploader: null
+};
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('Register page loaded');
+    
+    try {
+        // Initialize UI elements
+        initElements();
+        
+        // Setup event listeners
+        setupEventListeners();
+        
+        // Show first step
+        showFormStep(1);
+        
+        // Fetch events data from database
+        await fetchEventsData();
+        
+        // Initialize file uploader
+        initFileUploader();
+        
+    } catch (error) {
+        console.error('Error initializing registration page:', error);
+        showError('Failed to initialize registration form. Please refresh the page and try again.');
+    } finally {
+        // Hide loading screen
+        hideLoadingScreen();
+    }
+});
+
+// Initialize DOM elements
+function initElements() {
+    console.log('Initializing elements');
+    // DOM elements initialization code...
+}
+
+// Hide loading screen with smoother transition
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.classList.add('opacity-0');
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+        }, 500);
+    }
+}
+
+// Show error message
+function showError(message) {
+    console.error('Error:', message);
+    
+    const errorContainer = document.createElement('div');
+    errorContainer.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-4 py-2 rounded-md z-50';
+    errorContainer.textContent = message;
+    
+    document.body.appendChild(errorContainer);
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+        errorContainer.classList.add('opacity-0');
+        setTimeout(() => {
+            document.body.removeChild(errorContainer);
+        }, 500);
+    }, 5000);
+}
+
+// Fetch events data from the database
+async function fetchEventsData() {
+    try {
+        console.log('Fetching events data');
+        
+        // Basic query to get active events
+        const { data, error } = await supabase
+            .from('events')
+            .select('*')
+            .eq('status', 'active');
+            
+        if (error) throw error;
+        
+        console.log('Fetched events:', data);
+        
+        // Store events by category for quick access
+        state.eventDetails = data.reduce((acc, event) => {
+            acc[event.id] = event;
+            return acc;
+        }, {});
+        
+        return data;
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        showError('Failed to fetch events. Please refresh the page and try again.');
+        return [];
+    }
+}
+
+// Rest of the registration page code...
+// ...existing code...

@@ -220,6 +220,11 @@ h1, h2, h3, h4, h5, h6 {
 .gradient-text {
     background: linear-gradient(135deg, var(--primary-light), var(--accent));
     -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: var(--shadow-sm);
+    background: linear-gradient(90deg, var(--primary-light), var(--primary), var(--secondary));
+    -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: var(--shadow-sm);
     background: linear-gradient(90deg, var(--primary-light), var(--primary), var(--secondary));
@@ -378,33 +383,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .status-approved {
     background: rgba(72, 187, 120, 0.1);
-    color: var(--success);
-}
-
-.status-rejected {
-    background: rgba(245, 101, 101, 0.1);
-    color: var(--error);
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-    :root {
-        --spacing-2xl: 2.5rem;
-    }
-}
-
-@media (max-width: 992px) {
-    :root {
-        --spacing-xl: 1.75rem;
-    }
-}
-
-@media (max-width: 768px) {
-    :root {
-        --spacing-lg: 1.25rem;
-        --font-size-4xl: 2rem;
-        --font-size-3xl: 1.5rem;
-    }
+    color: var (--success);
+     --font-size-3xl: 1.5rem;
 }
 
 @media (max-width: 576px) {

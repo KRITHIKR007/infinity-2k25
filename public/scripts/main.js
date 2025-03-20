@@ -15,22 +15,22 @@ const mobileMenu = document.getElementById('mobileMenu');
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Initializing website...');
     
-    // Check database connection
     try {
-        const result = await verifyDatabaseSetup();
+        // Check database connection
+        const { data, error } = await supabase.from('events').select('count', { count: 'exact', head: true });
         
-        if (!result.success) {
-            console.error('Database verification failed:', result.error);
-            showConnectionError(result.error);
+        if (error) {
+            console.error('Database connection failed:', error);
+            showConnectionError('Failed to connect to the database. Please check your connection and try again.');
         } else {
-            console.log('Database connection verified successfully');
+            console.log('Database connection successful');
             initializeUI();
         }
     } catch (error) {
         console.error('Initialization error:', error);
-        showConnectionError('Failed to connect to the server. Please try again later.');
+        showConnectionError('Failed to initialize the application. Please try again later.');
     } finally {
-        // Hide loading overlay after a minimum display time
+        // Always hide loading overlay after a maximum of 3 seconds, even if there's an error
         setTimeout(() => {
             if (loadingOverlay) {
                 loadingOverlay.classList.add('opacity-0');
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     loadingOverlay.classList.add('hidden');
                 }, 500);
             }
-        }, 800);
+        }, 3000);
     }
 });
 
@@ -52,6 +52,19 @@ function initializeUI() {
     
     // Check if user is logged in (for admin sections)
     checkAuthStatus();
+    
+    // Hide loading overlay
+    hideLoadingOverlay();
+}
+
+// Hide loading overlay with smoother transition
+function hideLoadingOverlay() {
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('opacity-0');
+        setTimeout(() => {
+            loadingOverlay.classList.add('hidden');
+        }, 500);
+    }
 }
 
 // Setup mobile menu functionality
@@ -198,6 +211,7 @@ function setupTooltips() {
 
 // Show connection error
 function showConnectionError(message) {
+    console.error('Connection error:', message);
     const errorDiv = document.createElement('div');
     errorDiv.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-80';
     errorDiv.innerHTML = `
@@ -214,6 +228,9 @@ function showConnectionError(message) {
     `;
     
     document.body.appendChild(errorDiv);
+    
+    // Hide loading overlay when showing an error
+    hideLoadingOverlay();
 }
 
 // Check if an element is in the viewport

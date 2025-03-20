@@ -9,7 +9,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Add Supabase URL and key as meta tags for easier debugging -->
+    <meta name="supabase-url" content="https://ceickbodqhwfhcpabfdq.supabase.co">
+    <meta name="supabase-anon-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8">
+    
+    <!-- Load the Supabase client directly in the head for immediate availability -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1"></script>
+    <script>
+        // Initialize Supabase client globally
+        window.supabase = supabase.createClient(
+            'https://ceickbodqhwfhcpabfdq.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8'
+        );
+    </script>
+    
+    <!-- Add debug helper script -->
+    <script type="module" src="public/scripts/debug-helper.js"></script>
+    
     <style>
+        /* Ensure loading overlay can transition properly */
+        #loadingOverlay {
+            transition: opacity 0.5s ease-out;
+        }
+        
+        #loadingOverlay.opacity-0 {
+            opacity: 0;
+        }
+        
+        #loadingOverlay.hidden {
+            display: none;
+        }
+        
         .gradient-text {
             background: linear-gradient(90deg, #9333ea, #c026d3);
             -webkit-background-clip: text;
@@ -58,11 +88,12 @@
     </style>
 </head>
 <body class="bg-gray-900 min-h-screen">
-    <!-- Loading Overlay -->
+    <!-- Loading Overlay with additional failsafe -->
     <div id="loadingOverlay" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-80 z-50">
         <div class="text-center">
             <div class="w-16 h-16 border-4 border-t-purple-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin mb-4"></div>
             <p class="text-white text-lg">Loading amazing experiences...</p>
+            <p class="text-white text-sm mt-4">If loading takes too long, <a href="#" onclick="window.location.reload()" class="text-purple-400 hover:underline">click here to refresh</a></p>
         </div>
     </div>
 
@@ -111,7 +142,7 @@
     </div>
 
     <!-- Hero Section -->
-    <div class="pt-32 pb-20 bg-[url('public/images/gradient-bg.jpg')] bg-cover bg-fixed">
+    <div class="pt-32 pb-20 bg-[url('public/images/hero-bg.jpeg')] bg-cover bg-fixed">
         <div class="max-w-7xl mx-auto px-4 relative">
             <div class="text-center mb-12">
                 <h1 class="text-5xl md:text-7xl font-extrabold mb-4">
@@ -120,7 +151,6 @@
                 </h1>
                 <p class="text-xl md:text-2xl text-gray-300 mb-8">Faculty of Engineering and Technology, Jain (Deemed-to-be University), Bangalore</p>
                 <p class="text-lg text-purple-300 mb-8">March 27-28, 2025</p>
-                
                 <div class="flex justify-center gap-4 mb-12">
                     <a href="pages/tech.html" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors">
                         <i class="fas fa-microchip mr-2"></i>Tech Events
@@ -129,12 +159,10 @@
                         <i class="fas fa-music mr-2"></i>Cultural Events
                     </a>
                 </div>
-                
                 <!-- Countdown Timer -->
                 <div id="countdown" class="flex justify-center space-x-4 mb-8">
                     <!-- Will be populated by JavaScript -->
                 </div>
-                
                 <a href="pages/register.html" class="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-bold rounded-lg shadow-lg transition-all transform hover:scale-105">
                     <i class="fas fa-user-plus mr-2"></i>Register Now
                 </a>
@@ -152,7 +180,6 @@
                     INFINITY-2K25 is the annual national-level technical and cultural fest of Faculty of Engineering and Technology, Jain (Deemed-to-be University), Bangalore. It provides a platform for students to showcase their technical and creative skills, connect with industry experts, and compete for exciting prizes.
                 </p>
             </div>
-            
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div class="glass-effect p-6 rounded-xl">
                     <div class="text-purple-500 text-4xl mb-4">
@@ -163,154 +190,27 @@
                         Explore cutting-edge technology through competitions, workshops, and tech talks designed to enhance your technical skills.
                     </p>
                 </div>
-                
                 <div class="glass-effect p-6 rounded-xl">
                     <div class="text-purple-500 text-4xl mb-4">
                         <i class="fas fa-palette"></i>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-2">Cultural Showcase</h3>
                     <p class="text-gray-300">
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero-bg min-h-screen flex items-center justify-center relative overflow-hidden">
-        <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-        
-        <!-- Logos positioned at sides of hero section - reduced size -->
-        <div class="absolute top-1/3 left-8 md:left-16 hidden md:block">
-            <img src="public/images/FET-logoWhite.png" alt="FET Logo" class="h-16 w-auto">
-        </div>
-        
-        <div class="absolute top-1/3 right-8 md:right-16 hidden md:block">
-            <!-- Cultural Club Logo - adjusted size -->
-            <img src="public/images/CC Black.png" alt="Cultural Club Logo" class="h-32 w-auto">
-        </div>
-        
-        <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
-            <h1 class="text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-purple-200">
-                INFINITY-2K25
-            </h1>
-            <p class="text-2xl mb-4 text-white font-medium">National Level Techno-Cultural Fest</p>
-            <p class="text-lg mb-8 text-gray-200 font-semibold">March 27-28, 2025 | Faculty of Engineering and Technology, Jain (Deemed-to-be University), Bangalore</p>
-            <a href="pages/register.html" class="inline-block bg-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 text-lg">
-                Register Now
-            </a>
-            
-            <!-- Countdown Timer -->
-            <div class="glass-effect py-6 px-4 rounded-xl mt-8 mx-auto max-w-lg">
-                <p class="text-xl text-purple-200 font-semibold mb-3">Countdown to INFINITY-2K25</p>
-                <div class="flex justify-center space-x-4 text-white">
-                    <div class="text-center">
-                        <div id="days" class="text-3xl md:text-4xl font-bold">00</div>
-                        <div class="text-sm text-gray-300">Days</div>
-                    </div>
-                    <div class="text-3xl font-bold">:</div>
-                    <div class="text-center">
-                        <div id="hours" class="text-3xl md:text-4xl font-bold">00</div>
-                        <div class="text-sm text-gray-300">Hours</div>
-                    </div>
-                    <div class="text-3xl font-bold">:</div>
-                    <div class="text-center">
-                        <div id="minutes" class="text-3xl md:text-4xl font-bold">00</div>
-                        <div class="text-sm text-gray-300">Minutes</div>
-                    </div>
-                    <div class="text-3xl font-bold">:</div>
-                    <div class="text-center">
-                        <div id="seconds" class="text-3xl md:text-4xl font-bold">00</div>
-                        <div class="text-sm text-gray-300">Seconds</div>
-                    </div>
+                        Celebrate creativity and talent through various cultural events including dance, music, art, and drama.
+                    </p>
                 </div>
-            </div>
-            
-            <!-- Flashy Ticker Tape -->
-            <div class="ticker-tape-container mt-6 mx-auto w-full">
-                <div class="ticker-content">
-                    <span class="ticker-item">🎮 LIVE COMPETITIONS</span>
-                    <span class="ticker-item">🏆 WIN EXCITING PRIZES</span>
-                    <span class="ticker-item">🚀 LAUNCH YOUR CAREER</span>
-                    <span class="ticker-item">💡 SHOWCASE YOUR TALENT</span>
-                    <span class="ticker-item">🔥 LIMITED SPOTS AVAILABLE</span>
-                    <span class="ticker-item">✨ NETWORK WITH INDUSTRY EXPERTS</span>
-                    <span class="ticker-item">🌟 BE PART OF SOMETHING EPIC</span>
-                    <span class="ticker-item">🎭 UNLEASH YOUR CREATIVITY</span>
-                    <span class="ticker-item">💻 CUTTING-EDGE TECH EVENTS</span>
-                    <span class="ticker-item">🎨 CULTURAL EXTRAVAGANZA</span>
-                    <span class="ticker-item">🏅 COMPETE TO WIN</span>
-                    <span class="ticker-item">🚀 BOOST YOUR PORTFOLIO</span>
-                    <span class="ticker-item">💼 IMPRESS RECRUITERS</span>
-                    <span class="ticker-item">🌈 ENDLESS OPPORTUNITIES</span>
+                <div class="glass-effect p-6 rounded-xl">
+                    <div class="text-purple-500 text-4xl mb-4">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Networking Opportunities</h3>
+                    <p class="text-gray-300">
+                        Connect with industry leaders, professionals, and peers to expand your network and explore new opportunities.
+                    </p>
                 </div>
             </div>
         </div>
-        <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent"></div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-20 bg-gray-900 gradient-bg">
-        <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-purple-400">About INFINITY-2K25</h2>
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="glass-effect p-8 rounded-lg card-hover">
-                    <p class="text-gray-200 text-lg">
-                        INFINITY-2K25 is a premier national-level techno-cultural college fest organized by Faculty of Engineering and Technology, Jain (Deemed-to-be University) in Bangalore. 
-                        Join us for an unforgettable experience of innovation, competition, and networking on March 27-28, 2025.
-                    </p>
-                    <p class="text-gray-200 text-lg mt-4">
-                        This year's theme <span class="text-purple-300 font-semibold">"Past to Future"</span> celebrates the fusion of tradition and innovation, bringing together the brightest minds from across the country.
-                    </p>
-                    <p class="text-gray-200 text-lg mt-4">
-                        Since 2018, INFINITY has grown to become one of South India's leading college festivals, attracting talented participants from over 100 colleges nationwide. Our mission is to create a vibrant platform where students showcase their skills, exchange ideas, and build lasting connections.
-                    </p>
-                    <p class="text-gray-200 text-lg mt-4">
-                        With a prize pool of <span class="text-yellow-300 font-semibold">₹2 Lakhs</span> and industry-recognized certifications, INFINITY-2K25 offers both competitive challenges and professional growth opportunities at Jain University's state-of-the-art campus.
-                    </p>
-                </div>
-                <div class="glass-effect p-8 rounded-lg card-hover">
-                    <h3 class="text-2xl font-semibold mb-4 text-purple-400">Why Participate in INFINITY-2K25?</h3>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-purple-400 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <div>
-                                <h4 class="font-semibold text-white">Challenge the Best Talent</h4>
-                                <p class="text-gray-200">Compete against top students from universities across India in a wide range of technical and cultural competitions.</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-purple-400 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <div>
-                                <h4 class="font-semibold text-white">Win Prestigious Prizes</h4>
-                                <p class="text-gray-200">Compete for cash prizes, tech gadgets, internship opportunities, and certificates of achievement.</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-purple-400 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <div>
-                                <h4 class="font-semibold text-white">Build Valuable Connections</h4>
-                                <p class="text-gray-200">Meet industry leaders, professionals, and talented peers to expand your network and discover career opportunities.</p>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-5 h-5 text-purple-400 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <div>
-                                <h4 class="font-semibold text-white">Develop New Skills</h4>
-                                <p class="text-gray-200">Participate in workshops, panel discussions, and hands-on sessions to enhance your professional and technical abilities.</p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+    </div>
 
     <!-- Events Section -->
     <section id="events" class="py-20 bg-gray-900 gradient-bg">
@@ -319,7 +219,6 @@
                 <h2 class="text-4xl font-bold gradient-text mb-4">Our Exciting Events</h2>
                 <p class="text-xl text-gray-200">Join us for a spectacular lineup of technical and cultural events</p>
             </div>
-            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                 <div class="glass-effect p-8 rounded-lg text-center card-hover">
                     <div class="text-6xl mb-6 text-center">🔬</div>
@@ -327,7 +226,6 @@
                     <p class="text-gray-200 mb-6">Showcasing innovation, coding challenges, hackathons and more</p>
                     <a href="pages/tech.html" class="btn btn-primary">Explore Tech Events</a>
                 </div>
-                
                 <div class="glass-effect p-8 rounded-lg text-center card-hover">
                     <div class="text-6xl mb-6 text-center">🎭</div>
                     <h3 class="text-2xl font-bold text-white mb-4">Cultural Events</h3>
@@ -335,7 +233,6 @@
                     <a href="pages/cultural.html" class="btn btn-primary">Explore Cultural Events</a>
                 </div>
             </div>
-            
             <!-- Registration CTA -->
             <div class="text-center mt-12">
                 <h3 class="text-2xl font-bold text-white mb-4">Registration Open Until March 26th, 2025</h3>
@@ -350,22 +247,21 @@
         <div class="max-w-7xl mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-8 text-purple-400">Event Showcase</h2>
             <p class="text-center text-gray-200 mb-12">Explore our exciting lineup of events for INFINITY-2K25</p>
-            
-            <!-- Single Infinite Scroll Container - Left to Right -->
             <div class="relative overflow-hidden glass-effect p-6 rounded-lg">
                 <div class="flex animate-marquee space-x-8">
+                    <!-- Single Infinite Scroll Container - Left to Right -->
                     <img src="public/images/posters/ctrl+z.jpg" alt="CTRL+Z Event" class="h-60 rounded-lg shadow-lg">
                     <img src="public/images/posters/dron etream.jpg" alt="DroneXtreme Event" class="h-60 rounded-lg shadow-lg">
                     <img src="public/images/posters/innovation.jpg" alt="Innovation Event" class="h-60 rounded-lg shadow-lg">
                     <img src="public/images/posters/model blitz.jpg" alt="Model Blitz Event" class="h-60 rounded-lg shadow-lg">
                     <img src="public/images/posters/pitch4sustain.jpg" alt="Pitch4Sustain Event" class="h-60 rounded-lg shadow-lg">
                     <img src="public/images/posters/phnatum hunt.jpg" alt="Phantom Hunt Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/britya veduka.jpg" alt="Nritya Vedika Event" class="h-60 rounded-lg shadow-lg">
                     <img src="public/images/posters/cosmic drift.jpg" alt="Cosmic Drift Event" class="h-60 rounded-lg shadow-lg">
                     <img src="public/images/posters/echoed strangel.jpg" alt="Echoes & Strings Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/just s minut.jpg" alt="Just a Minute Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/britya veduka.jpg" alt="Nritya Vedika Event" class="h-60 rounded-lg shadow-lg">
                     <img src="public/images/posters/resonance.jpg" alt="Resonance Event" class="h-60 rounded-lg shadow-lg">
                     <img src="public/images/posters/stepsynk.jpg" alt="Step Sync Event" class="h-60 rounded-lg shadow-lg">
+                    <img src="public/images/posters/just s minut.jpg" alt="Just a Minute Event" class="h-60 rounded-lg shadow-lg">
                 </div>
             </div>
         </div>
@@ -384,7 +280,6 @@
                     <h3 class="text-xl font-semibold mb-2 text-white">₹2 Lakhs+</h3>
                     <p class="text-gray-200">Prize Pool & Rewards</p>
                 </div>
-                
                 <!-- Highlight 2 -->
                 <div class="glass-effect rounded-lg p-6 text-center transform hover:scale-105 transition-all duration-300 card-hover">
                     <div class="text-4xl text-purple-400 mb-4">
@@ -393,7 +288,6 @@
                     <h3 class="text-xl font-semibold mb-2 text-white">20+ Events</h3>
                     <p class="text-gray-200">Tech & Cultural Competitions</p>
                 </div>
-                
                 <!-- Highlight 3 -->
                 <div class="glass-effect rounded-lg p-6 text-center transform hover:scale-105 transition-all duration-300 card-hover">
                     <div class="text-4xl text-purple-400 mb-4">
@@ -402,7 +296,6 @@
                     <h3 class="text-xl font-semibold mb-2 text-white">1000+ Students</h3>
                     <p class="text-gray-200">National Participation</p>
                 </div>
-                
                 <!-- Highlight 4 -->
                 <div class="glass-effect rounded-lg p-6 text-center transform hover:scale-105 transition-all duration-300 card-hover">
                     <div class="text-4xl text-purple-400 mb-4">
@@ -434,20 +327,18 @@
                         </a>
                     </div>
                 </div>
-                
                 <!-- Column 2: Quick Links -->
                 <div class="glass-effect p-6 rounded-lg">
                     <h3 class="text-xl font-semibold text-purple-400 mb-4">Quick Links</h3>
                     <div class="grid grid-cols-2 gap-2">
                         <a href="index.html" class="text-gray-300 hover:text-purple-400 transition-colors font-semibold">Home</a>
-                        <a href="pages/tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech Events</a>
                         <a href="pages/cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural Events</a>
+                        <a href="pages/tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech Events</a>
                         <a href="pages/register.html" class="text-gray-300 hover:text-purple-400 transition-colors">Register</a>
                         <a href="pages/contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">Contact Us</a>
                         <a href="admin/login.html" class="text-gray-300 hover:text-purple-400 transition-colors">Admin Portal</a>
                     </div>
                 </div>
-                
                 <!-- Column 3: Contact Info -->
                 <div class="glass-effect p-6 rounded-lg">
                     <h3 class="text-xl font-semibold text-purple-400 mb-4">Contact Information</h3>
@@ -475,7 +366,6 @@
                     </div>
                 </div>
             </div>
-            
             <!-- Copyright -->
             <div class="border-t border-gray-800 pt-6 mt-6">
                 <p class="text-center text-gray-300 mb-2">&copy; 2025 Krithik R. All rights reserved. | Designed & Developed by <a href="https://krithikr007.github.io/krithik-r/portfolio/index.html" target="_blank" class="text-purple-400 hover:text-purple-300">Krithik R.</a></p>
@@ -495,41 +385,173 @@
         </div>
     </footer>
 
-    <script src="public/scripts/main.js"></script>
-    <!-- Countdown Script -->
-    <script>
-        // Set the date we're counting down to (March 27, 2025)
-        const countDownDate = new Date("Mar 27, 2025 09:00:00").getTime();
+    <!-- Include a fallback version of main.js for older browsers -->
+    <script nomodule src="public/scripts/main-fallback.js"></script>
+    
+    <!-- Main script with ES modules -->
+    <script type="module">
+        // Import dependencies
+        import { supabase } from './supabase.js';
         
-        // Update the countdown every 1 second
-        const countdownTimer = setInterval(function() {
-            // Get today's date and time
-            const now = new Date().getTime();
+        // DOM Elements
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const closeMenuButton = document.getElementById('closeMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        // Initialize website
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Initializing website...');
             
-            // Find the distance between now and the countdown date
-            const distance = countDownDate - now;
-            
-            // Time calculations for days, hours, minutes and seconds
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            // Display the result
-            document.getElementById("days").innerHTML = days.toString().padStart(2, '0');
-            document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
-            document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
-            document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
-            
-            // If the countdown is finished, display message
-            if (distance < 0) {
-                clearInterval(countdownTimer);
-                document.getElementById("days").innerHTML = "00";
-                document.getElementById("hours").innerHTML = "00";
-                document.getElementById("minutes").innerHTML = "00";
-                document.getElementById("seconds").innerHTML = "00";
+            try {
+                // Initialize UI
+                setupMobileMenu();
+                setupCountdown();
+                setupInteractiveElements();
+                
+                // Test connection to Supabase
+                const { data, error } = await window.supabase.from('events').select('count', { count: 'exact', head: true });
+                
+                if (error) {
+                    console.error('Database connection failed:', error);
+                    showConnectionError('Failed to connect to the database. Please check your connection and try again.');
+                } else {
+                    console.log('Database connection successful');
+                }
+            } catch (error) {
+                console.error('Initialization error:', error);
+            } finally {
+                // Hide loading overlay after a delay
+                setTimeout(() => {
+                    hideLoadingOverlay();
+                }, 500);
             }
-        }, 1000);
+        });
+        
+        // Hide loading overlay with smoother transition
+        function hideLoadingOverlay() {
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    loadingOverlay.classList.add('hidden');
+                }, 500);
+            }
+        }
+        
+        // Setup mobile menu functionality
+        function setupMobileMenu() {
+            if (mobileMenuButton && mobileMenu && closeMenuButton) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.remove('hidden');
+                });
+                
+                closeMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            }
+        }
+        
+        // Setup countdown timer
+        function setupCountdown() {
+            // Set the date we're counting down to (March 27, 2025)
+            const countDownDate = new Date("Mar 27, 2025 09:00:00").getTime();
+            
+            // Update the countdown every 1 second
+            const countdownTimer = setInterval(function() {
+                // Get today's date and time
+                const now = new Date().getTime();
+                
+                // Find the distance between now and the countdown date
+                const distance = countDownDate - now;
+                
+                // Time calculations for days, hours, minutes and seconds
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                // Display the result
+                document.getElementById("days").innerHTML = days.toString().padStart(2, '0');
+                document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
+                document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
+                document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
+                
+                // If the countdown is finished, display message
+                if (distance < 0) {
+                    clearInterval(countdownTimer);
+                    document.getElementById("days").innerHTML = "00";
+                    document.getElementById("hours").innerHTML = "00";
+                    document.getElementById("minutes").innerHTML = "00";
+                    document.getElementById("seconds").innerHTML = "00";
+                }
+            }, 1000);
+        }
+        
+        // Setup interactive elements
+        function setupInteractiveElements() {
+            // Implement smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Show connection error
+        function showConnectionError(message) {
+            console.error('Connection error:', message);
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-80';
+            errorDiv.innerHTML = `
+                <div class="bg-gray-900 p-6 rounded-lg max-w-md text-center">
+                    <div class="text-red-500 text-5xl mb-4">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white mb-4">Connection Error</h2>
+                    <p class="text-gray-300 mb-6">${message}</p>
+                    <button onclick="location.reload()" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
+                        Try Again
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(errorDiv);
+            
+            // Hide loading overlay when showing an error
+            hideLoadingOverlay();
+        }
+    </script>
+    
+    <!-- Fallback script for countdown timer -->
+    <script>
+        // Ensure the loading overlay is removed even if scripts fail
+        setTimeout(function() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.opacity = '0';
+                setTimeout(function() {
+                    loadingOverlay.style.display = 'none';
+                }, 500);
+            }
+        }, 5000);
+        
+        // Add a way to enable debug mode in console
+        console.log('You can enable debug mode by running: enableDebugMode()');
     </script>
 </body>
 </html>

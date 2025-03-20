@@ -293,34 +293,17 @@ export async function getEvents(category = null) {
  */
 export async function verifyDatabaseSetup() {
     try {
-        // Check if we can connect to Supabase
+        // Simple check if we can connect to Supabase
         const { data, error } = await supabase
-            .from(TABLES.EVENTS)
+            .from('events')
             .select('id')
             .limit(1);
             
         if (error) throw error;
         
-        // Check storage buckets
-        const { data: buckets, error: bucketsError } = await supabase
-            .storage
-            .listBuckets();
-            
-        if (bucketsError) throw bucketsError;
-        
-        // Check if payment_proofs bucket exists
-        const paymentProofsBucket = buckets.find(bucket => bucket.name === TABLES.STORAGE.PAYMENT_PROOFS);
-        
         return {
             success: true,
-            connected: true,
-            tables: {
-                events: true,
-                registrations: true
-            },
-            storage: {
-                paymentProofs: !!paymentProofsBucket
-            }
+            connected: true
         };
     } catch (error) {
         console.error('Database verification error:', error);
@@ -328,6 +311,27 @@ export async function verifyDatabaseSetup() {
             success: false,
             connected: false,
             error: error.message || 'Failed to verify database setup'
+        };
+    }
+}
+
+/**
+ * Verify that the Supabase client is properly initialized
+ */
+export async function testConnection() {
+    try {
+        const { data, error } = await supabase.auth.getSession();
+        
+        // Even if not logged in, this should return a valid response
+        return { 
+            success: !error,
+            error: error?.message
+        };
+    } catch (error) {
+        console.error('Connection test error:', error);
+        return {
+            success: false,
+            error: error.message
         };
     }
 }

@@ -3,10 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration - Infinity 2025</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Register for INFINITY-2K25 | Annual Tech & Cultural Fest</title>
+    <meta name="description" content="Register for INFINITY-2K25 - The annual technical and cultural fest of Faculty of Engineering and Technology, Jain University, Bangalore">
     <link rel="stylesheet" href="../public/styles/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Add Supabase URL and key as meta tags for easier debugging -->
+    <meta name="supabase-url" content="https://ceickbodqhwfhcpabfdq.supabase.co">
+    <meta name="supabase-anon-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8">
+    
+    <!-- Load the Supabase client directly in the head for immediate availability -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1"></script>
+    <script>
+        // Initialize Supabase client globally
+        window.supabase = supabase.createClient(
+            'https://ceickbodqhwfhcpabfdq.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8'
+        );
+    </script>
+    
+    <!-- Add debug script -->
+    <script type="module" src="../public/scripts/debug-helper.js"></script>
+    
     <style>
         .floating-navbar {
             position: fixed;
@@ -180,9 +199,31 @@
         .upload-success {
             animation: uploadSuccess 0.5s ease;
         }
+
+        /* Ensure loading overlay can transition properly */
+        #loadingScreen {
+            transition: opacity 0.5s ease-out;
+        }
+        
+        #loadingScreen.opacity-0 {
+            opacity: 0;
+        }
+        
+        #loadingScreen.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-gray-900 min-h-screen">
+    <!-- Loading Screen with additional failsafe -->
+    <div id="loadingScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-90">
+        <div class="text-center">
+            <div class="w-16 h-16 border-4 border-t-purple-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin mb-4"></div>
+            <p class="text-white text-lg">Loading registration form...</p>
+            <p class="text-white text-sm mt-4">If loading takes too long, <a href="#" onclick="window.location.reload()" class="text-purple-400 hover:underline">click here to refresh</a></p>
+        </div>
+    </div>
+    
     <!-- Navigation -->
     <nav class="glass-effect floating-navbar">
         <div class="max-w-7xl mx-auto px-4">
@@ -1260,6 +1301,20 @@
         
         // Initialize the form
         showStep(1);
+    </script>
+
+    <!-- Failsafe script at the end -->
+    <script>
+        // Failsafe to hide loading overlay after 10 seconds no matter what
+        setTimeout(function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0';
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }
+        }, 10000);
     </script>
 </body>
 </html>
