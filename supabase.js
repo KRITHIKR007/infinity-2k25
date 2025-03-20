@@ -1,11 +1,53 @@
-import { createClient } from '@supabase/supabase-js';
+// Import createClient from the CDN if the module import fails
+let createClient;
+try {
+  if (typeof window !== 'undefined') {
+    if (window.supabase && window.supabase.createClient) {
+      createClient = window.supabase.createClient;
+    } else {
+      // Dynamic import for browsers
+      import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/+esm')
+        .then(module => {
+          createClient = module.createClient;
+        });
+    }
+  } else {
+    // For NodeJS environments
+    import('@supabase/supabase-js').then(module => {
+      createClient = module.createClient;
+    });
+  }
+} catch (e) {
+  console.error('Failed to import Supabase client:', e);
+}
 
 // Supabase configuration
 const SUPABASE_URL = 'https://ceickbodqhwfhcpabfdq.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8';
 
 // Initialize Supabase client
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let supabase;
+
+// Use a function to ensure we have createClient before initializing
+function getSupabaseClient() {
+  if (!supabase && typeof createClient === 'function') {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  return supabase;
+}
+
+// For ES module environments
+export { getSupabaseClient as supabase };
+
+// For script tag environments
+if (typeof window !== 'undefined') {
+  window.getSupabaseClient = getSupabaseClient;
+  
+  // Initialize immediately if both dependencies are available
+  if (typeof createClient === 'function') {
+    window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+}
 
 // Export table names
 export const TABLES = {
@@ -22,29 +64,29 @@ export const TABLES = {
 // Authentication helper functions
 export const auth = {
   signIn: async (email, password) => {
-    return await supabase.auth.signInWithPassword({ email, password });
+    return await getSupabaseClient().auth.signInWithPassword({ email, password });
   },
   
   signOut: async () => {
-    return await supabase.auth.signOut();
+    return await getSupabaseClient().auth.signOut();
   },
   
   resetPassword: async (email) => {
-    return await supabase.auth.resetPasswordForEmail(email, {
+    return await getSupabaseClient().auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + '/admin/reset-password.html',
     });
   },
   
   updatePassword: async (password) => {
-    return await supabase.auth.updateUser({ password });
+    return await getSupabaseClient().auth.updateUser({ password });
   },
   
   getSession: async () => {
-    return await supabase.auth.getSession();
+    return await getSupabaseClient().auth.getSession();
   },
   
   getCurrentUser: async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await getSupabaseClient().auth.getUser();
     return user;
   }
 };
@@ -52,14 +94,14 @@ export const auth = {
 // Event management functions
 export const events = {
   getAllEvents: async () => {
-    return await supabase
+    return await getSupabaseClient()
       .from(TABLES.EVENTS)
       .select('*')
       .order('created_at', { ascending: false });
   },
   
   getEventById: async (id) => {
-    return await supabase
+    return await getSupabaseClient()
       .from(TABLES.EVENTS)
       .select('*')
       .eq('id', id)
@@ -67,20 +109,20 @@ export const events = {
   },
   
   createEvent: async (eventData) => {
-    return await supabase
+    return await getSupabaseClient()
       .from(TABLES.EVENTS)
       .insert([{ ...eventData, created_at: new Date().toISOString() }]);
   },
   
   updateEvent: async (id, eventData) => {
-    return await supabase
+    return await getSupabaseClient()
       .from(TABLES.EVENTS)
       .update({ ...eventData, updated_at: new Date().toISOString() })
       .eq('id', id);
   },
   
   deleteEvent: async (id) => {
-    return await supabase
+    return await getSupabaseClient()
       .from(TABLES.EVENTS)
       .delete()
       .eq('id', id);
@@ -90,14 +132,14 @@ export const events = {
 // Registration management functions
 export const registrations = {
   getAllRegistrations: async () => {
-    return await supabase
+    return await getSupabaseClient()
       .from(TABLES.REGISTRATIONS)
       .select('*')
       .order('created_at', { ascending: false });
   },
   
   getRegistrationById: async (id) => {
-    return await supabase
+    return await getSupabaseClient()
       .from(TABLES.REGISTRATIONS)
       .select('*')
       .eq('id', id)
@@ -105,13 +147,13 @@ export const registrations = {
   },
   
   createRegistration: async (registrationData) => {
-    return await supabase
+    return await getSupabaseClient()
       .from(TABLES.REGISTRATIONS)
       .insert([{ ...registrationData, created_at: new Date().toISOString() }]);
   },
   
   updateRegistrationStatus: async (id, status) => {
-    return await supabase
+    return await getSupabaseClient()
       .from(TABLES.REGISTRATIONS)
       .update({ 
         payment_status: status, 

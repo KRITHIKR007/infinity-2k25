@@ -5,14 +5,15 @@
     { "src": "pages/**/*.html", "use": "@vercel/static" },
     { "src": "admin/**/*.html", "use": "@vercel/static" },
     { "src": "public/**/*", "use": "@vercel/static" },
-    { "src": "api/**/*.js", "use": "@vercel/node" }
+    { "src": "*.js", "use": "@vercel/node" },
+    { "src": "supabase.js", "use": "@vercel/static" }
   ],
-  "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/pages/:path*", "destination": "/pages/:path*" },
-    { "source": "/admin/:path*", "destination": "/admin/:path*" },
-    { "source": "/api/:path*", "destination": "/api/:path*" },
-    { "source": "/public/:path*", "destination": "/public/:path*" }
+  "routes": [
+    { "src": "/pages/(.*)", "dest": "/pages/$1" },
+    { "src": "/admin/(.*)", "dest": "/admin/$1" },
+    { "src": "/public/(.*)", "dest": "/public/$1" },
+    { "src": "/supabase.js", "dest": "/supabase.js" },
+    { "src": "/(.*)", "dest": "/$1" }
   ],
   "headers": [
     {
