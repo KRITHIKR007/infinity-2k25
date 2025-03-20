@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "serve -p 3000",
     "start": "serve -p $PORT",
-    "build": "echo 'No build step required, static site'"
+    "build": "echo 'No build step required, static site'",
+    "vercel-build": "echo 'Static site deployment'"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
