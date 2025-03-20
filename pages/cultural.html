@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cultural Events - INFINITY-2K25</title>
+    <title>Cultural Events - Infinity 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1"></script>
     <link rel="stylesheet" href="../public/styles/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -37,7 +38,7 @@
 </head>
 <body class="bg-gray-900 min-h-screen">
     <!-- Navigation -->
-    <nav class="glass-effect floating-navbar">
+    <nav class="fixed top-0 left-0 right-0 z-30 py-4">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
@@ -61,7 +62,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="pt-24 pb-12">
+    <div class="pt-32 pb-20 bg-[url('../public/images/hero-bg.jpeg')] bg-cover bg-fixed">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center">
                 <h1 class="text-5xl font-bold gradient-text mb-4">Cultural Events</h1>
@@ -80,26 +81,26 @@
                         <img src="../public/images/posters/stepsynk.jpg" alt="Step Sync" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-2xl font-bold text-white">STEP SYNC</h3>
-                            <p class="text-gray-200">Solo Dance Competition</p>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Solo Dance
+                            </span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                <span>Venue: Colosseum</span>
+                        <h3 class="text-xl font-bold text-white mb-2">Step Sync</h3>
+                        <p class="text-gray-300 text-sm mb-4">A solo dance competition where participants showcase their dance skills, expressions, and stage presence.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> Colosseum
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-user mr-2"></i>
-                                <span>Individual Participation</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-ticket-alt mr-2"></i>
-                                <span>Registration Fee: ₹500</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 199
                             </div>
                         </div>
-                        <div class="mt-6 flex space-x-4">
+                        <div class="flex justify-between">
                             <a href="events/step-sync.html" class="btn btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>View Details
                             </a>
@@ -116,26 +117,26 @@
                         <img src="../public/images/posters/britya veduka.jpg" alt="Nritya Vedika" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-2xl font-bold text-white">NRITYA VEDIKA</h3>
-                            <p class="text-gray-200">Group Dance Competition</p>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Group Dance
+                            </span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                <span>Venue: Colosseum</span>
+                        <h3 class="text-xl font-bold text-white mb-2">Nritya Vedika</h3>
+                        <p class="text-gray-300 text-sm mb-4">A group dance competition that brings teams together to perform synchronized and energetic routines in Indo-Western styles.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> Colosseum
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-users mr-2"></i>
-                                <span>Team Size: 6-15 members</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-ticket-alt mr-2"></i>
-                                <span>Registration Fee: ₹800</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 799
                             </div>
                         </div>
-                        <div class="mt-6 flex space-x-4">
+                        <div class="flex justify-between">
                             <a href="events/nritya-vedika.html" class="btn btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>View Details
                             </a>
@@ -152,26 +153,26 @@
                         <img src="../public/images/posters/echoed strangel.jpg" alt="Echoes & Strings" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-2xl font-bold text-white">ECHOES & STRINGS</h3>
-                            <p class="text-gray-200">Solo Singing Competition</p>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Solo Music
+                            </span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                <span>Venue: FET</span>
+                        <h3 class="text-xl font-bold text-white mb-2">Echoes & Strings</h3>
+                        <p class="text-gray-300 text-sm mb-4">A solo singing competition where participants display their vocal skills across different genres.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> FET
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-user mr-2"></i>
-                                <span>Individual Participation</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-ticket-alt mr-2"></i>
-                                <span>Registration Fee: ₹299</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 299
                             </div>
                         </div>
-                        <div class="mt-6 flex space-x-4">
+                        <div class="flex justify-between">
                             <a href="events/echoes-strings.html" class="btn btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>View Details
                             </a>
@@ -188,26 +189,26 @@
                         <img src="../public/images/posters/resonance.jpg" alt="Resonance" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-2xl font-bold text-white">RESONANCE</h3>
-                            <p class="text-gray-200">Music Competition (Duet & Group)</p>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Group & Duet Singing
+                            </span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                <span>Venue: FET</span>
+                        <h3 class="text-xl font-bold text-white mb-2">Resonance</h3>
+                        <p class="text-gray-300 text-sm mb-4">A group & duet singing competition featuring live performances with various musical styles.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> FET
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-users mr-2"></i>
-                                <span>Duet/Group Participation</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-ticket-alt mr-2"></i>
-                                <span>Registration Fee: ₹399-₹699</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 499
                             </div>
                         </div>
-                        <div class="mt-6 flex space-x-4">
+                        <div class="flex justify-between">
                             <a href="events/resonance.html" class="btn btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>View Details
                             </a>
@@ -224,27 +225,27 @@
                         <img src="../public/images/posters/cosmic drift.jpg" alt="Cosmic Drift" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-2xl font-bold text-white">COSMIC DRIFT</h3>
-                            <p class="text-gray-200">Sci-Fi Themed Fashion Show</p>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Fashion Show
+                            </span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                <span>Venue: Colosseum</span>
+                        <h3 class="text-xl font-bold text-white mb-2">Cosmic Drift</h3>
+                        <p class="text-gray-300 text-sm mb-4">A sci-fi-themed fashion show where teams showcase unique and futuristic designs with creativity and elegance.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> Colosseum
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-users mr-2"></i>
-                                <span>Team Size: 10-14 members</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-ticket-alt mr-2"></i>
-                                <span>Registration Fee: ₹2500</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 1499
                             </div>
                         </div>
-                        <div class="mt-6 flex space-x-4">
-                            <a href="events/fashion-fusion.html" class="btn btn-primary flex-1">
+                        <div class="flex justify-between">
+                            <a href="events/cosmic-drift.html" class="btn btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>View Details
                             </a>
                             <a href="register.html" class="btn btn-secondary">
@@ -257,30 +258,30 @@
                 <!-- Ekphrastic Poetry -->
                 <div class="glass-effect rounded-lg overflow-hidden">
                     <div class="relative h-48">
-                        <img src="../public/images/posters/poetry.jpg" alt="Ekphrastic Poetry" class="w-full h-full object-cover">
+                        <img src="../public/images/events/poetry.jpg" alt="Ekphrastic" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-2xl font-bold text-white">EKPHRASTIC POETRY</h3>
-                            <p class="text-gray-200">Poetry Writing Based on Artwork</p>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Poetry Writing
+                            </span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                <span>Venue: FET</span>
+                        <h3 class="text-xl font-bold text-white mb-2">Ekphrastic</h3>
+                        <p class="text-gray-300 text-sm mb-4">A poetry competition where participants create a poem based on an artwork given at the event.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> FET
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-user mr-2"></i>
-                                <span>Individual Participation</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-ticket-alt mr-2"></i>
-                                <span>Registration Fee: ₹199</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 99
                             </div>
                         </div>
-                        <div class="mt-6 flex space-x-4">
-                            <a href="events/art-attack.html" class="btn btn-primary flex-1">
+                        <div class="flex justify-between">
+                            <a href="events/ekphrastic.html" class="btn btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>View Details
                             </a>
                             <a href="register.html" class="btn btn-secondary">
@@ -293,30 +294,30 @@
                 <!-- Tale Rewind -->
                 <div class="glass-effect rounded-lg overflow-hidden">
                     <div class="relative h-48">
-                        <img src="../public/images/posters/tale rewind.jpg" alt="Tale Rewind" class="w-full h-full object-cover">
+                        <img src="../public/images/events/story.jpg" alt="Tale Rewind" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-2xl font-bold text-white">TALE REWIND</h3>
-                            <p class="text-gray-200">Story Writing Competition</p>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Story Writing
+                            </span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                <span>Venue: FET</span>
+                        <h3 class="text-xl font-bold text-white mb-2">Tale Rewind</h3>
+                        <p class="text-gray-300 text-sm mb-4">A storytelling event where participants must write a story leading up to a predefined ending.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> FET
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-user mr-2"></i>
-                                <span>Individual Participation</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-ticket-alt mr-2"></i>
-                                <span>Registration Fee: ₹199</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 99
                             </div>
                         </div>
-                        <div class="mt-6 flex space-x-4">
-                            <a href="events/word-wizards.html" class="btn btn-primary flex-1">
+                        <div class="flex justify-between">
+                            <a href="events/tale-rewind.html" class="btn btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>View Details
                             </a>
                             <a href="register.html" class="btn btn-secondary">
@@ -332,27 +333,27 @@
                         <img src="../public/images/posters/just s minut.jpg" alt="Just A Minute" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-2xl font-bold text-white">JUST A MINUTE</h3>
-                            <p class="text-gray-200">Speaking Challenge</p>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Speech Competition
+                            </span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                <span>Venue: FET</span>
+                        <h3 class="text-xl font-bold text-white mb-2">Just A Minute</h3>
+                        <p class="text-gray-300 text-sm mb-4">A fast-paced speech event where participants must speak fluently for a minute on a given topic.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> FET
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-user mr-2"></i>
-                                <span>Individual Participation</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-ticket-alt mr-2"></i>
-                                <span>Registration Fee: ₹199</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 99
                             </div>
                         </div>
-                        <div class="mt-6 flex space-x-4">
-                            <a href="events/word-wizards.html" class="btn btn-primary flex-1">
+                        <div class="flex justify-between">
+                            <a href="events/just-a-minute.html" class="btn btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>View Details
                             </a>
                             <a href="register.html" class="btn btn-secondary">
@@ -365,30 +366,30 @@
                 <!-- Wave Your Story -->
                 <div class="glass-effect rounded-lg overflow-hidden">
                     <div class="relative h-48">
-                        <img src="../public/images/posters/wave the falge.jpg" alt="Wave Your Story" class="w-full h-full object-cover">
+                        <img src="../public/images/events/historical-speech.jpg" alt="Weave Your Story" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-2xl font-bold text-white">WAVE YOUR STORY</h3>
-                            <p class="text-gray-200">Speech Recital Competition</p>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Historical Speech
+                            </span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-map-marker-alt mr-2"></i>
-                                <span>Venue: FET</span>
+                        <h3 class="text-xl font-bold text-white mb-2">Weave Your Story</h3>
+                        <p class="text-gray-300 text-sm mb-4">Historical speech recital event where participants recreate famous speeches from history.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> FET
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-user mr-2"></i>
-                                <span>Individual Participation</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-ticket-alt mr-2"></i>
-                                <span>Registration Fee: ₹299</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 99
                             </div>
                         </div>
-                        <div class="mt-6 flex space-x-4">
-                            <a href="events/stage-spotlite.html" class="btn btn-primary flex-1">
+                        <div class="flex justify-between">
+                            <a href="events/weave-your-story.html" class="btn btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>View Details
                             </a>
                             <a href="register.html" class="btn btn-secondary">
@@ -401,22 +402,30 @@
                 <!-- Short Film Making -->
                 <div class="glass-effect rounded-lg overflow-hidden">
                     <div class="relative h-48">
-                        <img src="../public/images/posters/ather frames.jpg" alt="Short Film Making" class="w-full h-full object-cover">
+                        <img src="../public/images/events/short-film.jpg" alt="Aether Frames" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-2xl font-bold text-white">SHORT FILM MAKING</h3>
-                            <p class="text-gray-200">Create and Submit Short Films</p>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Short Film Making
+                            </span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-users mr-2"></i>
-                                <span>Team Size: Max 10 members</span>
+                        <h3 class="text-xl font-bold text-white mb-2">Aether Frames</h3>
+                        <p class="text-gray-300 text-sm mb-4">A short film making competition showcasing creativity, storytelling, and cinematography.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> TBA
+                            </div>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
+                            </div>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 499
                             </div>
                         </div>
-                        <div class="mt-6 flex space-x-4">
-                            <a href="events/stage-spotlite.html" class="btn btn-primary flex-1">
+                        <div class="flex justify-between">
+                            <a href="events/aether-frames.html" class="btn btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>View Details
                             </a>
                             <a href="register.html" class="btn btn-secondary">
@@ -429,26 +438,66 @@
                 <!-- Capture the Moment / Motion Fusion -->
                 <div class="glass-effect rounded-lg overflow-hidden">
                     <div class="relative h-48">
-                        <img src="../public/images/posters/capture the moment.jpg" alt="Capture the Moment" class="w-full h-full object-cover">
+                        <img src="../public/images/events/photography.jpg" alt="Capture the Moment" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-2xl font-bold text-white">Capture the Moment</h3>
-                            <p class="text-gray-200">Photography & Videography</p>
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Photography & Videography
+                            </span>
                         </div>
                     </div>
                     <div class="p-6">
-                        <div class="space-y-4">
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-camera mr-2"></i>
-                                <span>Mobile/DSLR Photography</span>
+                        <h3 class="text-xl font-bold text-white mb-2">Capture the Moment</h3>
+                        <p class="text-gray-300 text-sm mb-4">Photography and videography competition capturing the essence of Infinity 2025.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> TBA
                             </div>
-                            <div class="flex items-center text-gray-300">
-                                <i class="fas fa-ticket-alt mr-2"></i>
-                                <span>Registration Fee: ₹100-₹150</span>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
+                            </div>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 100-150
                             </div>
                         </div>
-                        <div class="mt-6 flex space-x-4">
-                            <a href="events/lens-tale.html" class="btn btn-primary flex-1">
+                        <div class="flex justify-between">
+                            <a href="events/capture-the-moment.html" class="btn btn-primary flex-1">
+                                <i class="fas fa-eye mr-2"></i>View Details
+                            </a>
+                            <a href="register.html" class="btn btn-secondary">
+                                <i class="fas fa-user-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Motion Fusion (Videography Competition) -->
+                <div class="glass-effect rounded-lg overflow-hidden">
+                    <div class="relative h-48">
+                        <img src="../public/images/events/videography.jpg" alt="Motion Fusion" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="px-2 py-1 text-xs rounded-full bg-purple-900 bg-opacity-50 text-purple-300">
+                                Videography
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-white mb-2">Motion Fusion</h3>
+                        <p class="text-gray-300 text-sm mb-4">Specialized videography competition focusing on motion, transitions, and visual storytelling.</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-1"></i> TBA
+                            </div>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-calendar-alt mr-1"></i> 27th March
+                            </div>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-rupee-sign mr-1"></i> 99
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <a href="events/motion-fusion.html" class="btn btn-primary flex-1">
                                 <i class="fas fa-eye mr-2"></i>View Details
                             </a>
                             <a href="register.html" class="btn btn-secondary">
@@ -458,6 +507,17 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="py-16 bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-white mb-6">Ready to Showcase Your Talent?</h2>
+            <p class="text-xl text-gray-300 mb-8">Join us at Infinity 2025 and be part of an unforgettable cultural experience!</p>
+            <a href="register.html" class="px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors inline-flex items-center">
+                <i class="fas fa-user-plus mr-2"></i>Register Now
+            </a>
         </div>
     </div>
 

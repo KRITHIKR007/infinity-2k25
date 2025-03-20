@@ -85,6 +85,33 @@
             color: #9ca3af;
             text-transform: uppercase;
         }
+        
+        /* Add marquee animation CSS */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .animate-marquee {
+            display: flex;
+            animation: marquee 30s linear infinite;
+            width: max-content;
+        }
+        
+        .marquee-container {
+            overflow: hidden;
+            width: 100%;
+        }
+        
+        .animate-marquee img {
+            transition: transform 0.3s ease;
+        }
+        
+        .animate-marquee img:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
     </style>
 </head>
 <body class="bg-gray-900 min-h-screen">
@@ -247,21 +274,36 @@
         <div class="max-w-7xl mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-8 text-purple-400">Event Showcase</h2>
             <p class="text-center text-gray-200 mb-12">Explore our exciting lineup of events for INFINITY-2K25</p>
-            <div class="relative overflow-hidden glass-effect p-6 rounded-lg">
-                <div class="flex animate-marquee space-x-8">
-                    <!-- Single Infinite Scroll Container - Left to Right -->
-                    <img src="public/images/posters/ctrl+z.jpg" alt="CTRL+Z Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/dron etream.jpg" alt="DroneXtreme Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/innovation.jpg" alt="Innovation Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/model blitz.jpg" alt="Model Blitz Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/pitch4sustain.jpg" alt="Pitch4Sustain Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/phnatum hunt.jpg" alt="Phantom Hunt Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/cosmic drift.jpg" alt="Cosmic Drift Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/echoed strangel.jpg" alt="Echoes & Strings Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/britya veduka.jpg" alt="Nritya Vedika Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/resonance.jpg" alt="Resonance Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/stepsynk.jpg" alt="Step Sync Event" class="h-60 rounded-lg shadow-lg">
-                    <img src="public/images/posters/just s minut.jpg" alt="Just a Minute Event" class="h-60 rounded-lg shadow-lg">
+            <div class="glass-effect p-6 rounded-lg marquee-container">
+                <!-- Create two copies of the content to create the infinite loop effect -->
+                <div class="animate-marquee">
+                    <!-- First set of images -->
+                    <img src="public/images/posters/ctrl+z.jpg" alt="CTRL+Z Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/dron etream.jpg" alt="DroneXtreme Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/innovation.jpg" alt="Innovation Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/model blitz.jpg" alt="Model Blitz Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/pitch4sustain.jpg" alt="Pitch4Sustain Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/phnatum hunt.jpg" alt="Phantom Hunt Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/cosmic drift.jpg" alt="Cosmic Drift Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/echoed strangel.jpg" alt="Echoes & Strings Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/britya veduka.jpg" alt="Nritya Vedika Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/resonance.jpg" alt="Resonance Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/stepsynk.jpg" alt="Step Sync Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/just s minut.jpg" alt="Just a Minute Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    
+                    <!-- Duplicate set of images to create seamless loop -->
+                    <img src="public/images/posters/ctrl+z.jpg" alt="CTRL+Z Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/dron etream.jpg" alt="DroneXtreme Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/innovation.jpg" alt="Innovation Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/model blitz.jpg" alt="Model Blitz Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/pitch4sustain.jpg" alt="Pitch4Sustain Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/phnatum hunt.jpg" alt="Phantom Hunt Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/cosmic drift.jpg" alt="Cosmic Drift Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/echoed strangel.jpg" alt="Echoes & Strings Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/britya veduka.jpg" alt="Nritya Vedika Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/resonance.jpg" alt="Resonance Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/stepsynk.jpg" alt="Step Sync Event" class="h-60 rounded-lg shadow-lg mx-4">
+                    <img src="public/images/posters/just s minut.jpg" alt="Just a Minute Event" class="h-60 rounded-lg shadow-lg mx-4">
                 </div>
             </div>
         </div>
@@ -336,7 +378,6 @@
                         <a href="pages/tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech Events</a>
                         <a href="pages/register.html" class="text-gray-300 hover:text-purple-400 transition-colors">Register</a>
                         <a href="pages/contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">Contact Us</a>
-                        <a href="admin/login.html" class="text-gray-300 hover:text-purple-400 transition-colors">Admin Portal</a>
                     </div>
                 </div>
                 <!-- Column 3: Contact Info -->
@@ -349,7 +390,7 @@
                         </p>
                         <p class="flex items-start">
                             <i class="fas fa-envelope mt-1 mr-3 text-purple-400"></i>
-                            <span class="text-gray-200">culturalculbfet.ju@gmail.com</span>
+                            <span class="text-gray-200">culturalclubfet.ju@gmail.com</span>
                         </p>
                         <p class="flex items-start">
                             <i class="fas fa-phone-alt mt-1 mr-3 text-purple-400"></i>
@@ -376,11 +417,12 @@
                     <a href="https://www.linkedin.com/in/krithik-r124/" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">LinkedIn</a> | 
                     <span class="text-gray-500 mx-2">Discord: krithik.r007</span>
                 </p>
-                <p class="text-center text-gray-400 mt-4">
-                    <a href="admin/login.html" class="text-gray-400 hover:text-purple-400 transition-colors">
-                        <i class="fas fa-lock mr-1"></i> Admin Login
+                <!-- Admin Login Button - Subtle and small -->
+                <div class="text-center mt-4">
+                    <a href="/admin/login.html" class="text-xs text-gray-500 hover:text-purple-400 transition-colors opacity-60 hover:opacity-100">
+                        <i class="fas fa-lock mr-1"></i>Admin
                     </a>
-                </p>
+                </div>
             </div>
         </div>
     </footer>
@@ -438,21 +480,34 @@
             }
         }
         
-        // Setup mobile menu functionality
-        function setupMobileMenu() {
-            if (mobileMenuButton && mobileMenu && closeMenuButton) {
-                mobileMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.remove('hidden');
-                });
-                
-                closeMenuButton.addEventListener('click', () => {
-                    mobileMenu.classList.add('hidden');
-                });
-            }
-        }
-        
         // Setup countdown timer
         function setupCountdown() {
+            // Create countdown elements if they don't exist
+            const countdownContainer = document.getElementById('countdown');
+            if (countdownContainer) {
+                // Only create elements if the container is empty
+                if (countdownContainer.children.length === 0) {
+                    countdownContainer.innerHTML = `
+                        <div class="countdown-item">
+                            <span id="days" class="countdown-value">00</span>
+                            <span class="countdown-label">Days</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span id="hours" class="countdown-value">00</span>
+                            <span class="countdown-label">Hours</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span id="minutes" class="countdown-value">00</span>
+                            <span class="countdown-label">Minutes</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span id="seconds" class="countdown-value">00</span>
+                            <span class="countdown-label">Seconds</span>
+                        </div>
+                    `;
+                }
+            }
+            
             // Set the date we're counting down to (March 27, 2025)
             const countDownDate = new Date("Mar 27, 2025 09:00:00").getTime();
             
@@ -470,21 +525,40 @@
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
                 
-                // Display the result
-                document.getElementById("days").innerHTML = days.toString().padStart(2, '0');
-                document.getElementById("hours").innerHTML = hours.toString().padStart(2, '0');
-                document.getElementById("minutes").innerHTML = minutes.toString().padStart(2, '0');
-                document.getElementById("seconds").innerHTML = seconds.toString().padStart(2, '0');
+                // Get the elements first
+                const daysElement = document.getElementById("days");
+                const hoursElement = document.getElementById("hours");
+                const minutesElement = document.getElementById("minutes");
+                const secondsElement = document.getElementById("seconds");
+                
+                // Only update if elements exist
+                if (daysElement) daysElement.innerHTML = days.toString().padStart(2, '0');
+                if (hoursElement) hoursElement.innerHTML = hours.toString().padStart(2, '0');
+                if (minutesElement) minutesElement.innerHTML = minutes.toString().padStart(2, '0');
+                if (secondsElement) secondsElement.innerHTML = seconds.toString().padStart(2, '0');
                 
                 // If the countdown is finished, display message
                 if (distance < 0) {
                     clearInterval(countdownTimer);
-                    document.getElementById("days").innerHTML = "00";
-                    document.getElementById("hours").innerHTML = "00";
-                    document.getElementById("minutes").innerHTML = "00";
-                    document.getElementById("seconds").innerHTML = "00";
+                    if (daysElement) daysElement.innerHTML = "00";
+                    if (hoursElement) hoursElement.innerHTML = "00";
+                    if (minutesElement) minutesElement.innerHTML = "00";
+                    if (secondsElement) secondsElement.innerHTML = "00";
                 }
             }, 1000);
+        }
+        
+        // Setup mobile menu functionality
+        function setupMobileMenu() {
+            if (mobileMenuButton && mobileMenu && closeMenuButton) {
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.remove('hidden');
+                });
+                
+                closeMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            }
         }
         
         // Setup interactive elements

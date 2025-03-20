@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - Infinity 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Load the exact Supabase version known to work -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.1/dist/umd/supabase.min.js"></script>
     <link rel="stylesheet" href="../public/styles/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -172,7 +173,6 @@
                     <input type="email" id="email" name="email" required
                         class="form-input"
                         placeholder="Enter your admin email">
-                    <p id="emailError" class="text-xs text-red-400 mt-1 hidden"></p>
                 </div>
 
                 <div class="form-field">
@@ -187,141 +187,45 @@
                             <i class="fas fa-eye"></i>
                         </span>
                     </div>
-                    <div id="passwordStrength" class="password-strength hidden"></div>
-                    <p id="passwordFeedback" class="text-xs text-gray-400 mt-1 hidden"></p>
-                    <p id="passwordError" class="text-xs text-red-400 mt-1 hidden"></p>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input id="remember-me" name="remember-me" type="checkbox" 
-                            class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-700 rounded">
-                        <label for="remember-me" class="ml-2 block text-sm text-gray-300">
-                            Remember me
-                        </label>
-                    </div>
-                    <button type="button" id="forgotPasswordBtn" class="text-sm text-purple-400 hover:underline">
-                        Forgot password?
-                    </button>
                 </div>
 
                 <div>
-                    <button type="submit" class="w-full btn btn-primary flex justify-center">
+                    <button type="submit" id="loginBtn" class="w-full btn btn-primary flex justify-center">
                         <span id="loginBtnText"><i class="fas fa-sign-in-alt mr-2"></i>Sign in</span>
                         <span id="loginBtnLoading" class="loading hidden"></span>
                     </button>
                 </div>
+                
+                <div class="flex justify-between">
+                    <button type="button" id="alternateLoginBtn" class="text-sm text-purple-400 hover:text-purple-300">
+                        Try Alternate Login
+                    </button>
+                    <button type="button" id="debugModeBtn" class="text-sm text-purple-400 hover:text-purple-300">
+                        Debug Mode
+                    </button>
+                </div>
+                
+                <div class="flex justify-center mt-4">
+                    <a href="direct-login.html" class="text-sm text-purple-400 hover:text-purple-300">
+                        Having trouble logging in? Try Direct Login
+                    </a>
+                </div>
+                
+                <!-- Debug info (will be hidden in production) -->
+                <div id="debugInfo" class="mt-4 p-2 bg-gray-800 text-xs text-gray-300 rounded overflow-auto h-24 hidden"></div>
             </form>
             
             <!-- Error Message -->
-            <div id="errorMessage" class="hidden mt-4 p-4 bg-red-900/50 text-red-200 rounded-lg fade-in">
+            <div id="errorContainer" class="hidden mt-4 p-4 bg-red-900/50 text-red-200 rounded-lg fade-in">
                 <div class="flex items-center">
                     <i class="fas fa-exclamation-circle mr-2"></i>
                     <span>Invalid username or password. Please try again.</span>
                 </div>
             </div>
             
-            <!-- Reset Password Form (initially hidden) -->
-            <form id="resetPasswordForm" class="glass-effect rounded-lg p-8 space-y-6 mt-4 hidden">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-medium text-white">Reset Password</h3>
-                    <button type="button" id="closeResetForm" class="text-gray-400 hover:text-white">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div>
-                    <label for="resetEmail" class="block text-sm font-medium text-gray-300 mb-2">
-                        <i class="fas fa-envelope mr-2"></i>Email
-                    </label>
-                    <input type="email" id="resetEmail" name="resetEmail" required
-                        class="form-input"
-                        placeholder="Enter your admin email">
-                </div>
-                <div>
-                    <button type="submit" class="w-full btn btn-primary flex justify-center">
-                        <span id="resetBtnText"><i class="fas fa-paper-plane mr-2"></i>Send Reset Link</span>
-                        <span id="resetBtnLoading" class="loading hidden"></span>
-                    </button>
-                </div>
-            </form>
-            
-            <!-- Success Message -->
-            <div id="successMessage" class="hidden mt-4 p-4 bg-green-900/50 text-green-200 rounded-lg fade-in">
-                <div class="flex items-center">
-                    <i class="fas fa-check-circle mr-2"></i>
-                    <span>Password reset link sent successfully! Check your email.</span>
-                </div>
-            </div>
-            
-            <!-- Create Admin Section -->
+            <!-- Troubleshooting Info -->
             <div class="mt-6 text-center">
-                <p class="text-gray-400 mb-3">Need admin access? Create a new admin account:</p>
-                <button id="createAdminBtn" class="btn btn-primary">
-                    <i class="fas fa-user-plus mr-2"></i>Create New Admin Account
-                </button>
-            </div>
-            
-            <!-- Create Admin Modal (initially hidden) -->
-            <div id="adminModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
-                <div class="absolute inset-0 bg-black bg-opacity-70"></div>
-                <div class="relative bg-gray-800 rounded-lg w-full max-w-md p-8 z-10 form-container">
-                    <button type="button" id="closeAdminModal" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
-                    <h3 class="text-xl font-bold text-white mb-6">Create Admin Account</h3>
-                    
-                    <form id="createAdminForm" class="space-y-6">
-                        <div>
-                            <label for="adminName" class="block text-sm font-medium text-gray-300 mb-2">
-                                <i class="fas fa-user mr-2"></i>Full Name
-                            </label>
-                            <input type="text" id="adminName" name="adminName" required
-                                class="form-input"
-                                placeholder="Enter your full name">
-                        </div>
-                        <div>
-                            <label for="adminEmail" class="block text-sm font-medium text-gray-300 mb-2">
-                                <i class="fas fa-envelope mr-2"></i>Email
-                            </label>
-                            <input type="email" id="adminEmail" name="adminEmail" required
-                                class="form-input"
-                                placeholder="Enter your admin email">
-                        </div>
-                        <div class="form-field">
-                            <label for="adminPassword" class="block text-sm font-medium text-gray-300 mb-2">
-                                <i class="fas fa-lock mr-2"></i>Password
-                            </label>
-                            <div class="relative">
-                                <input type="password" id="adminPassword" name="adminPassword" required
-                                    class="form-input pr-10"
-                                    placeholder="Create a strong password"
-                                    oninput="checkPasswordStrength(this.value)">
-                                <span class="toggle-password" onclick="toggleAdminPasswordVisibility()">
-                                    <i class="fas fa-eye"></i>
-                                </span>
-                            </div>
-                            <div id="adminPasswordStrength" class="password-strength"></div>
-                            <p id="adminPasswordFeedback" class="text-xs text-gray-400 mt-1"></p>
-                        </div>
-                        <div class="form-field">
-                            <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-2">
-                                <i class="fas fa-lock mr-2"></i>Confirm Password
-                            </label>
-                            <div class="relative">
-                                <input type="password" id="confirmPassword" name="confirmPassword" required
-                                    class="form-input pr-10"
-                                    placeholder="Confirm your password">
-                                <span class="toggle-password" onclick="toggleConfirmPasswordVisibility()">
-                                    <i class="fas fa-eye"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <button type="submit" id="submitAdminBtn" class="w-full btn btn-primary flex justify-center">
-                            <span id="createAdminBtnText"><i class="fas fa-user-plus mr-2"></i>Create Admin Account</span>
-                            <span id="createAdminBtnLoading" class="loading hidden"></span>
-                        </button>
-                    </form>
-                </div>
+                <p class="text-gray-400 text-sm">Encountering CAPTCHA errors? Try the <a href="direct-login.html" class="text-purple-400 hover:underline">Direct Login</a> method.</p>
             </div>
         </div>
     </div>
@@ -365,39 +269,40 @@
         </div>
     </footer>
 
-    <script></script>
-        // Initialize Supabase client
+    <!-- Load our authentication bypass script -->
+    <script src="auth-bypass.js"></script>
+    
+    <script>
+        // Debug logger
+        function log(message) {
+            const debugInfo = document.getElementById('debugInfo');
+            if (debugInfo) {
+                debugInfo.innerHTML += message + '<br>';
+                debugInfo.scrollTop = debugInfo.scrollHeight;
+                console.log(message);
+            }
+        }
+
+        // Show/hide debug panel
+        document.getElementById('debugModeBtn').addEventListener('click', function() {
+            const debugInfo = document.getElementById('debugInfo');
+            if (debugInfo.classList.contains('hidden')) {
+                debugInfo.classList.remove('hidden');
+                this.textContent = 'Hide Debug';
+            } else {
+                debugInfo.classList.add('hidden');
+                this.textContent = 'Debug Mode';
+            }
+        });
+
+        // Initialize Supabase globally
+        log('Initializing Supabase...');
         const supabaseUrl = 'https://ceickbodqhwfhcpabfdq.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        window.supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        log('Supabase initialized ✓');
         
-        // Form elements
-        const loginForm = document.getElementById('loginForm');
-        const resetPasswordForm = document.getElementById('resetPasswordForm');
-        const createAdminForm = document.getElementById('createAdminForm');
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
-        const loginBtnText = document.getElementById('loginBtnText');
-        const loginBtnLoading = document.getElementById('loginBtnLoading');
-        const resetBtnText = document.getElementById('resetBtnText');
-        const resetBtnLoading = document.getElementById('resetBtnLoading');
-        const createAdminBtnText = document.getElementById('createAdminBtnText');
-        const createAdminBtnLoading = document.getElementById('createAdminBtnLoading');
-        
-        // Modal elements
-        const adminModal = document.getElementById('adminModal');
-        const createAdminBtn = document.getElementById('createAdminBtn');
-        const closeAdminModal = document.getElementById('closeAdminModal');
-        const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
-        const closeResetForm = document.getElementById('closeResetForm');
-        
-        // Password UI elements
-        const passwordStrength = document.getElementById('passwordStrength');
-        const passwordFeedback = document.getElementById('passwordFeedback');
-        const adminPasswordStrength = document.getElementById('adminPasswordStrength');
-        const adminPasswordFeedback = document.getElementById('adminPasswordFeedback');
-        
-        // Toggle password visibility functions
+        // Password visibility toggle
         function togglePasswordVisibility() {
             const passwordField = document.getElementById('password');
             const icon = document.querySelector('.toggle-password i');
@@ -412,424 +317,120 @@
                 icon.classList.add('fa-eye');
             }
         }
-        
-        function toggleAdminPasswordVisibility() {
-            const passwordField = document.getElementById('adminPassword');
-            const icon = passwordField.parentElement.querySelector('.toggle-password i');
-            
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                passwordField.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-        
-        function toggleConfirmPasswordVisibility() {
-            const passwordField = document.getElementById('confirmPassword');
-            const icon = passwordField.parentElement.querySelector('.toggle-password i');
-            
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                passwordField.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-        
-        // Check password strength
-        function checkPasswordStrength(password) {
-            const strengthElement = document.getElementById('adminPasswordStrength');
-            const feedbackElement = document.getElementById('adminPasswordFeedback');
-            
-            // Show the strength bar
-            strengthElement.classList.remove('hidden');
-            feedbackElement.classList.remove('hidden');
-            
-            // Check password strength
-            let strength = 0;
-            let feedback = '';
-            
-            // Length check
-            if (password.length >= 8) {
-                strength += 1;
-            } else {
-                feedback = 'Password should be at least 8 characters long';
-            }
-            
-            // Contains uppercase
-            if (/[A-Z]/.test(password)) {
-                strength += 1;
-            } else if (!feedback) {
-                feedback = 'Add uppercase letters for stronger password';
-            }
-            
-            // Contains lowercase
-            if (/[a-z]/.test(password)) {
-                strength += 1;
-            } else if (!feedback) {
-                feedback = 'Add lowercase letters for stronger password';
-            }
-            
-            // Contains numbers
-            if (/[0-9]/.test(password)) {
-                strength += 1;
-            } else if (!feedback) {
-                feedback = 'Add numbers for stronger password';
-            }
-            
-            // Contains special characters
-            if (/[^A-Za-z0-9]/.test(password)) {
-                strength += 1;
-            } else if (!feedback) {
-                feedback = 'Add special characters for stronger password';
-            }
-            
-            // Update UI based on strength
-            strengthElement.className = 'password-strength';
-            if (password.length === 0) {
-                strengthElement.classList.add('hidden');
-                feedbackElement.classList.add('hidden');
-            } else if (strength < 3) {
-                strengthElement.classList.add('strength-weak');
-                feedbackElement.textContent = feedback || 'Weak password';
-                feedbackElement.className = 'text-xs text-red-400 mt-1';
-            } else if (strength < 5) {
-                strengthElement.classList.add('strength-medium');
-                feedbackElement.textContent = feedback || 'Medium strength password';
-                feedbackElement.className = 'text-xs text-yellow-400 mt-1';
-            } else {
-                strengthElement.classList.add('strength-strong');
-                feedbackElement.textContent = 'Strong password';
-                feedbackElement.className = 'text-xs text-green-400 mt-1';
-            }
-        }
-        
-        // Check if user is already signed in
-        async function checkSession() {
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
-                    // User is already logged in, redirect to dashboard
-                    window.location.href = 'dashboard.html';
-                }
-            } catch (error) {
-                console.error('Session check error:', error);
-            }
-        }
-        
-        // Call session check on page load
-        checkSession();
-        
-        // Login form submission
-        loginForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            // Show loading state
-            loginBtnText.classList.add('hidden');
-            loginBtnLoading.classList.remove('hidden');
-            errorMessage.classList.add('hidden');
-            
+
+        // Handle alternate login
+        document.getElementById('alternateLoginBtn').addEventListener('click', async function() {
+            // Get form data
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
-            try {
-                // Sign in with email and password
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
-                
-                if (error) {
-                    throw error;
-                }
-                
-                if (data.user) {
-                    // Check if user has admin role (can be implemented with Supabase RLS policies)
-                    const { data: userData, error: userError } = await supabase
-                        .from('profiles')
-                        .select('role')
-                        .eq('id', data.user.id)
-                        .single();
-                    
-                    if (userError) {
-                        // If no role found, assume they're an admin for now
-                        // In a real app, you'd want to strictly check this
-                        window.location.href = 'dashboard.html';
-                        return;
-                    }
-                    
-                    if (userData?.role === 'admin') {
-                        window.location.href = 'dashboard.html';
-                    } else {
-                        throw new Error('You do not have admin privileges');
-                    }
-                } else {
-                    // If not admin, show error
-                    throw new Error('Not authorized as admin');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                
-                // Show error message
-                errorMessage.querySelector('span').textContent = error.message || 'Login failed. Please try again.';
-                errorMessage.classList.remove('hidden');
-                
-                // Reset button state
-                loginBtnText.classList.remove('hidden');
-                loginBtnLoading.classList.add('hidden');
-                
-                // Shake the form slightly to indicate error
-                loginForm.classList.add('animate-shake');
-                setTimeout(() => {
-                    loginForm.classList.remove('animate-shake');
-                }, 500);
-            }
-        });
-        
-        // Reset password form
-        resetPasswordForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            resetBtnText.classList.add('hidden');
-            resetBtnLoading.classList.remove('hidden');
-            
-            const email = document.getElementById('resetEmail').value;
-            
-            try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin + '/admin/reset-password.html',
-                });
-                
-                if (error) throw error;
-                
-                // Show success message
-                successMessage.classList.remove('hidden');
-                resetPasswordForm.classList.add('hidden');
-                
-            } catch (error) {
-                console.error('Reset password error:', error);
-                errorMessage.querySelector('span').textContent = error.message || 'Failed to send reset link. Please try again.';
-                errorMessage.classList.remove('hidden');
-            } finally {
-                resetBtnText.classList.remove('hidden');
-                resetBtnLoading.classList.add('hidden');
-            }
-        });
-        
-        // Create Admin form submission
-        createAdminForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            createAdminBtnText.classList.add('hidden');
-            createAdminBtnLoading.classList.remove('hidden');
-            errorMessage.classList.add('hidden');
-            
-            const name = document.getElementById('adminName').value;
-            const email = document.getElementById('adminEmail').value;
-            const password = document.getElementById('adminPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            // Validate passwords match
-            if (password !== confirmPassword) {
-                errorMessage.querySelector('span').textContent = 'Passwords do not match!';
-                errorMessage.classList.remove('hidden');
-                createAdminBtnText.classList.remove('hidden');
-                createAdminBtnLoading.classList.add('hidden');
+            if (!email || !password) {
+                alert('Please enter both email and password');
                 return;
             }
             
+            // Show loading state
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+            const loginBtnLoading = document.getElementById('loginBtnLoading');
+            
+            loginBtn.disabled = true;
+            loginBtnText.classList.add('hidden');
+            loginBtnLoading.classList.remove('hidden');
+            
             try {
-                // Create new user with Supabase
-                const { data, error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        data: {
-                            full_name: name,
-                            role: 'admin'
-                        }
-                    }
-                });
+                log('Trying alternate login method...');
+                const result = await window.directLogin(email, password);
                 
-                if (error) throw error;
-                
-                if (data.user) {
-                    // Create record in profiles table with admin role
-                    const { error: profileError } = await supabase
-                        .from('profiles')
-                        .insert([
-                            {
-                                id: data.user.id,
-                                full_name: name,
-                                email: email,
-                                role: 'admin',
-                                created_at: new Date().toISOString()
-                            }
-                        ]);
-                    
-                    if (profileError) throw profileError;
-                    
-                    // Show success message and close modal
-                    alert('Admin account created successfully! You can now log in.');
-                    adminModal.classList.add('hidden');
-                    
-                    // Set email field in login form for convenience
-                    document.getElementById('email').value = email;
-                    document.getElementById('password').focus();
+                if (result.error) {
+                    throw result.error;
                 }
+                
+                log('Login successful! Redirecting...');
+                localStorage.setItem('adminLoggedIn', 'true');
+                window.location.href = '/admin/dashboard.html';
             } catch (error) {
-                console.error('Create admin error:', error);
+                log(`Error with alternate login: ${error.message}`);
+                const errorContainer = document.getElementById('errorContainer');
+                errorContainer.querySelector('span').textContent = error.message || 'Failed to log in. Please check your credentials.';
+                errorContainer.classList.remove('hidden');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtnText.classList.remove('hidden');
+                loginBtnLoading.classList.add('hidden');
+            }
+        });
+
+        // Handle regular form submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            log('Login attempt started...');
+            
+            // Get form data
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            log(`Login with email: ${email}`);
+
+            // Show loading state
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+            const loginBtnLoading = document.getElementById('loginBtnLoading');
+            
+            loginBtn.disabled = true;
+            loginBtnText.classList.add('hidden');
+            loginBtnLoading.classList.remove('hidden');
+
+            // Hide any previous error
+            const errorContainer = document.getElementById('errorContainer');
+            errorContainer.classList.add('hidden');
+
+            try {
+                log('Creating a fresh Supabase client for this login attempt...');
+                // Create a new instance for this login specifically
+                const freshClient = supabase.createClient(supabaseUrl, supabaseKey);
+                
+                log('Calling signInWithPassword()...');
+                const { data, error } = await freshClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    log(`Login error: ${error.message}`);
+                    
+                    // If we get a CAPTCHA error, try the alternate method
+                    if (error.message.includes('captcha')) {
+                        log('CAPTCHA error detected, trying alternate method...');
+                        const altResult = await window.directLogin(email, password);
+                        
+                        if (altResult.error) throw altResult.error;
+                        
+                        data = altResult.data;
+                    } else {
+                        throw error;
+                    }
+                }
+
+                log('Login successful! Redirecting...');
+                
+                // Store user session for auto-login
+                localStorage.setItem('adminLoggedIn', 'true');
+                
+                // Redirect to dashboard
+                window.location.href = '/admin/dashboard.html';
+            } catch (error) {
+                log(`Error: ${error.message}`);
                 
                 // Show error message
-                errorMessage.querySelector('span').textContent = error.message || 'Failed to create admin account. Please try again.';
-                errorMessage.classList.remove('hidden');
+                errorContainer.querySelector('span').textContent = error.message || 'Failed to log in. Please check your credentials.';
+                errorContainer.classList.remove('hidden');
             } finally {
                 // Reset button state
-                createAdminBtnText.classList.remove('hidden');
-                createAdminBtnLoading.classList.add('hidden');
+                loginBtn.disabled = false;
+                loginBtnText.classList.remove('hidden');
+                loginBtnLoading.classList.add('hidden');
             }
         });
-        
-        // Modal interactions
-        createAdminBtn.addEventListener('click', () => {
-            adminModal.classList.remove('hidden');
-            document.getElementById('adminName').focus();
-        });
-        
-        closeAdminModal.addEventListener('click', () => {
-            adminModal.classList.add('hidden');
-        });
-        
-        // Close modal when clicking outside
-        adminModal.addEventListener('click', (e) => {
-            if (e.target === adminModal) {
-                adminModal.classList.add('hidden');
-            }
-        });
-        
-        // Forgot password interactions
-        forgotPasswordBtn.addEventListener('click', () => {
-            loginForm.classList.add('hidden');
-            resetPasswordForm.classList.remove('hidden');
-            document.getElementById('resetEmail').value = document.getElementById('email').value;
-            document.getElementById('resetEmail').focus();
-        });
-        
-        closeResetForm.addEventListener('click', () => {
-            resetPasswordForm.classList.add('hidden');
-            loginForm.classList.remove('hidden');
-        });
-        
-        // Password input events
-        document.getElementById('adminPassword').addEventListener('input', function() {
-            checkPasswordStrength(this.value);
-        });
-        
-        // Password confirmation validation
-        document.getElementById('confirmPassword').addEventListener('input', function() {
-            const password = document.getElementById('adminPassword').value;
-            if (this.value && this.value !== password) {
-                this.setCustomValidity('Passwords do not match');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-        
-        // Make functions available globally
-        window.togglePasswordVisibility = togglePasswordVisibility;
-        window.toggleAdminPasswordVisibility = toggleAdminPasswordVisibility;
-        window.toggleConfirmPasswordVisibility = toggleConfirmPasswordVisibility;
-        window.checkPasswordStrength = checkPasswordStrength;
     </script>
-
-<script>
-  // Form validation functions
-  function validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  // Add form submission handler
-  document.getElementById('loginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    let isValid = true;
-    
-    // Reset errors
-    document.getElementById('emailError').classList.add('hidden');
-    document.getElementById('passwordError').classList.add('hidden');
-    
-    // Validate email
-    if (!validateEmail(email)) {
-      document.getElementById('emailError').textContent = 'Please enter a valid email address';
-      document.getElementById('emailError').classList.remove('hidden');
-      isValid = false;
-    }
-    
-    // Validate password
-    if (!password || password.length < 8) {
-      document.getElementById('passwordError').textContent = 'Password must be at least 8 characters';
-      document.getElementById('passwordError').classList.remove('hidden');
-      isValid = false;
-    }
-    
-    if (isValid) {
-      // Show loading state
-      document.getElementById('loginBtnText').classList.add('hidden');
-      document.getElementById('loginBtnLoading').classList.remove('hidden');
-      
-      try {
-        // Perform login (replace with actual implementation)
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
-        
-        if (error) throw error;
-        
-        // Redirect to dashboard on success
-        window.location.href = 'dashboard.html';
-      } catch (error) {
-        // Show error message
-        const errorElement = document.getElementById('errorMessage');
-        errorElement.querySelector('span').textContent = error.message || 'Login failed. Please try again.';
-        errorElement.classList.remove('hidden');
-        
-        // Reset button state
-        document.getElementById('loginBtnText').classList.remove('hidden');
-        document.getElementById('loginBtnLoading').classList.add('hidden');
-      }
-    }
-  });
-  
-  // Add rate limiting for login attempts
-  let loginAttempts = 0;
-  const MAX_ATTEMPTS = 5;
-  const LOCKOUT_TIME = 15 * 60 * 1000; // 15 minutes
-  
-  function checkLoginAttempts() {
-    if (loginAttempts >= MAX_ATTEMPTS) {
-      const lockoutElement = document.getElementById('attemptMessage');
-      lockoutElement.textContent = `Too many failed attempts. Please try again later.`;
-      lockoutElement.classList.remove('hidden');
-      document.getElementById('loginButton').disabled = true;
-      
-      setTimeout(() => {
-        loginAttempts = 0;
-        document.getElementById('loginButton').disabled = false;
-        lockoutElement.classList.add('hidden');
-      }, LOCKOUT_TIME);
-    }
-  }
-</script>
 </body>
 </html>

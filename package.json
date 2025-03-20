@@ -3,11 +3,17 @@
   "version": "1.0.0",
   "description": "Website for INFINITY-2K25 tech fest",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "serve -p 3000",
     "start": "serve -p $PORT",
     "build": "echo 'No build step required, static site'",
-    "vercel-build": "echo 'Static site deployment'"
+    "vercel-build": "echo 'Static site deployment'",
+    "setup": "node setup.js",
+    "test-connection": "node test-connection.js",
+    "deploy": "node vercel-deploy.js",
+    "setup-db": "node supabase-setup.js",
+    "setup-permissions": "node setup-permissions.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",

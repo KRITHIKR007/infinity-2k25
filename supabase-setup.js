@@ -1,15 +1,31 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 // Load environment variables
 dotenv.config();
+
+// Get current file path for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Supabase configuration
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://ceickbodqhwfhcpabfdq.supabase.co';
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
-// Initialize Supabase admin client
-const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+if (!SUPABASE_SERVICE_KEY) {
+  console.error('Error: SUPABASE_SERVICE_KEY environment variable is required.');
+  process.exit(1);
+}
+
+// Initialize Supabase admin client with correct options
+const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
 
 // Database table definitions
 const tables = {
@@ -186,32 +202,28 @@ async function createBuckets() {
  * Main function to run setup
  */
 async function setupDatabase() {
-    if (!SUPABASE_SERVICE_KEY) {
-        console.error('Error: SUPABASE_SERVICE_KEY environment variable is required.');
-        process.exit(1);
-    }
+  console.log('Starting Supabase database setup...');
+  
+  try {
+    // Test connection with a simple query instead of auth call
+    const { data, error } = await supabaseAdmin
+      .from('postgres_tables')
+      .select('*')
+      .limit(1);
+      
+    if (error) throw error;
     
-    console.log('Starting Supabase database setup...');
+    console.log('Connected to Supabase successfully.');
     
-    try {
-        // Test connection
-        const { data, error } = await supabaseAdmin.auth.getUser();
-        
-        if (error) {
-            throw new Error(`Failed to connect to Supabase: ${error.message}`);
-        }
-        
-        console.log('Connected to Supabase successfully.');
-        
-        // Create tables and buckets
-        await createTables();
-        await createBuckets();
-        
-        console.log('Supabase setup completed successfully.');
-    } catch (error) {
-        console.error('Setup failed:', error);
-        process.exit(1);
-    }
+    // Create tables and buckets
+    await createTables();
+    await createBuckets();
+    
+    console.log('Supabase setup completed successfully.');
+  } catch (error) {
+    console.error('Setup failed:', error);
+    process.exit(1);
+  }
 }
 
 // Run setup if this file is executed directly
