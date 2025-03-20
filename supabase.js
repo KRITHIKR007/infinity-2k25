@@ -1,210 +1,164 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+// Import createClient from the CDN if the module import fails
+let createClient;
+try {
+  if (typeof window !== 'undefined') {
+    if (window.supabase && window.supabase.createClient) {
+      createClient = window.supabase.createClient;
+    } else {
+      // Dynamic import for browsers
+      import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/+esm')
+        .then(module => {
+          createClient = module.createClient;
+        });
+    }
+  } else {
+    // For NodeJS environments
+    import('@supabase/supabase-js').then(module => {
+      createClient = module.createClient;
+    });
+  }
+} catch (e) {
+  console.error('Failed to import Supabase client:', e);
+}
+
+// Supabase configuration
+const SUPABASE_URL = 'https://ceickbodqhwfhcpabfdq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8';
 
 // Initialize Supabase client
-export const supabaseUrl = 'https://ceickbodqhwfhcpabfdq.supabase.co';
-export const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWNrYm9kcWh3ZmhjcGFiZmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDIzMzU2MTgsImV4cCI6MjA1NzkxMTYxOH0.ZyTG1FkQzjQ0CySlyvkQEYPHWBbZJd--vsB_IqILuo8';
-export const supabase = createClient(supabaseUrl, supabaseKey);
+let supabase;
 
-// Define database tables and constants
+// Use a function to ensure we have createClient before initializing
+function getSupabaseClient() {
+  if (!supabase && typeof createClient === 'function') {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  return supabase;
+}
+
+// For ES module environments
+export { getSupabaseClient as supabase };
+
+// For script tag environments
+if (typeof window !== 'undefined') {
+  window.getSupabaseClient = getSupabaseClient;
+  
+  // Initialize immediately if both dependencies are available
+  if (typeof createClient === 'function') {
+    window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+}
+
+// Export table names
 export const TABLES = {
-    EVENTS: 'events',
     REGISTRATIONS: 'registrations',
+    EVENTS: 'events',
     PAYMENTS: 'payments',
     PARTICIPANTS: 'participants',
-    CONTACT_MESSAGES: 'contact_messages',
     STORAGE: {
-        PAYMENT_PROOFS: 'payment_proofs'
+        PAYMENT_PROOFS: 'payment_proofs',
+        EVENT_IMAGES: 'event_images'
     }
-}
+};
 
-// Define storage buckets
-export const STORAGE = {
-    AVATARS: 'avatars',
-    PAYMENTS: 'payment_proofs',
-    EVENTS: 'event_images'
-}
-
-// Define authentication constants
-export const AUTH = {
-    ROLES: {
-        ADMIN: 'admin',
-        USER: 'user',
-        ORGANIZER: 'organizer'
-    }
-}
-
-// Define common validations
-export const VALIDATIONS = {
-    EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    PHONE: /^[0-9]{10}$/,
-    PASSWORD: {
-        MIN_LENGTH: 8,
-        REQUIRES_UPPERCASE: true,
-        REQUIRES_NUMBER: true,
-        REQUIRES_SPECIAL: true
-    }
-}
-
-// Define event categories
-export const EVENT_CATEGORIES = {
-    TECH: 'tech',
-    CULTURAL: 'cultural'
-}
-
-// Define payment statuses
-export const PAYMENT_STATUS = {
-    PENDING: 'pending',
-    PAID: 'paid',
-    REJECTED: 'rejected'
-}
-
-// Define payment methods
-export const PAYMENT_METHODS = {
-    UPI: 'upi',
-    CARD: 'card',
-    NETBANKING: 'netbanking',
-    CASH: 'cash'
-}
-
-// Define registration statuses
-export const REGISTRATION_STATUS = {
-    PENDING: 'pending',
-    CONFIRMED: 'confirmed',
-    REJECTED: 'rejected',
-    WAITLISTED: 'waitlisted',
-    CANCELLED: 'cancelled'
-}
-
-// Define notification types
-export const NOTIFICATION_TYPES = {
-    REGISTRATION: 'registration',
-    PAYMENT: 'payment',
-    ANNOUNCEMENT: 'announcement',
-    REMINDER: 'reminder'
-}
-
-// Define API responses
-export const API_RESPONSES = {
-    SUCCESS: { status: 200, message: 'Success' },
-    CREATED: { status: 201, message: 'Created successfully' },
-    BAD_REQUEST: { status: 400, message: 'Bad request' },
-    UNAUTHORIZED: { status: 401, message: 'Unauthorized' },
-    FORBIDDEN: { status: 403, message: 'Forbidden' },
-    NOT_FOUND: { status: 404, message: 'Not found' },
-    SERVER_ERROR: { status: 500, message: 'Server error' }
-}
-
-/**
- * Helper functions to interact with Supabase
- */
-
-// Authentication functions
+// Authentication helper functions
 export const auth = {
-    // Register a new user
-    async signUp(email, password, userData = {}) {
-        return await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: userData
-            }
-        });
-    },
+  signIn: async (email, password) => {
+    return await getSupabaseClient().auth.signInWithPassword({ email, password });
+  },
+  
+  signOut: async () => {
+    return await getSupabaseClient().auth.signOut();
+  },
+  
+  resetPassword: async (email) => {
+    return await getSupabaseClient().auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/admin/reset-password.html',
+    });
+  },
+  
+  updatePassword: async (password) => {
+    return await getSupabaseClient().auth.updateUser({ password });
+  },
+  
+  getSession: async () => {
+    return await getSupabaseClient().auth.getSession();
+  },
+  
+  getCurrentUser: async () => {
+    const { data: { user } } = await getSupabaseClient().auth.getUser();
+    return user;
+  }
+};
 
-    // Sign in a user
-    async signIn(email, password) {
-        return await supabase.auth.signInWithPassword({
-            email,
-            password
-        });
-    },
+// Event management functions
+export const events = {
+  getAllEvents: async () => {
+    return await getSupabaseClient()
+      .from(TABLES.EVENTS)
+      .select('*')
+      .order('created_at', { ascending: false });
+  },
+  
+  getEventById: async (id) => {
+    return await getSupabaseClient()
+      .from(TABLES.EVENTS)
+      .select('*')
+      .eq('id', id)
+      .single();
+  },
+  
+  createEvent: async (eventData) => {
+    return await getSupabaseClient()
+      .from(TABLES.EVENTS)
+      .insert([{ ...eventData, created_at: new Date().toISOString() }]);
+  },
+  
+  updateEvent: async (id, eventData) => {
+    return await getSupabaseClient()
+      .from(TABLES.EVENTS)
+      .update({ ...eventData, updated_at: new Date().toISOString() })
+      .eq('id', id);
+  },
+  
+  deleteEvent: async (id) => {
+    return await getSupabaseClient()
+      .from(TABLES.EVENTS)
+      .delete()
+      .eq('id', id);
+  }
+};
 
-    // Sign out the current user
-    async signOut() {
-        return await supabase.auth.signOut();
-    },
-
-    // Get the current user
-    async getCurrentUser() {
-        return await supabase.auth.getUser();
-    },
-
-    // Reset password
-    async resetPassword(email) {
-        return await supabase.auth.resetPasswordForEmail(email);
-    }
-}
-
-// Database functions
-export const db = {
-    // Insert a new record
-    async insert(table, data) {
-        return await supabase.from(table).insert(data);
-    },
-
-    // Get records with optional filters
-    async get(table, columns = '*', filters = {}) {
-        let query = supabase.from(table).select(columns);
-
-        // Apply filters if any
-        for (const [key, value] of Object.entries(filters)) {
-            if (typeof value === 'object' && value !== null) {
-                query = query[value.operator || 'eq'](key, value.value);
-            } else {
-                query = query.eq(key, value);
-            }
-        }
-
-        return await query;
-    },
-
-    // Update records with filters
-    async update(table, data, filters = {}) {
-        let query = supabase.from(table).update(data);
-
-        // Apply filters if any
-        for (const [key, value] of Object.entries(filters)) {
-            if (typeof value === 'object' && value !== null) {
-                query = query[value.operator || 'eq'](key, value.value);
-            } else {
-                query = query.eq(key, value);
-            }
-        }
-
-        return await query;
-    },
-
-    // Delete records with filters
-    async delete(table, filters = {}) {
-        let query = supabase.from(table).delete();
-
-        // Apply filters if any
-        for (const [key, value] of Object.entries(filters)) {
-            if (typeof value === 'object' && value !== null) {
-                query = query[value.operator || 'eq'](key, value.value);
-            } else {
-                query = query.eq(key, value);
-            }
-        }
-
-        return await query;
-    }
-}
-
-// Storage functions
-export const storage = {
-    // Upload a file
-    async upload(bucket, filePath, file) {
-        return await supabase.storage.from(bucket).upload(filePath, file);
-    },
-
-    // Get public URL for a file
-    getPublicUrl(bucket, filePath) {
-        return supabase.storage.from(bucket).getPublicUrl(filePath).data.publicUrl;
-    },
-
-    // Remove a file
-    async remove(bucket, filePath) {
-        return await supabase.storage.from(bucket).remove([filePath]);
-    }
-}
+// Registration management functions
+export const registrations = {
+  getAllRegistrations: async () => {
+    return await getSupabaseClient()
+      .from(TABLES.REGISTRATIONS)
+      .select('*')
+      .order('created_at', { ascending: false });
+  },
+  
+  getRegistrationById: async (id) => {
+    return await getSupabaseClient()
+      .from(TABLES.REGISTRATIONS)
+      .select('*')
+      .eq('id', id)
+      .single();
+  },
+  
+  createRegistration: async (registrationData) => {
+    return await getSupabaseClient()
+      .from(TABLES.REGISTRATIONS)
+      .insert([{ ...registrationData, created_at: new Date().toISOString() }]);
+  },
+  
+  updateRegistrationStatus: async (id, status) => {
+    return await getSupabaseClient()
+      .from(TABLES.REGISTRATIONS)
+      .update({ 
+        payment_status: status, 
+        updated_at: new Date().toISOString() 
+      })
+      .eq('id', id);
+  }
+};

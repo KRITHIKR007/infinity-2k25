@@ -76,31 +76,79 @@
                 <!-- Contact Form -->
                 <div class="glass-effect rounded-xl p-8">
                     <h2 class="text-3xl font-bold text-purple-400 mb-6">Send Us a Message</h2>
-                    <form id="contact-form" class="space-y-6">
+                    <form id="contactForm" class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label for="name" class="block text-white mb-2">Name</label>
-                                <input type="text" id="name" name="name" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                                <label for="name" class="block text-gray-300 mb-2">Your Name *</label>
+                                <input type="text" id="name" name="name" required 
+                                    class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-purple-500 focus:outline-none">
+                                <p id="nameError" class="text-red-400 text-sm mt-1 hidden">Please enter your name</p>
                             </div>
+                            
                             <div>
-                                <label for="email" class="block text-white mb-2">Email</label>
-                                <input type="email" id="email" name="email" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                                <label for="email" class="block text-gray-300 mb-2">Your Email *</label>
+                                <input type="email" id="email" name="email" required 
+                                    class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-purple-500 focus:outline-none">
+                                <p id="emailError" class="text-red-400 text-sm mt-1 hidden">Please enter a valid email</p>
+                            </div>
+                            
+                            <div>
+                                <label for="phone" class="block text-gray-300 mb-2">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" 
+                                    class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-purple-500 focus:outline-none">
+                                <p id="phoneError" class="text-red-400 text-sm mt-1 hidden">Please enter a valid phone number</p>
+                            </div>
+                            
+                            <div>
+                                <label for="subject" class="block text-gray-300 mb-2">Subject *</label>
+                                <select id="subject" name="subject" required 
+                                    class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-purple-500 focus:outline-none">
+                                    <option value="">Select a subject</option>
+                                    <option value="general">General Inquiry</option>
+                                    <option value="technical">Technical Events Question</option>
+                                    <option value="cultural">Cultural Events Question</option>
+                                    <option value="registration">Registration Support</option>
+                                    <option value="sponsorship">Sponsorship Opportunity</option>
+                                </select>
+                                <p id="subjectError" class="text-red-400 text-sm mt-1 hidden">Please select a subject</p>
                             </div>
                         </div>
+                        
                         <div>
-                            <label for="subject" class="block text-white mb-2">Subject</label>
-                            <input type="text" id="subject" name="subject" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all">
+                            <label for="message" class="block text-gray-300 mb-2">Your Message *</label>
+                            <textarea id="message" name="message" rows="6" required 
+                                class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-purple-500 focus:outline-none"></textarea>
+                            <p id="messageError" class="text-red-400 text-sm mt-1 hidden">Please enter your message</p>
                         </div>
-                        <div>
-                            <label for="message" class="block text-white mb-2">Message</label>
-                            <textarea id="message" name="message" rows="5" required class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"></textarea>
+                        
+                        <div class="flex items-center">
+                            <input type="checkbox" id="consent" name="consent" required 
+                                class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-700 rounded">
+                            <label for="consent" class="ml-2 block text-sm text-gray-300">
+                                I consent to having this website store my submitted information for contact purposes *
+                            </label>
                         </div>
+                        
                         <div>
-                            <button type="submit" id="submit-button" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-300">
-                                <i class="fas fa-paper-plane mr-2"></i>Send Message
+                            <button type="submit" id="submitBtn" class="btn btn-primary">
+                                <span id="submitText">Send Message</span>
+                                <span id="submitLoading" class="hidden">
+                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Sending...
+                                </span>
                             </button>
                         </div>
-                        <div id="form-status" class="hidden py-3 px-4 rounded-lg text-center"></div>
+                        
+                        <div id="successMessage" class="bg-green-900 bg-opacity-20 border border-green-800 text-green-400 p-4 rounded-lg hidden">
+                            Thank you for your message! We'll get back to you soon.
+                        </div>
+                        
+                        <div id="errorMessage" class="bg-red-900 bg-opacity-20 border border-red-800 text-red-400 p-4 rounded-lg hidden">
+                            There was an error sending your message. Please try again later.
+                        </div>
                     </form>
                 </div>
 
@@ -125,7 +173,7 @@
                                 </div>
                                 <div>
                                     <h3 class="text-xl font-semibold text-white">Venue</h3>
-                                    <p class="text-gray-300">Jain (Deemed-to-be University)</p>
+                                    <p class="text-gray-300">Faculty of Engineering and Technology, Jain (Deemed-to-be University)</p>
                                     <p class="text-gray-300">Jakkasandra Post, Kanakapura Road</p>
                                     <p class="text-gray-300">Bangalore - 560082</p>
                                 </div>
@@ -301,7 +349,11 @@
                         </p>
                         <p class="flex items-start">
                             <i class="fas fa-phone-alt mt-1 mr-3 text-purple-400"></i>
-                            <span class="text-gray-300">+91 8296019911</span>
+                            <span class="text-gray-300">Technical Events: Dhrub Kumar Jha (+91 8296019911)</span>
+                        </p>
+                        <p class="flex items-start">
+                            <i class="fas fa-phone-alt mt-1 mr-3 text-purple-400"></i>
+                            <span class="text-gray-300">Cultural Events: Rohan (+91 9353074448)</span>
                         </p>
                         <p class="flex items-start">
                             <i class="fas fa-calendar-alt mt-1 mr-3 text-purple-400"></i>
@@ -320,6 +372,7 @@
                     <a href="https://www.linkedin.com/in/krithik-r124/" target="_blank" class="text-gray-500 hover:text-purple-400 transition-colors mx-2">LinkedIn</a> | 
                     <span class="text-gray-500 mx-2">Discord: krithik.r007</span>
                 </p>
+                <p class="text-center text-gray-400 mb-2">Contact: Technical Events - Dhrub Kumar Jha (+91 8296019911) | Cultural Events - Rohan (+91 9353074448)</p>
             </div>
         </div>
     </footer>
@@ -395,5 +448,93 @@
             }
         });
     </script>
+    <script>
+    // Form validation functions
+    const contactForm = document.getElementById('contactForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    const submitLoading = document.getElementById('submitLoading');
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    function validatePhone(phone) {
+        if (!phone) return true; // Optional field
+        const phoneRegex = /^[0-9+\-\s()]{7,15}$/;
+        return phoneRegex.test(phone);
+    }
+    
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form values
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value;
+        
+        // Reset error messages
+        document.querySelectorAll('.text-red-400').forEach(el => el.classList.add('hidden'));
+        
+        // Validate form
+        let isValid = true;
+        
+        if (!name) {
+            document.getElementById('nameError').classList.remove('hidden');
+            isValid = false;
+        }
+        
+        if (!validateEmail(email)) {
+            document.getElementById('emailError').classList.remove('hidden');
+            isValid = false;
+        }
+        
+        if (!validatePhone(phone)) {
+            document.getElementById('phoneError').classList.remove('hidden');
+            isValid = false;
+        }
+        
+        if (!subject) {
+            document.getElementById('subjectError').classList.remove('hidden');
+            isValid = false;
+        }
+        
+        if (!message) {
+            document.getElementById('messageError').classList.remove('hidden');
+            isValid = false;
+        }
+        
+        if (isValid) {
+            // Show loading state
+            submitText.classList.add('hidden');
+            submitLoading.classList.remove('hidden');
+            submitBtn.disabled = true;
+            
+            // Simulate form submission (replace with actual API call)
+            setTimeout(() => {
+                // Hide loading state
+                submitText.classList.remove('hidden');
+                submitLoading.classList.add('hidden');
+                submitBtn.disabled = false;
+                
+                // Show success message
+                successMessage.classList.remove('hidden');
+                
+                // Reset form
+                contactForm.reset();
+                
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 5000);
+            }, 1500);
+        }
+    });
+</script>
 </body>
 </html>

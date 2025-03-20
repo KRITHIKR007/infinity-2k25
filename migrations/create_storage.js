@@ -1,78 +1,120 @@
+/**
+ * Storage Migration - Create Storage Buckets
+ * 
+ * This script creates the necessary storage buckets in Supabase for the Infinity 2025 registration system.
+ */
+
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
 
+// Load environment variables
 dotenv.config();
 
-const supabaseUrl = process.env.SUPABASE_URL || 'https://ceickbodqhwfhcpabfdq.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_KEY; // This should be a service key with higher privileges
+// Get current file path for ES Modules
+const __filename = fileURLToPath(import.meta.url);
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Supabase credentials
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 
-async function setupStorage() {
-    console.log('Setting up storage buckets...');
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('Error: Missing Supabase credentials. Please check your .env file.');
+  process.exit(1);
+}
+
+// Initialize Supabase client with service key for admin access
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+// Define storage buckets to create
+const buckets = [
+  {
+    name: 'payment_proofs',
+    options: {
+      public: true,
+      fileSizeLimit: 5 * 1024 * 1024, // 5MB
+      allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif']
+    }
+  },
+  {
+    name: 'event_images',
+    options: {
+      public: true,
+      fileSizeLimit: 5 * 1024 * 1024, // 5MB
+      allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif']
+    }
+  }
+];
+
+// Function to create all storage buckets
+async function createStorageBuckets() {
+  console.log('Starting storage migration: Creating buckets...');
+  
+  try {
+    // Verify connection with a simple query
+    const { data, error } = await supabase.auth.getUser();
     
-    try {
-        // Create payment_proofs bucket
-        const { data: bucketData, error: bucketError } = await supabase
-            .storage
-            .createBucket('payment_proofs', {
-                public: true,  // Make the bucket publicly accessible
-                fileSizeLimit: 5242880, // 5MB in bytes
-                allowedMimeTypes: ['image/png', 'image/jpeg', 'image/jpg', 'image/gif']
-            });
+    if (error) {
+      throw new Error(`Failed to connect to Supabase: ${error.message}`);
+    }
+    
+    console.log('Connected to Supabase successfully');
+    
+    // List existing buckets
+    const { data: existingBuckets, error: listError } = await supabase.storage.listBuckets();
+    
+    if (listError) {
+      throw new Error(`Failed to list existing buckets: ${listError.message}`);
+    }
+    
+    // Create each bucket if it doesn't exist
+    for (const bucket of buckets) {
+      console.log(`Processing bucket: ${bucket.name}...`);
+      
+      // Check if bucket already exists
+      const bucketExists = existingBuckets.some(b => b.name === bucket.name);
+      
+      if (bucketExists) {
+        console.log(`Bucket ${bucket.name} already exists, updating settings...`);
         
-        if (bucketError) {
-            // If error is because bucket already exists, it's fine
-            if (bucketError.message.includes('already exists')) {
-                console.log('payment_proofs bucket already exists');
-            } else {
-                throw bucketError;
-            }
+        // Update bucket settings
+        const { error: updateError } = await supabase.storage.updateBucket(bucket.name, {
+          public: bucket.options.public
+        });
+        
+        if (updateError) {
+          console.warn(`Warning: Could not update bucket ${bucket.name} - ${updateError.message}`);
         } else {
-            console.log('Created payment_proofs bucket successfully');
+          console.log(`✅ Bucket ${bucket.name} updated successfully`);
         }
         
-        // Set up storage permissions via policies
-        await setupStoragePolicies();
+      } else {
+        // Create new bucket
+        console.log(`Creating new bucket: ${bucket.name}...`);
         
-        console.log('Storage setup completed successfully');
-    } catch (error) {
-        console.error('Error setting up storage:', error);
-    }
-}
-
-async function setupStoragePolicies() {
-    try {
-        // Allow anyone to read from payment_proofs bucket
-        const { error: readPolicyError } = await supabase.rpc('create_storage_policy', {
-            bucket_id: 'payment_proofs',
-            name: 'Public Read Access',
-            definition: `bucket_id = 'payment_proofs'`,
-            operation: 'SELECT',
-            role_name: 'anon'
+        const { error: createError } = await supabase.storage.createBucket(bucket.name, {
+          public: bucket.options.public
         });
         
-        if (readPolicyError && !readPolicyError.message.includes('already exists')) {
-            throw readPolicyError;
+        if (createError) {
+          throw new Error(`Failed to create bucket ${bucket.name}: ${createError.message}`);
         }
         
-        // Allow anonymous users to upload to payment_proofs bucket
-        const { error: insertPolicyError } = await supabase.rpc('create_storage_policy', {
-            bucket_id: 'payment_proofs',
-            name: 'Anonymous Upload Access',
-            definition: `bucket_id = 'payment_proofs'`,  // Allow anyone to upload
-            operation: 'INSERT',
-            role_name: 'anon'  // Change from authenticated to anon
-        });
-        
-        if (insertPolicyError && !insertPolicyError.message.includes('already exists')) {
-            throw insertPolicyError;
-        }
-        
-        console.log('Storage policies set up successfully');
-    } catch (error) {
-        console.error('Error setting up storage policies:', error);
+        console.log(`✅ Bucket ${bucket.name} created successfully`);
+      }
     }
+    
+    console.log('✅ All storage buckets created successfully');
+    
+  } catch (error) {
+    console.error('❌ Storage migration failed:', error.message);
+    process.exit(1);
+  }
 }
 
-setupStorage();
+// Run migration if this script is executed directly
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  createStorageBuckets();
+}
+
+export default createStorageBuckets;

@@ -1,112 +1,60 @@
-# Infinity 2025 Event Registration Website
+# INFINITY-2K25 Event Website
 
-A modern, responsive website for managing event registrations for Infinity 2025. Built with HTML, Tailwind CSS, and Supabase for backend functionality.
+The official website for INFINITY-2K25, the annual technical and cultural fest organized by the Faculty of Engineering and Technology, Jain (Deemed-to-be University), Bangalore.
 
 ## Features
 
-- 🎯 Modern, responsive design
-- 📝 User registration form with file upload
-- 🔒 Secure admin dashboard
-- 🔍 Real-time search and filtering
-- 💳 Payment verification system
-- 📱 Mobile-friendly interface
+- Event showcase and registration
+- Seamless payment integration with QR code
+- Admin dashboard for registration management
+- Responsive design for all devices
 
 ## Tech Stack
 
-- HTML5
-- Tailwind CSS
-- JavaScript (ES6+)
-- Supabase (Backend & Authentication)
-- Vercel (Deployment)
-
-## Prerequisites
-
-- Node.js (v14 or higher)
-- npm or yarn
-- Supabase account
-- Vercel account (for deployment)
+- Frontend: HTML, CSS, JavaScript
+- Database: Supabase
+- Authentication: Supabase Auth
+- Storage: Supabase Storage
+- Hosting: Vercel
 
 ## Setup Instructions
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/infinity2025.git
-   cd infinity2025
-   ```
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Configure Supabase:
+   - Create a .env file based on .env.example
+   - Add your Supabase URL and API key
+4. Run the development server: `npm run dev`
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+## Deployment
 
-3. Create a Supabase project and get your credentials:
-   - Go to [Supabase](https://supabase.com)
-   - Create a new project
-   - Get your project URL and anon key
+This site is set up for deployment on Vercel. Simply connect your GitHub repository to Vercel and it will automatically deploy when changes are pushed to the main branch.
 
-4. Set up environment variables:
-   Create a `.env` file in the root directory:
-   ```
-   SUPABASE_URL=your_supabase_project_url
-   SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
+## Environment Variables
 
-5. Set up Supabase database:
-   - Create a `registrations` table with the following columns:
-     - id (uuid, primary key)
-     - name (text)
-     - university (text)
-     - phone (text)
-     - team_members (array)
-     - payment_proof_url (text)
-     - payment_status (text)
-     - created_at (timestamp)
-
-6. Set up Supabase storage:
-   - Create a `payment-proofs` bucket
-   - Set appropriate storage policies
-
-7. Deploy to Vercel:
-   ```bash
-   vercel
-   ```
-
-## Project Structure
+Create a `.env` file with the following variables:
 
 ```
-/infinity2025
-│── public/
-│   ├── images/   → Event images & assets
-│   ├── styles/   → Tailwind CSS styles
-│   ├── scripts/  → JavaScript logic
-│── pages/
-│   ├── register.html  
-│   ├── admin.html  
-│── index.html  → Main home page
-│── app.js      → Handles form submission & Supabase connection
-│── supabase.js → Backend logic for storing data
-│── vercel.json → Vercel deployment config
-│── README.md   → Project documentation
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_KEY=your_supabase_service_key
 ```
 
-## Contributing
+## Database Setup
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+Run the database setup scripts to create the necessary tables and storage buckets:
+
+```
+node migrations/create_tables.js
+node migrations/create_storage.js
+```
+
+## Contributors
+
+- Krithik R (Lead Developer)
+- Dhrub Kumar Jha (Technical Events Coordinator)
+- Rohan (Cultural Events Coordinator)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For support, email support@infinity2025.com or create an issue in the repository.
-
-## Acknowledgments
-
-- [Tailwind CSS](https://tailwindcss.com)
-- [Supabase](https://supabase.com)
-- [Vercel](https://vercel.com) 
+MIT License

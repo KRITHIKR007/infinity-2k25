@@ -2,6 +2,10 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 import { submitRegistration as saveRegistration } from './database.js';
 import { FileUpload } from './components/file-upload.js';
+import { registrations } from './registrations.js';
+import { events } from './events.js';
+import { validators, validateForm } from './validation.js';
+import { ui } from './ui.js';
 
 // Initialize Supabase client
 export const supabaseUrl = 'https://ceickbodqhwfhcpabfdq.supabase.co';
@@ -62,7 +66,7 @@ export async function submitRegistration(registrationData) {
 }
 
 // Event data
-const events = {
+const eventsData = {
     tech: [
         {
             id: 'innovathon',
@@ -161,7 +165,9 @@ document.addEventListener('DOMContentLoaded', function() {
             maxFileSize: 5 * 1024 * 1024, // 5MB
             acceptedTypes: ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'],
             showFileName: true,
-            showFileSize: true
+            showFileSize: true,
+            showPreview: true,
+            previewClass: 'w-full h-40 object-cover rounded-lg mt-2'
         });
     }
     
@@ -200,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
         totalFee = 0;
         selectedEvents.clear();
         
-        events[category].forEach(event => {
+        eventsData[category].forEach(event => {
             const eventCard = document.createElement('div');
             eventCard.className = 'card p-4 mb-3';
             eventCard.innerHTML = `
@@ -379,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 break;
             case 3:
-                const selectedEvent = events[selectedCategory].find(e => selectedEvents.has(e.id));
+                const selectedEvent = eventsData[selectedCategory].find(e => selectedEvents.has(e.id));
                 if (selectedEvent && selectedEvent.teamSize > 1) {
                     const teamMembers = teamMembersContainer.querySelectorAll('input[name="teamMembers[]"]');
                     if (teamMembers.length < selectedEvent.teamSize - 1) {
@@ -464,7 +470,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Get selected events data and event names
             const selectedEventsArray = Array.from(selectedEvents);
             const eventNames = selectedEventsArray.map(eventId => {
-                const event = events[selectedCategory].find(e => e.id === eventId);
+                const event = eventsData[selectedCategory].find(e => e.id === eventId);
                 return event ? event.name : 'Unknown Event';
             }).join(', ');
             
@@ -651,3 +657,257 @@ function showError(message) {
     errorMessage.classList.remove('hidden');
     successMessage.classList.add('hidden');
 }
+
+// Registration page functionality
+document.addEventListener('DOMContentLoaded', async function() {
+  // DOM Elements
+  const registrationForm = document.getElementById('registrationForm');
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+  const step3 = document.getElementById('step3');
+  const step4 = document.getElementById('step4');
+  const registrationSuccess = document.getElementById('registrationSuccess');
+  
+  const step1Indicator = document.getElementById('step1Indicator');
+  const step2Indicator = document.getElementById('step2Indicator');
+  const step3Indicator = document.getElementById('step3Indicator');
+  const step4Indicator = document.getElementById('step4Indicator');
+  
+  const step1NextBtn = document.getElementById('step1NextBtn');
+  const step2NextBtn = document.getElementById('step2NextBtn');
+  const step2PrevBtn = document.getElementById('step2PrevBtn');
+  const step3NextBtn = document.getElementById('step3NextBtn');
+  const step3PrevBtn = document.getElementById('step3PrevBtn');
+  const step4PrevBtn = document.getElementById('step4PrevBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  const techEventsTab = document.getElementById('techEventsTab');
+  const culturalEventsTab = document.getElementById('culturalEventsTab');
+  const techEventsList = document.getElementById('techEventsList');
+  const culturalEventsList = document.getElementById('culturalEventsList');
+  
+  const selectedEventsCount = document.getElementById('selectedEventsCount');
+  const totalAmount = document.getElementById('totalAmount');
+  const noTeamEventsMessage = document.getElementById('noTeamEventsMessage');
+  const teamEventsContainer = document.getElementById('teamEventsContainer');
+  
+  // Load events data
+  try {
+    const { data: eventsData, error } = await events.getAll();
+    if (error) throw error;
+    
+    // Process events data
+    // ...existing code...
+  } catch (error) {
+    console.error('Error loading events:', error);
+  }
+  
+  // Step 1: Personal Information
+  step1NextBtn.addEventListener('click', () => {
+    // Validate personal information
+    const formData = {
+      fullName: document.getElementById('fullName').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value,
+      university: document.getElementById('university').value,
+      department: document.getElementById('department').value,
+      yearOfStudy: document.getElementById('yearOfStudy').value
+    };
+    
+    const validationRules = {
+      fullName: [validators.required],
+      email: [validators.required, validators.email],
+      phone: [validators.required, validators.phone],
+      university: [validators.required],
+      department: [validators.required],
+      yearOfStudy: [validators.required]
+    };
+    
+    const { isValid, errors } = validateForm(formData, validationRules);
+    
+    if (isValid) {
+      // Move to Step 2
+      step1.classList.add('hidden');
+      step2.classList.remove('hidden');
+      
+      // Update step indicators
+      step1Indicator.classList.remove('bg-purple-600');
+      step1Indicator.classList.add('bg-green-600');
+      step2Indicator.classList.remove('bg-gray-700');
+      step2Indicator.classList.add('bg-purple-600');
+    } else {
+      // Show validation errors
+      ui.handleValidationErrors(errors);
+    }
+  });
+  
+  // Step 2: Event Selection
+  // ...existing code...
+  
+  // Step 3: Team Details
+  // ...existing code...
+  
+  // Step 4: Review and Submit
+  // ...existing code...
+  
+  // Final form submission
+  registrationForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Show loading state
+    ui.showLoading('submitBtn', 'submitBtnLoading', 'submitBtnText');
+    
+    try {
+      // Get all form data and submit
+      const registrationData = {
+        // Collect all form data
+        // ...existing code...
+      };
+      
+      // Submit to Supabase
+      const { data, error } = await registrations.create(registrationData);
+      
+      if (error) throw error;
+      
+      // Show success message
+      step4.classList.add('hidden');
+      registrationSuccess.classList.remove('hidden');
+      
+      // Set registration ID in success message
+      document.getElementById('registrationId').textContent = data[0].registration_id;
+      
+      // Redirect to confirmation page after delay
+      setTimeout(() => {
+        window.location.href = `confirmation.html?registration_id=${data[0].registration_id}`;
+      }, 5000);
+      
+    } catch (error) {
+      console.error('Registration error:', error);
+      ui.showError('submitError', 'Failed to submit registration. Please try again.');
+    } finally {
+      ui.hideLoading('submitBtn', 'submitBtnLoading', 'submitBtnText');
+    }
+  });
+  
+  // Helper functions
+  // ...existing code...
+});
+
+// Use the global Supabase client if available, or import it
+const supabase = window.supabase || (await import('../../supabase.js')).supabase;
+
+// Constants
+const QR_CODE_URL = 'public/images/qr-code.png';
+const TECHNICAL_CATEGORY = 'tech';
+const CULTURAL_CATEGORY = 'cultural';
+
+// State management
+const state = {
+    category: null,
+    selectedEvents: [],
+    eventDetails: {},
+    totalFee: 0,
+    formStep: 1,
+    paymentMethod: 'qr',
+    teamMembers: [],
+    isTeamEvent: false,
+    maxTeamSize: 1,
+    fileUploader: null
+};
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('Register page loaded');
+    
+    try {
+        // Initialize UI elements
+        initElements();
+        
+        // Setup event listeners
+        setupEventListeners();
+        
+        // Show first step
+        showFormStep(1);
+        
+        // Fetch events data from database
+        await fetchEventsData();
+        
+        // Initialize file uploader
+        initFileUploader();
+        
+    } catch (error) {
+        console.error('Error initializing registration page:', error);
+        showError('Failed to initialize registration form. Please refresh the page and try again.');
+    } finally {
+        // Hide loading screen
+        hideLoadingScreen();
+    }
+});
+
+// Initialize DOM elements
+function initElements() {
+    console.log('Initializing elements');
+    // DOM elements initialization code...
+}
+
+// Hide loading screen with smoother transition
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.classList.add('opacity-0');
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+        }, 500);
+    }
+}
+
+// Show error message
+function showError(message) {
+    console.error('Error:', message);
+    
+    const errorContainer = document.createElement('div');
+    errorContainer.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-4 py-2 rounded-md z-50';
+    errorContainer.textContent = message;
+    
+    document.body.appendChild(errorContainer);
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+        errorContainer.classList.add('opacity-0');
+        setTimeout(() => {
+            document.body.removeChild(errorContainer);
+        }, 500);
+    }, 5000);
+}
+
+// Fetch events data from the database
+async function fetchEventsData() {
+    try {
+        console.log('Fetching events data');
+        
+        // Basic query to get active events
+        const { data, error } = await supabase
+            .from('events')
+            .select('*')
+            .eq('status', 'active');
+            
+        if (error) throw error;
+        
+        console.log('Fetched events:', data);
+        
+        // Store events by category for quick access
+        state.eventDetails = data.reduce((acc, event) => {
+            acc[event.id] = event;
+            return acc;
+        }, {});
+        
+        return data;
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        showError('Failed to fetch events. Please refresh the page and try again.');
+        return [];
+    }
+}
+
+// Rest of the registration page code...
+// ...existing code...
