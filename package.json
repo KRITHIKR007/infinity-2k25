@@ -1,26 +1,29 @@
 {
   "name": "infinity-2k25",
   "version": "1.0.0",
-  "description": "Website for INFINITY-2K25 tech fest",
+  "description": "Infinity 2025 Event Registration System",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "serve -p 3000",
-    "start": "serve -p $PORT",
+    "dev": "nodemon index.js",
+    "start": "node index.js",
     "build": "echo 'No build step required, static site'",
     "vercel-build": "echo 'Static site deployment'",
     "setup": "node setup.js",
     "test-connection": "node test-connection.js",
     "deploy": "node vercel-deploy.js",
-    "setup-db": "node supabase-setup.js",
-    "setup-permissions": "node setup-permissions.js"
+    "setup-db": "npm run migrate",
+    "setup-permissions": "node setup-permissions.js",
+    "migrate": "node migrations/create_tables.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
-    "serve": "^14.2.1"
+    "serve": "^14.2.1",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
-    "tailwindcss": "^3.3.3"
+    "tailwindcss": "^3.3.3",
+    "nodemon": "^3.0.1"
   },
   "engines": {
     "node": ">=16.0.0"

@@ -10,22 +10,36 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Supabase configuration
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://ceickbodqhwfhcpabfdq.supabase.co';
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
+// Supabase configuration and initialization
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://your-supabase-project-url.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || 'your-supabase-anon-key';
 
-if (!SUPABASE_SERVICE_KEY) {
-  console.error('Error: SUPABASE_SERVICE_KEY environment variable is required.');
-  process.exit(1);
+// Initialize Supabase client
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Table names constants
+export const TABLES = {
+  REGISTRATIONS: 'registrations',
+  SELECTED_EVENTS: 'selected_events',
+  TEAM_MEMBERS: 'team_members',
+  EVENTS: 'events',
+  STORAGE: {
+    PAYMENT_PROOFS: 'payment_proofs'
+  }
+};
+
+// Setup additional Supabase configurations if needed
+export function setupSupabase() {
+  // You can add additional setup here if needed
+  console.log('Supabase client initialized');
+  return supabase;
 }
 
-// Initialize Supabase admin client with correct options
-const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-});
+// Export a global instance for browser environments
+if (typeof window !== 'undefined') {
+  window.supabaseClient = supabase;
+  window.TABLES = TABLES;
+}
 
 // Database table definitions
 const tables = {
@@ -120,7 +134,7 @@ async function createTables() {
             console.log(`Setting up table: ${table.name}`);
             
             // Check if table exists
-            const { data: existingTables, error: tableError } = await supabaseAdmin.rpc('tables_info');
+            const { data: existingTables, error: tableError } = await supabase.rpc('tables_info');
             
             if (tableError) {
                 throw new Error(`Error checking table existence: ${tableError.message}`);
@@ -155,7 +169,7 @@ async function createBuckets() {
             console.log(`Setting up bucket: ${bucket.name}`);
             
             // Check if bucket exists
-            const { data: existingBuckets, error: listError } = await supabaseAdmin.storage.listBuckets();
+            const { data: existingBuckets, error: listError } = await supabase.storage.listBuckets();
             
             if (listError) {
                 throw new Error(`Error listing buckets: ${listError.message}`);
@@ -165,7 +179,7 @@ async function createBuckets() {
             
             if (!bucketExists) {
                 console.log(`Creating bucket: ${bucket.name}`);
-                const { error: createError } = await supabaseAdmin.storage.createBucket(bucket.name, {
+                const { error: createError } = await supabase.storage.createBucket(bucket.name, {
                     public: bucket.public
                 });
                 
@@ -179,7 +193,7 @@ async function createBuckets() {
                 
                 // Update bucket to ensure it has the correct publicity setting
                 if (bucket.public) {
-                    const { error: updateError } = await supabaseAdmin.storage.updateBucket(bucket.name, {
+                    const { error: updateError } = await supabase.storage.updateBucket(bucket.name, {
                         public: true
                     });
                     
@@ -206,7 +220,7 @@ async function setupDatabase() {
   
   try {
     // Test connection with a simple query instead of auth call
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
       .from('postgres_tables')
       .select('*')
       .limit(1);
@@ -231,4 +245,4 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     setupDatabase();
 }
 
-export { setupDatabase, createTables, createBuckets };
+export { setupDatabase, createTables, createBuckets, setupSupabase, supabase, TABLES };

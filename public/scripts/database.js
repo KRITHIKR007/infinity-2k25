@@ -1,4 +1,4 @@
-import { supabase } from '../../supabase.js';
+import { supabase, TABLES } from '../../supabase-setup.js';
 import { PhotoService } from './services/photo-service.js';
 
 // Database tables constants
@@ -332,6 +332,152 @@ export async function testConnection() {
         return {
             success: false,
             error: error.message
+        };
+    }
+}
+
+/**
+ * Get all registrations with optional filtering and pagination
+ * @param {Object} options - Query options
+ * @returns {Promise<Object>} - Query result
+ */
+export async function getRegistrations(options = {}) {
+    try {
+        let query = supabase
+            .from(TABLES.REGISTRATIONS)
+            .select('*');
+
+        // Apply filters if provided
+        if (options.category) {
+            query = query.eq('category', options.category);
+        }
+
+        if (options.payment_status) {
+            query = query.eq('payment_status', options.payment_status);
+        }
+
+        if (options.search) {
+            query = query.or(`name.ilike.%${options.search}%,email.ilike.%${options.search}%,university.ilike.%${options.search}%`);
+        }
+
+        // Apply sorting
+        if (options.orderBy) {
+            query = query.order(options.orderBy.column, { 
+                ascending: options.orderBy.ascending 
+            });
+        } else {
+            // Default ordering by created_at (newest first)
+            query = query.order('created_at', { ascending: false });
+        }
+
+        // Apply pagination
+        if (options.limit) {
+            query = query.limit(options.limit);
+        }
+
+        if (options.offset) {
+            query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+        }
+
+        const { data, error, count } = await query;
+
+        if (error) throw error;
+        return { data, count, error: null };
+    } catch (error) {
+        console.error('Error fetching registrations:', error);
+        return { data: null, count: 0, error };
+    }
+}
+
+/**
+ * Save registration data to the database
+ * @param {Object} registrationData - The registration data to submit
+ * @returns {Promise<Object>} - Result of the operation
+ */
+export async function saveRegistration(registrationData) {
+    try {
+        // Upload payment proof if QR payment
+        let paymentProofUrl = null;
+        
+        if (registrationData.paymentMethod === 'qr' && registrationData.paymentProof) {
+            const file = registrationData.paymentProof;
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${registrationData.id}.${fileExt}`;
+            
+            const { error: uploadError, data: uploadData } = await supabase.storage
+                .from(TABLES.STORAGE.PAYMENT_PROOFS)
+                .upload(fileName, file);
+                
+            if (uploadError) throw uploadError;
+            
+            const { data: urlData } = supabase.storage
+                .from(TABLES.STORAGE.PAYMENT_PROOFS)
+                .getPublicUrl(fileName);
+                
+            paymentProofUrl = urlData.publicUrl;
+        }
+        
+        // Insert registration record
+        const { data: registrationResult, error: registrationError } = await supabase
+            .from(TABLES.REGISTRATIONS)
+            .insert([{
+                id: registrationData.id,
+                name: registrationData.name,
+                email: registrationData.email,
+                phone: registrationData.phone,
+                university: registrationData.university,
+                category: registrationData.category,
+                team_name: registrationData.team_name || null,
+                payment_method: registrationData.paymentMethod,
+                payment_status: registrationData.paymentMethod === 'venue' ? 'pending' : 'completed',
+                total_amount: registrationData.totalAmount,
+                payment_proof_url: paymentProofUrl,
+                created_at: new Date().toISOString()
+            }])
+            .select();
+        
+        if (registrationError) throw registrationError;
+        
+        // Insert selected events
+        if (registrationData.selectedEvents && registrationData.selectedEvents.length > 0) {
+            const eventInserts = registrationData.selectedEvents.map(eventId => ({
+                registration_id: registrationData.id,
+                event_id: eventId,
+                created_at: new Date().toISOString()
+            }));
+            
+            const { error: eventsError } = await supabase
+                .from(TABLES.SELECTED_EVENTS)
+                .insert(eventInserts);
+            
+            if (eventsError) throw eventsError;
+        }
+        
+        // Insert team members if applicable
+        if (registrationData.teamMembers && registrationData.teamMembers.length > 0) {
+            const teamMemberInserts = registrationData.teamMembers.map((member, index) => ({
+                registration_id: registrationData.id,
+                name: member,
+                member_number: index + 1,
+                created_at: new Date().toISOString()
+            }));
+            
+            const { error: teamError } = await supabase
+                .from(TABLES.TEAM_MEMBERS)
+                .insert(teamMemberInserts);
+            
+            if (teamError) throw teamError;
+        }
+        
+        return {
+            success: true,
+            data: registrationResult[0]
+        };
+    } catch (error) {
+        console.error('Error saving registration:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to save registration'
         };
     }
 }

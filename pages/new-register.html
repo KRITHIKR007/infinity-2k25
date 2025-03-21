@@ -7,8 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../public/styles/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Add Supabase client library -->
+    <!-- Supabase client library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../public/scripts/supabase-config.js"></script>
+    <script type="module" src="../public/scripts/database.js"></script>
     <style>
         .floating-navbar {
             position: fixed;
@@ -116,6 +118,17 @@
             background-color: #10B981;
         }
     </style>
+    <!-- Import services -->
+    <script type="module">
+        import { ValidationService } from '../public/scripts/services/validation-service.js';
+        import { PhotoService } from '../public/scripts/services/photo-service.js';
+        import { RegistrationService } from '../public/scripts/services/registration-service.js';
+        
+        // Make services available globally
+        window.ValidationService = ValidationService;
+        window.PhotoService = PhotoService;
+        window.RegistrationService = RegistrationService;
+    </script>
 </head>
 <body class="bg-gray-900 min-h-screen">
     <!-- Navigation -->
@@ -611,10 +624,8 @@
     </footer>
 
     <script>
-        // Initialize Supabase client
-        const SUPABASE_URL = 'https://your-supabase-project-url.supabase.co';
-        const SUPABASE_KEY = 'your-supabase-anon-key';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Initialize Supabase client using the configuration from supabase-config.js
+        const supabase = window.supabaseConfig.initSupabase();
         
         document.addEventListener('DOMContentLoaded', function() {
             // Elements
@@ -1084,40 +1095,95 @@
                     const email = document.getElementById('email').value;
                     const phone = document.getElementById('phone').value;
                     const university = document.getElementById('university').value;
+                    const paymentReference = document.getElementById('paymentReference')?.value || '';
                     
-                    // Generate registration ID
-                    const registrationId = 'INF-2025-' + Math.floor(10000 + Math.random() * 90000);
+                    // Collect team members if applicable
+                    let teamMembers = [];
+                    let teamName = null;
                     
-                    // Create registration object
+                    if (hasTeamEvents()) {
+                        teamName = document.getElementById('teamName').value;
+                        
+                        const memberContainers = document.querySelectorAll('#eventTeamContainers .team-members-list');
+                        memberContainers.forEach(container => {
+                            const inputs = container.querySelectorAll('input[type="text"]');
+                            inputs.forEach(input => {
+                                if (input.value.trim()) {
+                                    teamMembers.push(input.value.trim());
+                                }
+                            });
+                        });
+                    }
+                    
+                    // Prepare registration data
                     const registrationData = {
-                        id: registrationId,
                         name,
                         email,
                         phone,
                         university,
-                        payment_method: paymentMethod,
-                        payment_status: paymentMethod === 'venue' ? 'pending' : 'completed',
-                        total_amount: totalFee,
                         category: selectedCategory,
-                        created_at: new Date().toISOString()
+                        hasTeamEvents: teamEvents.size > 0,
+                        teamName,
+                        teamMembers,
+                        paymentMethod,
+                        paymentProof: paymentMethod === 'qr' ? paymentProof.files[0] : null,
+                        paymentReference,
+                        totalAmount: totalFee,
+                        selectedEvents: Array.from(selectedEvents)
                     };
                     
-                    // Add team details if applicable
-                    if (hasTeamEvents()) {
-                        registrationData.team_name = document.getElementById('teamName').value;
+                    // Use the RegistrationService to submit
+                    const result = await window.RegistrationService.submitRegistration(registrationData);
+                    
+                    if (!result.success) {
+                        throw new Error(result.error || 'Failed to submit registration');
                     }
                     
-                    // Insert registration data
+                    // Show success message
+                    registrationForm.classList.add('hidden');
+                    successMessage.classList.remove('hidden');
+                    
+                    // Set confirmation details
+                    document.getElementById('registrationId').textContent = result.registrationId;
+                    document.getElementById('confirmationEmail').textContent = email;
+                    
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    showError(error.message || 'An error occurred during registration. Please try again.');
+                    
+                    // Reset loading state
+                    submitBtn.disabled = false;
+                    document.getElementById('submitText').classList.remove('hidden');
+                    document.getElementById('submitLoading').classList.add('hidden');
+                }
+            }
+            
+            // Attach the saveRegistration function to the window object to access from the submitRegistration function
+            window.saveRegistration = async function(registrationData) {
+                try {
+                    // Insert registration record
                     const { data: registration, error: registrationError } = await supabase
                         .from('registrations')
-                        .insert(registrationData)
+                        .insert({
+                            id: registrationData.id,
+                            name: registrationData.name,
+                            email: registrationData.email,
+                            phone: registrationData.phone,
+                            university: registrationData.university,
+                            payment_method: registrationData.paymentMethod,
+                            payment_status: registrationData.paymentMethod === 'venue' ? 'pending' : 'completed',
+                            total_amount: registrationData.totalAmount,
+                            category: registrationData.category,
+                            created_at: new Date().toISOString(),
+                            team_name: registrationData.team_name
+                        })
                         .select();
                     
                     if (registrationError) throw registrationError;
                     
                     // Insert selected events
-                    const eventInserts = Array.from(selectedEvents).map(eventId => ({
-                        registration_id: registrationId,
+                    const eventInserts = registrationData.selectedEvents.map(eventId => ({
+                        registration_id: registrationData.id,
                         event_id: eventId,
                         created_at: new Date().toISOString()
                     }));
@@ -1129,29 +1195,26 @@
                     if (eventsError) throw eventsError;
                     
                     // Insert team members if applicable
-                    if (hasTeamEvents()) {
-                        const teamMemberInputs = document.querySelectorAll('input[name^="teamMember"]');
-                        if (teamMemberInputs.length > 0) {
-                            const teamMembers = Array.from(teamMemberInputs).map((input, index) => ({
-                                registration_id: registrationId,
-                                name: input.value,
-                                member_number: index + 1,
-                                created_at: new Date().toISOString()
-                            }));
-                            
-                            const { error: teamError } = await supabase
-                                .from('team_members')
-                                .insert(teamMembers);
-                            
-                            if (teamError) throw teamError;
-                        }
+                    if (registrationData.teamMembers && registrationData.teamMembers.length > 0) {
+                        const teamMembers = registrationData.teamMembers.map((name, index) => ({
+                            registration_id: registrationData.id,
+                            name,
+                            member_number: index + 1,
+                            created_at: new Date().toISOString()
+                        }));
+                        
+                        const { error: teamError } = await supabase
+                            .from('team_members')
+                            .insert(teamMembers);
+                        
+                        if (teamError) throw teamError;
                     }
                     
                     // Upload payment proof if available
-                    if (paymentMethod === 'qr' && paymentProof.files.length > 0) {
-                        const file = paymentProof.files[0];
+                    if (registrationData.paymentMethod === 'qr' && registrationData.paymentProof) {
+                        const file = registrationData.paymentProof;
                         const fileExt = file.name.split('.').pop();
-                        const fileName = `${registrationId}.${fileExt}`;
+                        const fileName = `${registrationData.id}.${fileExt}`;
                         
                         const { error: uploadError } = await supabase.storage
                             .from('payment_proofs')
@@ -1160,27 +1223,15 @@
                         if (uploadError) throw uploadError;
                     }
                     
-                    // Show success message
-                    registrationForm.classList.add('hidden');
-                    successMessage.classList.remove('hidden');
-                    
-                    // Set confirmation details
-                    document.getElementById('registrationId').textContent = registrationId;
-                    document.getElementById('confirmationEmail').textContent = email;
-                    
-                    // Send confirmation email (this would typically be handled by a server-side function)
-                    // In Supabase, you could use Edge Functions or Database Webhooks to trigger emails
-                    
+                    return { success: true, data: registration[0] };
                 } catch (error) {
-                    console.error('Registration error:', error);
-                    showError('An error occurred during registration. Please try again.');
-                    
-                    // Reset loading state
-                    submitBtn.disabled = false;
-                    document.getElementById('submitText').classList.remove('hidden');
-                    document.getElementById('submitLoading').classList.add('hidden');
+                    console.error('Error saving registration:', error);
+                    return { 
+                        success: false, 
+                        error: error.message || 'Failed to save registration'
+                    };
                 }
-            }
+            };
             
             // Mobile menu toggle
             if (mobileMenuButton && closeMenuButton && mobileMenu) {

@@ -2,38 +2,37 @@ import { optimizeImageForUpload, blobToFile } from '../utils/photo-utils.js';
 import { supabase } from '../../../supabase.js';
 
 /**
- * Service for handling photo uploads and processing
+ * Service for handling photo uploads and optimization
  */
 export class PhotoService {
     /**
      * Upload a photo to Supabase storage
      * @param {File} file - The file to upload
      * @param {string} bucket - The storage bucket name
-     * @param {string} folderPath - The folder path within the bucket
-     * @param {boolean} optimize - Whether to optimize the image before uploading
-     * @returns {Promise<{success: boolean, url: string, error: string}>} - Result of the upload
+     * @param {string} folder - The folder path within the bucket
+     * @param {boolean} optimize - Whether to optimize the image before upload
+     * @returns {Promise<Object>} - Result of the upload operation
      */
-    static async uploadPhoto(file, bucket, folderPath = '', optimize = true) {
+    static async uploadPhoto(file, bucket, folder, optimize = false) {
         try {
-            // Generate a unique file path
-            const timestamp = new Date().getTime();
-            const sanitizedFilename = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-            const filePath = `${folderPath ? folderPath + '/' : ''}${timestamp}-${sanitizedFilename}`;
-            
-            // Optimize the image if required
+            if (!file) {
+                throw new Error('No file selected');
+            }
+
             let fileToUpload = file;
+            
+            // Optimize image if requested
             if (optimize && file.type.startsWith('image/')) {
-                const optimizedBlob = await optimizeImageForUpload(file, {
-                    maxWidth: 1600,
-                    maxHeight: 1600,
-                    quality: 0.85,
-                    maxSizeMB: 2
-                });
-                
-                fileToUpload = blobToFile(optimizedBlob, sanitizedFilename);
+                fileToUpload = await this.optimizeImage(file);
             }
             
-            // Upload to Supabase storage
+            // Create a unique file path
+            const timestamp = new Date().getTime();
+            const sanitizedFilename = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+            const filePath = `${folder}/${timestamp}-${sanitizedFilename}`;
+            
+            // Upload file to Supabase
+            const supabase = window.supabaseConfig.initSupabase();
             const { data, error } = await supabase.storage
                 .from(bucket)
                 .upload(filePath, fileToUpload, {
@@ -43,19 +42,18 @@ export class PhotoService {
                 
             if (error) throw error;
             
-            // Get the public URL
+            // Get public URL
             const { data: urlData } = supabase.storage
                 .from(bucket)
                 .getPublicUrl(filePath);
                 
             return {
                 success: true,
-                url: urlData.publicUrl,
-                path: filePath
+                path: filePath,
+                url: urlData.publicUrl
             };
-            
         } catch (error) {
-            console.error('Error uploading photo:', error);
+            console.error('Error in photo upload:', error);
             return {
                 success: false,
                 error: error.message || 'Failed to upload photo'
@@ -63,6 +61,63 @@ export class PhotoService {
         }
     }
     
+    /**
+     * Optimize an image file before upload
+     * @param {File} file - The image file to optimize
+     * @returns {Promise<Blob>} - Optimized image blob
+     */
+    static async optimizeImage(file) {
+        return new Promise((resolve, reject) => {
+            try {
+                const img = new Image();
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                img.onload = () => {
+                    // Calculate new dimensions (max 1200px width/height)
+                    let width = img.width;
+                    let height = img.height;
+                    const maxDimension = 1200;
+                    
+                    if (width > maxDimension || height > maxDimension) {
+                        if (width > height) {
+                            height = Math.round(height * (maxDimension / width));
+                            width = maxDimension;
+                        } else {
+                            width = Math.round(width * (maxDimension / height));
+                            height = maxDimension;
+                        }
+                    }
+                    
+                    // Set canvas dimensions
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // Draw image on canvas
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Convert to blob
+                    canvas.toBlob(
+                        (blob) => {
+                            resolve(blob);
+                        }, 
+                        file.type, 
+                        0.85 // quality
+                    );
+                };
+                
+                img.onerror = () => {
+                    reject(new Error('Failed to load image for optimization'));
+                };
+                
+                // Load image from file
+                img.src = URL.createObjectURL(file);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
     /**
      * Delete a photo from Supabase storage
      * @param {string} path - The file path to delete
