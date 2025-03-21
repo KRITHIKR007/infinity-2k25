@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration | Infinity 2025</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../public/styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Add Supabase client library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .floating-navbar {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 1280px;
+            z-index: 100;
+            border-radius: 1rem;
+            animation: navbarFloat 2s ease-in-out infinite alternate;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes navbarFloat {
+            from {
+                transform: translateX(-50%) translateY(0px);
+            }
+            to {
+                transform: translateX(-50%) translateY(5px);
+            }
+        }
+        
+        .glass-effect {
+            background-color: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #9333ea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #7e22ce;
+        }
+        
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .event-card {
+            transition: all 0.3s ease;
+        }
+        
+        .event-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .event-card.selected {
+            border: 2px solid #9333ea;
+        }
+        
+        .payment-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-card.selected {
+            border: 2px solid #9333ea;
+        }
+        
+        .form-step {
+            display: none;
+        }
+        
+        .form-step.active {
+            display: block;
+        }
+        
+        .step-indicator {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .step-indicator.active {
+            background-color: #9333ea;
+        }
+        
+        .step-indicator.completed {
+            background-color: #10B981;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-30 py-4">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="glass-effect rounded-xl py-4 px-6 flex justify-between items-center">
+                <a href="../index.html" class="flex items-center space-x-2">
+                    <img src="../public/images/INFINITY GOLD LOGO 24.png" alt="INFINITY-2K25 Logo" class="h-8 w-auto animate-float">
+                    <span class="text-xl font-bold gradient-text">INFINITY-2K25</span>
+                </a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="../index.html" class="text-gray-300 hover:text-purple-400 transition-colors">Home</a>
+                    <a href="tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech</a>
+                    <a href="cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural</a>
+                    <a href="contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">Contact</a>
+                    <a href="register.html" class="text-purple-400">Register</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobileMenuButton" class="text-white">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 z-40 hidden">
+        <div class="fixed inset-0 bg-black opacity-50"></div>
+        <div class="fixed right-0 top-0 h-full w-64 bg-gray-800 p-4">
+            <div class="flex justify-between items-center mb-8">
+                <span class="text-xl font-bold text-white">Menu</span>
+                <button id="closeMenuButton" class="text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="flex flex-col space-y-4">
+                <a href="../index.html" class="text-gray-300 hover:text-purple-400 transition-colors">Home</a>
+                <a href="tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech</a>
+                <a href="cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural</a>
+                <a href="contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">Contact</a>
+                <a href="register.html" class="text-purple-400">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Form Section -->
+    <div class="pt-32 pb-16">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="glass-effect p-8 rounded-lg">
+                <h1 class="text-3xl font-bold text-white mb-6 text-center">Event Registration</h1>
+                
+                <!-- Step Indicators -->
+                <div class="flex justify-center mb-8">
+                    <div class="flex items-center">
+                        <div class="step-indicator active" id="stepIndicator1">
+                            <span>1</span>
+                        </div>
+                        <div class="w-12 h-1 bg-gray-700" id="stepConnector1"></div>
+                        <div class="step-indicator" id="stepIndicator2">
+                            <span>2</span>
+                        </div>
+                        <div class="w-12 h-1 bg-gray-700" id="stepConnector2"></div>
+                        <div class="step-indicator" id="stepIndicator3">
+                            <span>3</span>
+                        </div>
+                        <div class="w-12 h-1 bg-gray-700" id="stepConnector3"></div>
+                        <div class="step-indicator" id="stepIndicator4">
+                            <span>4</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Error Alert (Hidden by default) -->
+                <div id="errorAlert" class="bg-red-900/50 text-white p-4 rounded-lg mb-6 hidden">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle mt-0.5"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p id="errorMessage">Error message will appear here</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Registration Form -->
+                <form id="registrationForm">
+                    <!-- Step 1: Personal Information -->
+                    <div class="form-step active" id="step1">
+                        <h2 class="text-xl font-semibold text-white mb-4">Personal Information</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label for="name" class="block text-gray-300 text-sm font-medium mb-2">Full Name*</label>
+                                <input type="text" id="name" name="name" required
+                                    class="w-full px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            
+                            <div>
+                                <label for="email" class="block text-gray-300 text-sm font-medium mb-2">Email Address*</label>
+                                <input type="email" id="email" name="email" required
+                                    class="w-full px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            
+                            <div>
+                                <label for="phone" class="block text-gray-300 text-sm font-medium mb-2">Phone Number*</label>
+                                <input type="tel" id="phone" name="phone" required
+                                    class="w-full px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            
+                            <div>
+                                <label for="university" class="block text-gray-300 text-sm font-medium mb-2">University/College*</label>
+                                <input type="text" id="university" name="university" required
+                                    class="w-full px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end">
+                            <button type="button" id="step1NextBtn" class="btn btn-primary">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Event Selection -->
+                    <div class="form-step" id="step2">
+                        <h2 class="text-xl font-semibold text-white mb-4">Event Selection</h2>
+                        
+                        <div class="mb-6">
+                            <p class="text-gray-300 mb-4">Select the events you wish to participate in. Note: You can only select either Tech events or Cultural events, not both.</p>
+                            
+                            <!-- Category Switcher -->
+                            <div class="flex border border-gray-700 rounded-lg overflow-hidden mb-6">
+                                <button type="button" id="techCategoryBtn" class="flex-1 py-3 text-center bg-purple-600 text-white">Tech Events</button>
+                                <button type="button" id="culturalCategoryBtn" class="flex-1 py-3 text-center bg-gray-800 text-gray-300">Cultural Events</button>
+                            </div>
+                            
+                            <!-- Tech Events -->
+                            <div id="techEventsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <!-- PITCH4SUSTAIN -->
+                                <div class="event-card glass-effect p-4 rounded-lg" data-category="tech" data-event-id="pitch4sustain" data-fee="500">
+                                    <div class="flex items-start">
+                                        <div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
+                                            <img src="../public/images/posters/pitch4sustain.jpg" alt="PITCH4SUSTAIN" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="text-white font-medium">PITCH4SUSTAIN</h3>
+                                                <div class="event-checkbox">
+                                                    <input type="checkbox" id="event-pitch4sustain" class="sr-only event-checkbox-input" data-event-id="pitch4sustain">
+                                                    <span class="w-5 h-5 border border-gray-500 rounded inline-block"></span>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-400 text-sm">Sustainability Innovation Challenge</p>
+                                            <p class="text-purple-400 text-sm">₹500 | Team Size: 1-5</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Syntax Scramble -->
+                                <div class="event-card glass-effect p-4 rounded-lg" data-category="tech" data-event-id="syntax-scramble" data-fee="150">
+                                    <div class="flex items-start">
+                                        <div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
+                                            <img src="../public/images/posters/syntax scrambel.jpg" alt="Syntax Scramble" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="text-white font-medium">Syntax Scramble</h3>
+                                                <div class="event-checkbox">
+                                                    <input type="checkbox" id="event-syntax-scramble" class="sr-only event-checkbox-input" data-event-id="syntax-scramble">
+                                                    <span class="w-5 h-5 border border-gray-500 rounded inline-block"></span>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-400 text-sm">Blind Coding Challenge</p>
+                                            <p class="text-purple-400 text-sm">₹150 | Individual</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- CTRL+Z -->
+                                <div class="event-card glass-effect p-4 rounded-lg" data-category="tech" data-event-id="ctrl-z" data-fee="200">
+                                    <div class="flex items-start">
+                                        <div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
+                                            <img src="../public/images/posters/ctrl+z.jpg" alt="CTRL+Z" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="text-white font-medium">CTRL+Z</h3>
+                                                <div class="event-checkbox">
+                                                    <input type="checkbox" id="event-ctrl-z" class="sr-only event-checkbox-input" data-event-id="ctrl-z">
+                                                    <span class="w-5 h-5 border border-gray-500 rounded inline-block"></span>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-400 text-sm">Debugging Competition</p>
+                                            <p class="text-purple-400 text-sm">₹200 | Team Size: 3-4</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Phantom Hunt -->
+                                <div class="event-card glass-effect p-4 rounded-lg" data-category="tech" data-event-id="phantom-hunt" data-fee="500">
+                                    <div class="flex items-start">
+                                        <div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
+                                            <img src="../public/images/posters/phnatum hunt.jpg" alt="Phantom Hunt" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="text-white font-medium">Phantom Hunt</h3>
+                                                <div class="event-checkbox">
+                                                    <input type="checkbox" id="event-phantom-hunt" class="sr-only event-checkbox-input" data-event-id="phantom-hunt">
+                                                    <span class="w-5 h-5 border border-gray-500 rounded inline-block"></span>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-400 text-sm">Cybersecurity Challenge</p>
+                                            <p class="text-purple-400 text-sm">₹500 | Team Size: 4-5</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Cultural Events -->
+                            <div id="culturalEventsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 hidden">
+                                <!-- Step Sync -->
+                                <div class="event-card glass-effect p-4 rounded-lg" data-category="cultural" data-event-id="step-sync" data-fee="199">
+                                    <div class="flex items-start">
+                                        <div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
+                                            <img src="../public/images/posters/stepsynk.jpg" alt="Step Sync" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="text-white font-medium">Step Sync</h3>
+                                                <div class="event-checkbox">
+                                                    <input type="checkbox" id="event-step-sync" class="sr-only event-checkbox-input" data-event-id="step-sync">
+                                                    <span class="w-5 h-5 border border-gray-500 rounded inline-block"></span>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-400 text-sm">Solo Dance</p>
+                                            <p class="text-purple-400 text-sm">₹199 | Individual</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Nritya Vedika -->
+                                <div class="event-card glass-effect p-4 rounded-lg" data-category="cultural" data-event-id="nritya-vedika" data-fee="599">
+                                    <div class="flex items-start">
+                                        <div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
+                                            <img src="../public/images/posters/britya veduka.jpg" alt="Nritya Vedika" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="text-white font-medium">Nritya Vedika</h3>
+                                                <div class="event-checkbox">
+                                                    <input type="checkbox" id="event-nritya-vedika" class="sr-only event-checkbox-input" data-event-id="nritya-vedika">
+                                                    <span class="w-5 h-5 border border-gray-500 rounded inline-block"></span>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-400 text-sm">Group Dance</p>
+                                            <p class="text-purple-400 text-sm">₹599 | Team Size: 6-15</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Echoes & Strings -->
+                                <div class="event-card glass-effect p-4 rounded-lg" data-category="cultural" data-event-id="echoes-strings" data-fee="299">
+                                    <div class="flex items-start">
+                                        <div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
+                                            <img src="../public/images/posters/echoed strangel.jpg" alt="Echoes & Strings" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="text-white font-medium">Echoes & Strings</h3>
+                                                <div class="event-checkbox">
+                                                    <input type="checkbox" id="event-echoes-strings" class="sr-only event-checkbox-input" data-event-id="echoes-strings">
+                                                    <span class="w-5 h-5 border border-gray-500 rounded inline-block"></span>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-400 text-sm">Solo Singing</p>
+                                            <p class="text-purple-400 text-sm">₹299 | Individual</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Resonance -->
+                                <div class="event-card glass-effect p-4 rounded-lg" data-category="cultural" data-event-id="resonance" data-fee="499">
+                                    <div class="flex items-start">
+                                        <div class="w-16 h-16 rounded-lg overflow-hidden mr-3">
+                                            <img src="../public/images/posters/resonance.jpg" alt="Resonance" class="w-full h-full object-cover">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start">
+                                                <h3 class="text-white font-medium">Resonance</h3>
+                                                <div class="event-checkbox">
+                                                    <input type="checkbox" id="event-resonance" class="sr-only event-checkbox-input" data-event-id="resonance">
+                                                    <span class="w-5 h-5 border border-gray-500 rounded inline-block"></span>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-400 text-sm">Band Performance</p>
+                                            <p class="text-purple-400 text-sm">₹499 | Team Size: 2-6</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button type="button" id="step2PrevBtn" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left mr-2"></i> Previous
+                            </button>
+                            <button type="button" id="step2NextBtn" class="btn btn-primary">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Team Details (Shown conditionally) -->
+                    <div class="form-step" id="step3">
+                        <h2 class="text-xl font-semibold text-white mb-4">Team Details</h2>
+                        
+                        <div id="noTeamEventsMessage" class="hidden">
+                            <p class="text-gray-300 mb-4">You have not selected any team events. You can proceed to the next step.</p>
+                        </div>
+                        
+                        <div id="teamEventsContainer" class="mb-6">
+                            <p class="text-gray-300 mb-4">Enter team details for the team events you've selected:</p>
+                            
+                            <!-- Team Name -->
+                            <div class="mb-6">
+                                <label for="teamName" class="block text-gray-300 text-sm font-medium mb-2">Team Name*</label>
+                                <input type="text" id="teamName" name="teamName" 
+                                    class="w-full px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            
+                            <!-- Dynamic Team Members Fields (Will be populated based on selections) -->
+                            <div id="teamMembersFields">
+                                <!-- Team members will be added here dynamically -->
+                            </div>
+                            
+                            <button type="button" id="addTeamMemberBtn" class="text-purple-400 hover:text-purple-300 transition-colors">
+                                <i class="fas fa-plus-circle mr-1"></i> Add Team Member
+                            </button>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button type="button" id="step3PrevBtn" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left mr-2"></i> Previous
+                            </button>
+                            <button type="button" id="step3NextBtn" class="btn btn-primary">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4: Payment Details -->
+                    <div class="form-step" id="step4">
+                        <h2 class="text-xl font-semibold text-white mb-4">Review & Payment</h2>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium text-white mb-2">Selected Events</h3>
+                            <div id="selectedEventsList" class="glass-effect p-4 rounded-lg mb-4">
+                                <!-- Selected events will be listed here -->
+                                <p class="text-gray-400">No events selected</p>
+                            </div>
+                            
+                            <div class="flex justify-between items-center glass-effect p-4 rounded-lg mb-6">
+                                <span class="text-white font-medium">Total Amount:</span>
+                                <span class="text-xl font-bold text-purple-400" id="totalAmount">₹0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium text-white mb-2">Payment Method</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="payment-card glass-effect p-4 rounded-lg" id="qrPaymentCard" data-payment-method="qr">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="text-white font-medium">QR Payment</h4>
+                                        <div class="payment-radio">
+                                            <input type="radio" id="payment-qr" name="paymentMethod" value="qr" class="sr-only">
+                                            <span class="w-5 h-5 border border-gray-500 rounded-full inline-block"></span>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-400 text-sm mb-2">Scan QR code and make payment</p>
+                                    <div class="mt-2">
+                                        <div id="techQrCode" class="hidden">
+                                            <img src="../public/images/tech-payment-qr.jpg" alt="Tech QR Code" class="w-32 h-32 mx-auto">
+                                        </div>
+                                        <div id="culturalQrCode" class="hidden">
+                                            <img src="../public/images/cultural-payment-qr.jpg" alt="Cultural QR Code" class="w-32 h-32 mx-auto">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="payment-card glass-effect p-4 rounded-lg" id="venuePaymentCard" data-payment-method="venue">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="text-white font-medium">Pay at Venue</h4>
+                                        <div class="payment-radio">
+                                            <input type="radio" id="payment-venue" name="paymentMethod" value="venue" class="sr-only">
+                                            <span class="w-5 h-5 border border-gray-500 rounded-full inline-block"></span>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-400 text-sm">Pay at the venue during check-in</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Payment Proof Upload (for QR payment) -->
+                            <div id="paymentProofSection" class="hidden mt-4">
+                                <label for="paymentProof" class="block text-gray-300 text-sm font-medium mb-2">Upload Payment Proof*</label>
+                                <div class="flex items-center">
+                                    <label for="paymentProof" class="cursor-pointer glass-effect p-4 rounded-lg flex items-center justify-center w-full">
+                                        <i class="fas fa-upload mr-2 text-purple-400"></i>
+                                        <span class="text-white" id="uploadLabel">Upload Screenshot</span>
+                                    </label>
+                                    <input type="file" id="paymentProof" name="paymentProof" accept="image/*" class="hidden">
+                                </div>
+                                <div id="previewContainer" class="mt-4 hidden">
+                                    <img id="previewImage" src="#" alt="Payment Proof" class="max-w-full h-auto rounded-lg">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <button type="button" id="step4PrevBtn" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left mr-2"></i> Previous
+                            </button>
+                            <button type="submit" id="submitBtn" class="btn btn-primary">
+                                <span id="submitText">Complete Registration</span>
+                                <span id="submitLoading" class="hidden">
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Processing...
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Success Message (Hidden by default) -->
+                <div id="successMessage" class="hidden text-center py-8">
+                    <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-check text-white text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Registration Successful!</h2>
+                    <p class="text-gray-300 mb-6">Your registration has been submitted successfully.</p>
+                    <p class="text-white mb-4">Registration ID: <span id="registrationId" class="font-semibold text-purple-400">INF-2025-XXXX</span></p>
+                    <p class="text-white mb-8">We've sent a confirmation email to <span id="confirmationEmail" class="text-purple-400">your@email.com</span></p>
+                    <a href="confirmation.html" class="btn btn-primary">
+                        Go to Confirmation Page
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 py-8">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div class="text-center">
+                    <a href="../index.html" class="inline-block py-2 px-4 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors w-full">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a href="tech.html" class="inline-block py-2 px-4 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors w-full">
+                        <i class="fas fa-microchip mr-2"></i>Tech Events
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a href="cultural.html" class="inline-block py-2 px-4 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors w-full">
+                        <i class="fas fa-music mr-2"></i>Cultural Events
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a href="register.html" class="inline-block py-2 px-4 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors w-full">
+                        <i class="fas fa-user-plus mr-2"></i>Register
+                    </a>
+                </div>
+            </div>
+            
+            <div class="text-center mb-4">
+                <a href="contact.html" class="inline-block py-2 px-8 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors">
+                    <i class="fas fa-envelope mr-2"></i>Contact Us
+                </a>
+            </div>
+            
+            <hr class="border-gray-800 my-6">
+            
+            <p class="text-center text-gray-400 mb-1">© 2025 Infinity. All rights reserved.</p>
+            <p class="text-center text-gray-500 text-sm">Organized by Faculty of Engineering and Technology, Jain (Deemed-to-be University), Bangalore</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Supabase client
+        const SUPABASE_URL = 'https://your-supabase-project-url.supabase.co';
+        const SUPABASE_KEY = 'your-supabase-anon-key';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const registrationForm = document.getElementById('registrationForm');
+            const successMessage = document.getElementById('successMessage');
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Step navigation
+            const formSteps = document.querySelectorAll('.form-step');
+            const stepIndicators = document.querySelectorAll('.step-indicator');
+            
+            // Step 1
+            const step1NextBtn = document.getElementById('step1NextBtn');
+            
+            // Step 2
+            const step2PrevBtn = document.getElementById('step2PrevBtn');
+            const step2NextBtn = document.getElementById('step2NextBtn');
+            const techCategoryBtn = document.getElementById('techCategoryBtn');
+            const culturalCategoryBtn = document.getElementById('culturalCategoryBtn');
+            const techEventsContainer = document.getElementById('techEventsContainer');
+            const culturalEventsContainer = document.getElementById('culturalEventsContainer');
+            const eventCards = document.querySelectorAll('.event-card');
+            
+            // Step 3
+            const step3PrevBtn = document.getElementById('step3PrevBtn');
+            const step3NextBtn = document.getElementById('step3NextBtn');
+            const noTeamEventsMessage = document.getElementById('noTeamEventsMessage');
+            const teamEventsContainer = document.getElementById('teamEventsContainer');
+            const teamMembersFields = document.getElementById('teamMembersFields');
+            const addTeamMemberBtn = document.getElementById('addTeamMemberBtn');
+            
+            // Step 4
+            const step4PrevBtn = document.getElementById('step4PrevBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const selectedEventsList = document.getElementById('selectedEventsList');
+            const totalAmount = document.getElementById('totalAmount');
+            const paymentCards = document.querySelectorAll('.payment-card');
+            const qrPaymentCard = document.getElementById('qrPaymentCard');
+            const venuePaymentCard = document.getElementById('venuePaymentCard');
+            const paymentProofSection = document.getElementById('paymentProofSection');
+            const paymentProof = document.getElementById('paymentProof');
+            const uploadLabel = document.getElementById('uploadLabel');
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImage = document.getElementById('previewImage');
+            const techQrCode = document.getElementById('techQrCode');
+            const culturalQrCode = document.getElementById('culturalQrCode');
+            
+            // Mobile menu
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const closeMenuButton = document.getElementById('closeMenuButton');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            // State variables
+            let selectedCategory = null;
+            let selectedEvents = new Set();
+            let teamMemberCount = 0;
+            let maxTeamSize = 0;
+            let totalFee = 0;
+            let paymentMethod = '';
+            
+            // Mobile menu toggle
+            if (mobileMenuButton && closeMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.remove('hidden');
+                });
+                
+                closeMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.add('hidden');
+                });
+            }
+            
+            // Step navigation functions
+            function goToStep(stepNumber) {
+                formSteps.forEach((step, index) => {
+                    if (index + 1 === stepNumber) {
+                        step.classList.add('active');
+                    } else {
+                        step.classList.remove('active');
+                    }
+                });
+                
+                stepIndicators.forEach((indicator, index) => {
+                    if (index + 1 === stepNumber) {
+                        indicator.classList.add('active');
+                    } else if (index + 1 < stepNumber) {
+                        indicator.classList.add('completed');
+                        indicator.classList.remove('active');
+                    } else {
+                        indicator.classList.remove('active', 'completed');
+                    }
+                });
+            }
+            
+            // Step 1 validation
+            function validateStep1() {
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const university = document.getElementById('university').value.trim();
+                
+                if (!name) {
+                    showError('Please enter your full name');
+                    return false;
+                }
+                
+                if (!email || !isValidEmail(email)) {
+                    showError('Please enter a valid email address');
+                    return false;
+                }
+                
+                if (!phone || !isValidPhone(phone)) {
+                    showError('Please enter a valid phone number');
+                    return false;
+                }
+                
+                if (!university) {
+                    showError('Please enter your university/college name');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            // Step 2 validation
+            function validateStep2() {
+                if (selectedEvents.size === 0) {
+                    showError('Please select at least one event');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            // Step 3 validation
+            function validateStep3() {
+                // Skip validation if there are no team events
+                if (noTeamEventsMessage.classList.contains('hidden')) {
+                    const teamName = document.getElementById('teamName').value.trim();
+                    
+                    if (!teamName) {
+                        showError('Please enter a team name');
+                        return false;
+                    }
+                    
+                    const teamMemberInputs = document.querySelectorAll('input[name^="teamMember"]');
+                    for (let input of teamMemberInputs) {
+                        if (!input.value.trim()) {
+                            showError('Please fill in all team member names');
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            }
+            
+            // Step 4 validation
+            function validateStep4() {
+                if (!paymentMethod) {
+                    showError('Please select a payment method');
+                    return false;
+                }
+                
+                if (paymentMethod === 'qr' && paymentProof.files.length === 0) {
+                    showError('Please upload payment proof');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            // Show error message
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorAlert.classList.remove('hidden');
+                
+                // Scroll to error
+                errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Hide after 5 seconds
+                setTimeout(() => {
+                    errorAlert.classList.add('hidden');
+                }, 5000);
+            }
+            
+            // Email validation
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+            
+            // Phone validation
+            function isValidPhone(phone) {
+                const phoneRegex = /^[0-9]{10}$/;
+                return phoneRegex.test(phone);
+            }
+            
+            // Update event selection
+            function updateEventSelection(eventCard) {
+                const eventId = eventCard.dataset.eventId;
+                const eventFee = parseInt(eventCard.dataset.fee, 10);
+                const eventCategory = eventCard.dataset.category;
+                const checkbox = eventCard.querySelector('.event-checkbox-input');
+                
+                if (checkbox.checked) {
+                    // Deselect the event
+                    selectedEvents.delete(eventId);
+                    eventCard.classList.remove('selected');
+                    checkbox.checked = false;
+                    
+                    // Update total fee
+                    totalFee -= eventFee;
+                    
+                    // If no events are selected, enable both categories
+                    if (selectedEvents.size === 0) {
+                        selectedCategory = null;
+                        enableAllEvents();
+                    }
+                } else {
+                    // If this is the first event selected, set the category
+                    if (selectedEvents.size === 0) {
+                        selectedCategory = eventCategory;
+                        disableOtherCategoryEvents(eventCategory);
+                    }
+                    
+                    // Select the event
+                    selectedEvents.add(eventId);
+                    eventCard.classList.add('selected');
+                    checkbox.checked = true;
+                    
+                    // Update total fee
+                    totalFee += eventFee;
+                }
+                
+                // Update total amount display
+                updateTotalAmount();
+            }
+            
+            // Enable all events
+            function enableAllEvents() {
+                eventCards.forEach(card => {
+                    card.classList.remove('disabled');
+                });
+            }
+            
+            // Disable events from other category
+            function disableOtherCategoryEvents(category) {
+                eventCards.forEach(card => {
+                    if (card.dataset.category !== category) {
+                        card.classList.add('disabled');
+                        
+                        // Uncheck if checked
+                        const checkbox = card.querySelector('.event-checkbox-input');
+                        if (checkbox.checked) {
+                            checkbox.checked = false;
+                            card.classList.remove('selected');
+                            selectedEvents.delete(card.dataset.eventId);
+                            totalFee -= parseInt(card.dataset.fee, 10);
+                        }
+                    }
+                });
+            }
+            
+            // Switch event category
+            function switchEventCategory(category) {
+                if (selectedEvents.size > 0 && selectedCategory !== category) {
+                    showError(`You can only select ${selectedCategory} events at a time. Please unselect all events to switch categories.`);
+                    return;
+                }
+                
+                if (category === 'tech') {
+                    techCategoryBtn.classList.add('bg-purple-600', 'text-white');
+                    techCategoryBtn.classList.remove('bg-gray-800', 'text-gray-300');
+                    culturalCategoryBtn.classList.add('bg-gray-800', 'text-gray-300');
+                    culturalCategoryBtn.classList.remove('bg-purple-600', 'text-white');
+                    
+                    techEventsContainer.classList.remove('hidden');
+                    culturalEventsContainer.classList.add('hidden');
+                } else {
+                    culturalCategoryBtn.classList.add('bg-purple-600', 'text-white');
+                    culturalCategoryBtn.classList.remove('bg-gray-800', 'text-gray-300');
+                    techCategoryBtn.classList.add('bg-gray-800', 'text-gray-300');
+                    techCategoryBtn.classList.remove('bg-purple-600', 'text-white');
+                    
+                    culturalEventsContainer.classList.remove('hidden');
+                    techEventsContainer.classList.add('hidden');
+                }
+            }
+            
+            // Check if any team events are selected
+            function hasTeamEvents() {
+                let hasTeam = false;
+                
+                eventCards.forEach(card => {
+                    const eventId = card.dataset.eventId;
+                    const checkbox = card.querySelector('.event-checkbox-input');
+                    
+                    if (checkbox.checked) {
+                        // These are known team events (you should add/update according to your actual events)
+                        if (eventId === 'pitch4sustain' || eventId === 'ctrl-z' || eventId === 'phantom-hunt' || 
+                            eventId === 'nritya-vedika' || eventId === 'resonance') {
+                            hasTeam = true;
+                        }
+                    }
+                });
+                
+                return hasTeam;
+            }
+            
+            // Find max team size from selected events
+            function findMaxTeamSize() {
+                let maxSize = 0;
+                
+                // These are example max team sizes, update with your actual numbers
+                const teamSizes = {
+                    'pitch4sustain': 5,
+                    'ctrl-z': 4,
+                    'phantom-hunt': 5,
+                    'nritya-vedika': 15,
+                    'resonance': 6
+                };
+                
+                selectedEvents.forEach(eventId => {
+                    if (teamSizes[eventId] && teamSizes[eventId] > maxSize) {
+                        maxSize = teamSizes[eventId];
+                    }
+                });
+                
+                return maxSize;
+            }
+            
+            // Add team member field
+            function addTeamMemberField() {
+                if (teamMemberCount >= maxTeamSize - 1) {
+                    showError(`Maximum team size is ${maxTeamSize} including you`);
+                    return;
+                }
+                
+                teamMemberCount++;
+                
+                const fieldDiv = document.createElement('div');
+                fieldDiv.className = 'mb-4';
+                fieldDiv.innerHTML = `
+                    <div class="flex items-center">
+                        <input type="text" name="teamMember${teamMemberCount}" placeholder="Team Member ${teamMemberCount} Name"
+                            class="flex-1 px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <button type="button" class="remove-team-member-btn ml-2 text-red-400 hover:text-red-300 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                teamMembersFields.appendChild(fieldDiv);
+                
+                // Add event listener to remove button
+                const removeBtn = fieldDiv.querySelector('.remove-team-member-btn');
+                removeBtn.addEventListener('click', function() {
+                    teamMembersFields.removeChild(fieldDiv);
+                    teamMemberCount--;
+                });
+            }
+            
+            // Update total amount display
+            function updateTotalAmount() {
+                totalAmount.textContent = `₹${totalFee}`;
+            }
+            
+            // Update selected events list
+            function updateSelectedEventsList() {
+                if (selectedEvents.size === 0) {
+                    selectedEventsList.innerHTML = '<p class="text-gray-400">No events selected</p>';
+                    return;
+                }
+                
+                let eventsHtml = '';
+                
+                eventCards.forEach(card => {
+                    const eventId = card.dataset.eventId;
+                    const checkbox = card.querySelector('.event-checkbox-input');
+                    
+                    if (checkbox.checked) {
+                        const eventName = card.querySelector('h3').textContent;
+                        const eventFee = card.dataset.fee;
+                        
+                        eventsHtml += `
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-white">${eventName}</span>
+                                <span class="text-purple-400">₹${eventFee}</span>
+                            </div>
+                        `;
+                    }
+                });
+                
+                selectedEventsList.innerHTML = eventsHtml;
+            }
+            
+            // Select payment method
+            function selectPaymentMethod(method) {
+                paymentMethod = method;
+                
+                paymentCards.forEach(card => {
+                    card.classList.remove('selected');
+                    const radio = card.querySelector('input[type="radio"]');
+                    radio.checked = false;
+                });
+                
+                if (method === 'qr') {
+                    qrPaymentCard.classList.add('selected');
+                    const radio = qrPaymentCard.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    paymentProofSection.classList.remove('hidden');
+                    
+                    // Show appropriate QR code based on category
+                    if (selectedCategory === 'tech') {
+                        techQrCode.classList.remove('hidden');
+                        culturalQrCode.classList.add('hidden');
+                    } else if (selectedCategory === 'cultural') {
+                        culturalQrCode.classList.remove('hidden');
+                        techQrCode.classList.add('hidden');
+                    }
+                } else if (method === 'venue') {
+                    venuePaymentCard.classList.add('selected');
+                    const radio = venuePaymentCard.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    paymentProofSection.classList.add('hidden');
+                    techQrCode.classList.add('hidden');
+                    culturalQrCode.classList.add('hidden');
+                }
+            }
+            
+            // Initialize file preview
+            function initFilePreview() {
+                paymentProof.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const file = this.files[0];
+                        
+                        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                            showError('File size exceeds 5MB limit');
+                            this.value = '';
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            previewImage.src = e.target.result;
+                            previewContainer.classList.remove('hidden');
+                            uploadLabel.textContent = file.name;
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // Submit registration to Supabase
+            async function submitRegistration() {
+                try {
+                    // Show loading state
+                    submitBtn.disabled = true;
+                    document.getElementById('submitText').classList.add('hidden');
+                    document.getElementById('submitLoading').classList.remove('hidden');
+                    
+                    // Get form data
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const phone = document.getElementById('phone').value;
+                    const university = document.getElementById('university').value;
+                    
+                    // Generate registration ID
+                    const registrationId = 'INF-2025-' + Math.floor(10000 + Math.random() * 90000);
+                    
+                    // Create registration object
+                    const registrationData = {
+                        id: registrationId,
+                        name,
+                        email,
+                        phone,
+                        university,
+                        payment_method: paymentMethod,
+                        payment_status: paymentMethod === 'venue' ? 'pending' : 'completed',
+                        total_amount: totalFee,
+                        category: selectedCategory,
+                        created_at: new Date().toISOString()
+                    };
+                    
+                    // Add team details if applicable
+                    if (hasTeamEvents()) {
+                        registrationData.team_name = document.getElementById('teamName').value;
+                    }
+                    
+                    // Insert registration data
+                    const { data: registration, error: registrationError } = await supabase
+                        .from('registrations')
+                        .insert(registrationData)
+                        .select();
+                    
+                    if (registrationError) throw registrationError;
+                    
+                    // Insert selected events
+                    const eventInserts = Array.from(selectedEvents).map(eventId => ({
+                        registration_id: registrationId,
+                        event_id: eventId,
+                        created_at: new Date().toISOString()
+                    }));
+                    
+                    const { error: eventsError } = await supabase
+                        .from('selected_events')
+                        .insert(eventInserts);
+                    
+                    if (eventsError) throw eventsError;
+                    
+                    // Insert team members if applicable
+                    if (hasTeamEvents()) {
+                        const teamMemberInputs = document.querySelectorAll('input[name^="teamMember"]');
+                        if (teamMemberInputs.length > 0) {
+                            const teamMembers = Array.from(teamMemberInputs).map((input, index) => ({
+                                registration_id: registrationId,
+                                name: input.value,
+                                member_number: index + 1,
+                                created_at: new Date().toISOString()
+                            }));
+                            
+                            const { error: teamError } = await supabase
+                                .from('team_members')
+                                .insert(teamMembers);
+                            
+                            if (teamError) throw teamError;
+                        }
+                    }
+                    
+                    // Upload payment proof if available
+                    if (paymentMethod === 'qr' && paymentProof.files.length > 0) {
+                        const file = paymentProof.files[0];
+                        const fileExt = file.name.split('.').pop();
+                        const fileName = `${registrationId}.${fileExt}`;
+                        
+                        const { error: uploadError } = await supabase.storage
+                            .from('payment_proofs')
+                            .upload(fileName, file);
+                        
+                        if (uploadError) throw uploadError;
+                    }
+                    
+                    // Show success message
+                    registrationForm.classList.add('hidden');
+                    successMessage.classList.remove('hidden');
+                    
+                    // Set confirmation details
+                    document.getElementById('registrationId').textContent = registrationId;
+                    document.getElementById('confirmationEmail').textContent = email;
+                    
+                    // Send confirmation email (this would typically be handled by a server-side function)
+                    // In Supabase, you could use Edge Functions or Database Webhooks to trigger emails
+                    
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    showError('An error occurred during registration. Please try again.');
+                    
+                    // Reset loading state
+                    submitBtn.disabled = false;
+                    document.getElementById('submitText').classList.remove('hidden');
+                    document.getElementById('submitLoading').classList.add('hidden');
+                }
+            }
+            
+            // Mobile menu toggle
+            if (mobileMenuButton && closeMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.remove('hidden');
+                });
+                
+                closeMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.add('hidden');
+                });
+            }
+            
+            // Step navigation functions
+            function goToStep(stepNumber) {
+                formSteps.forEach((step, index) => {
+                    if (index + 1 === stepNumber) {
+                        step.classList.add('active');
+                    } else {
+                        step.classList.remove('active');
+                    }
+                });
+                
+                stepIndicators.forEach((indicator, index) => {
+                    if (index + 1 === stepNumber) {
+                        indicator.classList.add('active');
+                    } else if (index + 1 < stepNumber) {
+                        indicator.classList.add('completed');
+                        indicator.classList.remove('active');
+                    } else {
+                        indicator.classList.remove('active', 'completed');
+                    }
+                });
+            }
+            
+            // Step 1 validation
+            function validateStep1() {
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const university = document.getElementById('university').value.trim();
+                
+                if (!name) {
+                    showError('Please enter your full name');
+                    return false;
+                }
+                
+                if (!email || !isValidEmail(email)) {
+                    showError('Please enter a valid email address');
+                    return false;
+                }
+                
+                if (!phone || !isValidPhone(phone)) {
+                    showError('Please enter a valid phone number');
+                    return false;
+                }
+                
+                if (!university) {
+                    showError('Please enter your university/college name');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            // Step 2 validation
+            function validateStep2() {
+                if (selectedEvents.size === 0) {
+                    showError('Please select at least one event');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            // Step 3 validation
+            function validateStep3() {
+                // Skip validation if there are no team events
+                if (noTeamEventsMessage.classList.contains('hidden')) {
+                    const teamName = document.getElementById('teamName').value.trim();
+                    
+                    if (!teamName) {
+                        showError('Please enter a team name');
+                        return false;
+                    }
+                    
+                    const teamMemberInputs = document.querySelectorAll('input[name^="teamMember"]');
+                    for (let input of teamMemberInputs) {
+                        if (!input.value.trim()) {
+                            showError('Please fill in all team member names');
+                            return false;
+                        }
+                    }
+                }
+                
+                return true;
+            }
+            
+            // Step 4 validation
+            function validateStep4() {
+                if (!paymentMethod) {
+                    showError('Please select a payment method');
+                    return false;
+                }
+                
+                if (paymentMethod === 'qr' && paymentProof.files.length === 0) {
+                    showError('Please upload payment proof');
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            // Show error message
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorAlert.classList.remove('hidden');
+                
+                // Scroll to error
+                errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Hide after 5 seconds
+                setTimeout(() => {
+                    errorAlert.classList.add('hidden');
+                }, 5000);
+            }
+            
+            // Email validation
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+            
+            // Phone validation
+            function isValidPhone(phone) {
+                const phoneRegex = /^[0-9]{10}$/;
+                return phoneRegex.test(phone);
+            }
+            
+            // Update event selection
+            function updateEventSelection(eventCard) {
+                const eventId = eventCard.dataset.eventId;
+                const eventFee = parseInt(eventCard.dataset.fee, 10);
+                const eventCategory = eventCard.dataset.category;
+                const checkbox = eventCard.querySelector('.event-checkbox-input');
+                
+                if (checkbox.checked) {
+                    // Deselect the event
+                    selectedEvents.delete(eventId);
+                    eventCard.classList.remove('selected');
+                    checkbox.checked = false;
+                    
+                    // Update total fee
+                    totalFee -= eventFee;
+                    
+                    // If no events are selected, enable both categories
+                    if (selectedEvents.size === 0) {
+                        selectedCategory = null;
+                        enableAllEvents();
+                    }
+                } else {
+                    // If this is the first event selected, set the category
+                    if (selectedEvents.size === 0) {
+                        selectedCategory = eventCategory;
+                        disableOtherCategoryEvents(eventCategory);
+                    }
+                    
+                    // Select the event
+                    selectedEvents.add(eventId);
+                    eventCard.classList.add('selected');
+                    checkbox.checked = true;
+                    
+                    // Update total fee
+                    totalFee += eventFee;
+                }
+                
+                // Update total amount display
+                updateTotalAmount();
+            }
+            
+            // Enable all events
+            function enableAllEvents() {
+                eventCards.forEach(card => {
+                    card.classList.remove('disabled');
+                });
+            }
+            
+            // Disable events from other category
+            function disableOtherCategoryEvents(category) {
+                eventCards.forEach(card => {
+                    if (card.dataset.category !== category) {
+                        card.classList.add('disabled');
+                        
+                        // Uncheck if checked
+                        const checkbox = card.querySelector('.event-checkbox-input');
+                        if (checkbox.checked) {
+                            checkbox.checked = false;
+                            card.classList.remove('selected');
+                            selectedEvents.delete(card.dataset.eventId);
+                            totalFee -= parseInt(card.dataset.fee, 10);
+                        }
+                    }
+                });
+            }
+            
+            // Switch event category
+            function switchEventCategory(category) {
+                if (selectedEvents.size > 0 && selectedCategory !== category) {
+                    showError(`You can only select ${selectedCategory} events at a time. Please unselect all events to switch categories.`);
+                    return;
+                }
+                
+                if (category === 'tech') {
+                    techCategoryBtn.classList.add('bg-purple-600', 'text-white');
+                    techCategoryBtn.classList.remove('bg-gray-800', 'text-gray-300');
+                    culturalCategoryBtn.classList.add('bg-gray-800', 'text-gray-300');
+                    culturalCategoryBtn.classList.remove('bg-purple-600', 'text-white');
+                    
+                    techEventsContainer.classList.remove('hidden');
+                    culturalEventsContainer.classList.add('hidden');
+                } else {
+                    culturalCategoryBtn.classList.add('bg-purple-600', 'text-white');
+                    culturalCategoryBtn.classList.remove('bg-gray-800', 'text-gray-300');
+                    techCategoryBtn.classList.add('bg-gray-800', 'text-gray-300');
+                    techCategoryBtn.classList.remove('bg-purple-600', 'text-white');
+                    
+                    culturalEventsContainer.classList.remove('hidden');
+                    techEventsContainer.classList.add('hidden');
+                }
+            }
+            
+            // Check if any team events are selected
+            function hasTeamEvents() {
+                let hasTeam = false;
+                
+                eventCards.forEach(card => {
+                    const eventId = card.dataset.eventId;
+                    const checkbox = card.querySelector('.event-checkbox-input');
+                    
+                    if (checkbox.checked) {
+                        // These are known team events (you should add/update according to your actual events)
+                        if (eventId === 'pitch4sustain' || eventId === 'ctrl-z' || eventId === 'phantom-hunt' || 
+                            eventId === 'nritya-vedika' || eventId === 'resonance') {
+                            hasTeam = true;
+                        }
+                    }
+                });
+                
+                return hasTeam;
+            }
+            
+            // Find max team size from selected events
+            function findMaxTeamSize() {
+                let maxSize = 0;
+                
+                // These are example max team sizes, update with your actual numbers
+                const teamSizes = {
+                    'pitch4sustain': 5,
+                    'ctrl-z': 4,
+                    'phantom-hunt': 5,
+                    'nritya-vedika': 15,
+                    'resonance': 6
+                };
+                
+                selectedEvents.forEach(eventId => {
+                    if (teamSizes[eventId] && teamSizes[eventId] > maxSize) {
+                        maxSize = teamSizes[eventId];
+                    }
+                });
+                
+                return maxSize;
+            }
+            
+            // Add team member field
+            function addTeamMemberField() {
+                if (teamMemberCount >= maxTeamSize - 1) {
+                    showError(`Maximum team size is ${maxTeamSize} including you`);
+                    return;
+                }
+                
+                teamMemberCount++;
+                
+                const fieldDiv = document.createElement('div');
+                fieldDiv.className = 'mb-4';
+                fieldDiv.innerHTML = `
+                    <div class="flex items-center">
+                        <input type="text" name="teamMember${teamMemberCount}" placeholder="Team Member ${teamMemberCount} Name"
+                            class="flex-1 px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <button type="button" class="remove-team-member-btn ml-2 text-red-400 hover:text-red-300 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                teamMembersFields.appendChild(fieldDiv);
+                
+                // Add event listener to remove button
+                const removeBtn = fieldDiv.querySelector('.remove-team-member-btn');
+                removeBtn.addEventListener('click', function() {
+                    teamMembersFields.removeChild(fieldDiv);
+                    teamMemberCount--;
+                });
+            }
+            
+            // Update total amount display
+            function updateTotalAmount() {
+                totalAmount.textContent = `₹${totalFee}`;
+            }
+            
+            // Update selected events list
+            function updateSelectedEventsList() {
+                if (selectedEvents.size === 0) {
+                    selectedEventsList.innerHTML = '<p class="text-gray-400">No events selected</p>';
+                    return;
+                }
+                
+                let eventsHtml = '';
+                
+                eventCards.forEach(card => {
+                    const eventId = card.dataset.eventId;
+                    const checkbox = card.querySelector('.event-checkbox-input');
+                    
+                    if (checkbox.checked) {
+                        const eventName = card.querySelector('h3').textContent;
+                        const eventFee = card.dataset.fee;
+                        
+                        eventsHtml += `
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-white">${eventName}</span>
+                                <span class="text-purple-400">₹${eventFee}</span>
+                            </div>
+                        `;
+                    }
+                });
+                
+                selectedEventsList.innerHTML = eventsHtml;
+            }
+            
+            // Select payment method
+            function selectPaymentMethod(method) {
+                paymentMethod = method;
+                
+                paymentCards.forEach(card => {
+                    card.classList.remove('selected');
+                    const radio = card.querySelector('input[type="radio"]');
+                    radio.checked = false;
+                });
+                
+                if (method === 'qr') {
+                    qrPaymentCard.classList.add('selected');
+                    const radio = qrPaymentCard.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    paymentProofSection.classList.remove('hidden');
+                    
+                    // Show appropriate QR code based on category
+                    if (selectedCategory === 'tech') {
+                        techQrCode.classList.remove('hidden');
+                        culturalQrCode.classList.add('hidden');
+                    } else if (selectedCategory === 'cultural') {
+                        culturalQrCode.classList.remove('hidden');
+                        techQrCode.classList.add('hidden');
+                    }
+                } else if (method === 'venue') {
+                    venuePaymentCard.classList.add('selected');
+                    const radio = venuePaymentCard.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    paymentProofSection.classList.add('hidden');
+                    techQrCode.classList.add('hidden');
+                    culturalQrCode.classList.add('hidden');
+                }
+            }
+            
+            // Initialize file preview
+            function initFilePreview() {
+                paymentProof.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const file = this.files[0];
+                        
+                        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                            showError('File size exceeds 5MB limit');
+                            this.value = '';
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            previewImage.src = e.target.result;
+                            previewContainer.classList.remove('hidden');
+                            uploadLabel.textContent = file.name;
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // Event listeners
+            
+            // Step 1
+            step1NextBtn.addEventListener('click', function() {
+                if (validateStep1()) {
+                    goToStep(2);
+                }
+            });
+            
+            // Step 2
+            step2PrevBtn.addEventListener('click', function() {
+                goToStep(1);
+            });
+            
+            step2NextBtn.addEventListener('click', function() {
+                if (validateStep2()) {
+                    // Check if we need step 3 (team details)
+                    if (hasTeamEvents()) {
+                        maxTeamSize = findMaxTeamSize();
+                        teamEventsContainer.classList.remove('hidden');
+                        noTeamEventsMessage.classList.add('hidden');
+                    } else {
+                        teamEventsContainer.classList.add('hidden');
+                        noTeamEventsMessage.classList.remove('hidden');
+                    }
+                    
+                    goToStep(3);
+                }
+            });
+            
+            techCategoryBtn.addEventListener('click', function() {
+                switchEventCategory('tech');
+            });
+            
+            culturalCategoryBtn.addEventListener('click', function() {
+                switchEventCategory('cultural');
+            });
+            
+            eventCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Prevent clicking on disabled cards
+                    if (card.classList.contains('disabled')) {
+                        return;
+                    }
+                    
+                    // Don't toggle if clicking the remove button
+                    if (e.target.closest('.remove-event-btn')) {
+                        return;
+                    }
+                    
+                    updateEventSelection(card);
+                });
+            });
+            
+            // Step 3
+            step3PrevBtn.addEventListener('click', function() {
+                goToStep(2);
+            });
+            
+            step3NextBtn.addEventListener('click', function() {
+                if (validateStep3()) {
+                    // Update selected events list for review
+                    updateSelectedEventsList();
+                    goToStep(4);
+                }
+            });
+            
+            addTeamMemberBtn.addEventListener('click', function() {
+                addTeamMemberField();
+            });
+            
+            // Step 4
+            step4PrevBtn.addEventListener('click', function() {
+                goToStep(3);
+            });
+            
+            qrPaymentCard.addEventListener('click', function() {
+                selectPaymentMethod('qr');
+            });
+            
+            venuePaymentCard.addEventListener('click', function() {
+                selectPaymentMethod('venue');
+            });
+            
+            // Form submission
+            registrationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (validateStep4()) {
+                    submitRegistration();
+                }
+            });
+            
+            // Initialize file preview
+            initFilePreview();
+        });
+    </script>
+</body>
+</html>

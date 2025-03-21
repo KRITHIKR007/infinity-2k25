@@ -3,146 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PITCH4SUSTAIN - INFINITY-2K25</title>
+    <title>PITCH4SUSTAIN - Sustainability Innovation Challenge | Infinity 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../../public/styles/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('../../public/images/posters/pitch4sustain.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .glass-effect {
+            background-color: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .event-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(147, 51, 234, 0.2);
+            border: 1px solid rgba(147, 51, 234, 0.3);
+            margin-right: 1rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #9333ea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #7e22ce;
+        }
+        
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    </style>
 </head>
 <body class="bg-gray-900 min-h-screen">
     <!-- Navigation -->
-    <nav class="glass-effect floating-navbar">
+    <nav class="fixed top-0 left-0 right-0 z-30 py-4">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <a href="../../index.html" class="flex items-center space-x-2">
-                        <img src="../../public/images/INFINITY GOLD LOGO 24.png" alt="INFINITY-2K25 Logo" class="h-8 w-auto animate-float">
-                        <span class="text-xl font-bold gradient-text">INFINITY-2K25</span>
-                    </a>
-                </div>
+            <div class="glass-effect rounded-xl py-4 px-6 flex justify-between items-center">
+                <a href="../../index.html" class="flex items-center space-x-2">
+                    <img src="../../public/images/INFINITY GOLD LOGO 24.png" alt="Infinity 2025 Logo" class="h-8 w-auto">
+                    <span class="text-xl font-bold gradient-text">Infinity 2025</span>
+                </a>
                 <div class="hidden md:flex space-x-8">
-                    <a href="../../index.html#about" class="text-gray-300 hover:text-purple-400 transition-colors">About</a>
-                    <a href="../cultural.html" class="text-purple-400">Cultural</a>
-                    <a href="../tech.html" class="text-gray-300 hover:text-purple-400 transition-colors">Tech</a>
+                    <a href="../../index.html" class="text-gray-300 hover:text-purple-400 transition-colors">Home</a>
+                    <a href="../tech.html" class="text-purple-400">Tech</a>
+                    <a href="../cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural</a>
                     <a href="../contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">Contact</a>
                     <a href="../register.html" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">Register</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobileMenuButton" class="text-white">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="fixed inset-0 z-40 hidden">
+        <div class="fixed inset-0 bg-black opacity-50"></div>
+        <div class="fixed right-0 top-0 h-full w-64 bg-gray-800 p-4">
+            <div class="flex justify-between items-center mb-8">
+                <span class="text-xl font-bold text-white">Menu</span>
+                <button id="closeMenuButton" class="text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="flex flex-col space-y-4">
+                <a href="../../index.html" class="text-gray-300 hover:text-purple-400 transition-colors">Home</a>
+                <a href="../tech.html" class="text-purple-400">Tech</a>
+                <a href="../cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural</a>
+                <a href="../contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">Contact</a>
+                <a href="../register.html" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition-colors text-center">Register</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Hero Section -->
-    <div class="pt-24 pb-12">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="glass-effect rounded-xl overflow-hidden">
-                <div class="relative h-64 md:h-80">
-                    <img src="../../public/images/posters/pitch4sustain.jpg" alt="PITCH4SUSTAIN" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20"></div>
-                    <div class="absolute bottom-0 left-0 w-full p-6 md:p-8">
-                        <h1 class="text-4xl md:text-5xl font-bold gradient-text mb-2">PITCH4SUSTAIN</h1>
-                        <p class="text-xl text-gray-300">Sustainable Innovation Challenge</p>
-                    </div>
+    <div class="hero-bg pt-32 pb-16 md:pb-24">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-col items-center text-center">
+                <span class="px-3 py-1 text-sm font-medium rounded-full bg-blue-900 bg-opacity-50 text-blue-300 mb-4">
+                    Sustainability Innovation Challenge
+                </span>
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">PITCH4SUSTAIN</h1>
+                <p class="text-xl text-gray-300 max-w-2xl mb-8">
+                    A sustainability-focused innovation challenge where participants develop a technical solution and present a functional prototype or simulation.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="../register.html" class="btn btn-primary">
+                        <i class="fas fa-user-plus mr-2"></i>Register Now
+                    </a>
+                    <a href="../tech.html" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Events
+                    </a>
                 </div>
-                <div class="p-6 md:p-8">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="glass-effect p-4 rounded-lg text-center">
-                            <i class="fas fa-map-marker-alt text-2xl text-purple-400 mb-2"></i>
-                            <h3 class="text-lg font-semibold text-white">Venue</h3>
-                            <p class="text-gray-300">Room 002</p>
-                        </div>
-                        <div class="glass-effect p-4 rounded-lg text-center">
-                            <i class="fas fa-users text-2xl text-purple-400 mb-2"></i>
-                            <h3 class="text-lg font-semibold text-white">Team Size</h3>
-                            <p class="text-gray-300">1-5 members</p>
-                        </div>
-                        <div class="glass-effect p-4 rounded-lg text-center">
-                            <i class="fas fa-ticket-alt text-2xl text-purple-400 mb-2"></i>
-                            <h3 class="text-lg font-semibold text-white">Registration Fee</h3>
-                            <p class="text-gray-300">₹500 per team</p>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-purple-400 mb-4">Event Description</h2>
-                        <p class="text-gray-300 mb-4">
-                            PITCH4SUSTAIN challenges teams to develop innovative sustainability solutions that address key UN Sustainable Development Goals. Teams will create functional prototypes and pitch their ideas to a panel of judges.
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Details Section -->
+    <div class="py-16 bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Main Content -->
+                <div class="md:col-span-2">
+                    <!-- Event Overview -->
+                    <div class="glass-effect p-8 rounded-lg mb-8">
+                        <h2 class="text-2xl font-bold text-white mb-4">Event Overview</h2>
+                        <p class="text-gray-300 mb-6">
+                            PITCH4SUSTAIN is a sustainability-focused innovation challenge where participants develop and present technical solutions to address global sustainability challenges. This event encourages participants to think creatively about how technology can be used to create positive environmental and social impacts.
                         </p>
                         <p class="text-gray-300">
-                            Organized by $echo, Anova, GDG on Campus, and Zigbee clubs, this event offers participants the opportunity to showcase their creativity, technical skills, and commitment to sustainable development.
+                            Teams will develop a technical solution and present a functional prototype or simulation based on global challenges. This competitive event provides participants with the opportunity to showcase their problem-solving abilities, technical skills, and commitment to creating sustainable solutions for real-world problems.
                         </p>
                     </div>
-
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-purple-400 mb-4">Rules & Regulations</h2>
-                        <ul class="text-gray-300 space-y-3 list-disc pl-5">
-                            <li>
-                                <span class="text-white font-medium">Team Composition:</span> 1-5 members with diverse skills in problem-solving, design, prototyping, and presentation.
+                    
+                    <!-- Rules & Guidelines -->
+                    <div class="glass-effect p-8 rounded-lg mb-8">
+                        <h2 class="text-2xl font-bold text-white mb-6">Rules & Guidelines</h2>
+                        <ul class="space-y-4 text-gray-300">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-blue-400 mt-1 mr-3"></i>
+                                <span><strong>Team Size:</strong> 1 to 5 members per team.</span>
                             </li>
-                            <li>
-                                <span class="text-white font-medium">Prototype Requirement:</span> A functional prototype (hardware, software, simulation, or interactive demo) is mandatory.
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-blue-400 mt-1 mr-3"></i>
+                                <span><strong>Prototype Required:</strong> Hardware, software, or interactive demo.</span>
                             </li>
-                            <li>
-                                <span class="text-white font-medium">Problem Statements:</span> Your solution must address one of the following UN Sustainable Development Goals:
-                                <ul class="list-disc pl-5 mt-2">
-                                    <li>Good Health and Well-being</li>
-                                    <li>Decent Work and Economic Growth</li>
-                                    <li>Zero Hunger</li>
-                                    <li>Affordable and Clean Energy</li>
-                                    <li>Sustainable Cities and Communities</li>
-                                </ul>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-blue-400 mt-1 mr-3"></i>
+                                <span><strong>Problem Statements:</strong></span>
                             </li>
-                            <li>
-                                <span class="text-white font-medium">Presentation Guidelines:</span> 10-minute pitch + 5-minute Q&A. Should include problem statement, technical aspects, sustainability benefits, demo, and implementation strategy.
+                            <li class="flex items-start pl-10">
+                                <i class="fas fa-arrow-right text-blue-400 mt-1 mr-3"></i>
+                                <span>Sustainable Cities & Communities</span>
+                            </li>
+                            <li class="flex items-start pl-10">
+                                <i class="fas fa-arrow-right text-blue-400 mt-1 mr-3"></i>
+                                <span>Decent Work & Economic Growth</span>
+                            </li>
+                            <li class="flex items-start pl-10">
+                                <i class="fas fa-arrow-right text-blue-400 mt-1 mr-3"></i>
+                                <span>Affordable & Clean Energy</span>
+                            </li>
+                            <li class="flex items-start pl-10">
+                                <i class="fas fa-arrow-right text-blue-400 mt-1 mr-3"></i>
+                                <span>Zero Hunger</span>
+                            </li>
+                            <li class="flex items-start pl-10">
+                                <i class="fas fa-arrow-right text-blue-400 mt-1 mr-3"></i>
+                                <span>Good Health & Well-being</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-blue-400 mt-1 mr-3"></i>
+                                <span><strong>Presentation:</strong> 10-minute pitch followed by 5-minute Q&A.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-blue-400 mt-1 mr-3"></i>
+                                <span>Teams must demonstrate a working prototype or detailed simulation of their solution.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-blue-400 mt-1 mr-3"></i>
+                                <span>Solutions will be judged on innovation, technical feasibility, sustainability impact, and presentation quality.</span>
                             </li>
                         </ul>
                     </div>
-
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-purple-400 mb-4">Judging Criteria</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="glass-effect p-4 rounded-lg">
-                                <h3 class="text-lg font-semibold text-white mb-2">Innovation (25%)</h3>
-                                <p class="text-gray-300">Originality and creativity of the solution</p>
+                    
+                    <!-- Faculty Coordinators -->
+                    <div class="glass-effect p-8 rounded-lg">
+                        <h2 class="text-2xl font-bold text-white mb-6">Event Coordinators</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="flex items-center">
+                                <div class="event-icon">
+                                    <i class="fas fa-user-tie text-blue-400 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">Dr. N. Suresh Kumar</h3>
+                                    <p class="text-gray-400">Faculty Coordinator</p>
+                                    <p class="text-gray-400">
+                                        <i class="fas fa-phone-alt mr-2"></i>8056744016
+                                    </p>
+                                </div>
                             </div>
-                            <div class="glass-effect p-4 rounded-lg">
-                                <h3 class="text-lg font-semibold text-white mb-2">Technical Implementation (25%)</h3>
-                                <p class="text-gray-300">Quality and functionality of the prototype</p>
-                            </div>
-                            <div class="glass-effect p-4 rounded-lg">
-                                <h3 class="text-lg font-semibold text-white mb-2">Sustainability Impact (25%)</h3>
-                                <p class="text-gray-300">Potential to address chosen SDG</p>
-                            </div>
-                            <div class="glass-effect p-4 rounded-lg">
-                                <h3 class="text-lg font-semibold text-white mb-2">Presentation (25%)</h3>
-                                <p class="text-gray-300">Clarity, persuasiveness, and Q&A responses</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-purple-400 mb-4">Prizes</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="glass-effect p-4 rounded-lg text-center">
-                                <div class="text-3xl text-yellow-400 mb-2"><i class="fas fa-trophy"></i></div>
-                                <h3 class="text-lg font-semibold text-white mb-1">1st Prize</h3>
-                                <p class="text-gray-300">₹10,000 + Certificates</p>
-                            </div>
-                            <div class="glass-effect p-4 rounded-lg text-center">
-                                <div class="text-3xl text-gray-300 mb-2"><i class="fas fa-trophy"></i></div>
-                                <h3 class="text-lg font-semibold text-white mb-1">2nd Prize</h3>
-                                <p class="text-gray-300">₹5,000 + Certificates</p>
-                            </div>
-                            <div class="glass-effect p-4 rounded-lg text-center">
-                                <div class="text-3xl text-amber-700 mb-2"><i class="fas fa-trophy"></i></div>
-                                <h3 class="text-lg font-semibold text-white mb-1">3rd Prize</h3>
-                                <p class="text-gray-300">₹3,000 + Certificates</p>
+                            <div class="flex items-center">
+                                <div class="event-icon">
+                                    <i class="fas fa-user-graduate text-blue-400 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">Raksha G</h3>
+                                    <p class="text-gray-400">Student Coordinator</p>
+                                    <p class="text-gray-400">
+                                        <i class="fas fa-phone-alt mr-2"></i>9845038773
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="text-center">
-                        <a href="../register.html" class="btn btn-primary inline-block px-8 py-3">
+                </div>
+                
+                <!-- Sidebar -->
+                <div>
+                    <!-- Event Details Card -->
+                    <div class="glass-effect p-6 rounded-lg mb-8">
+                        <h3 class="text-xl font-bold text-white mb-4">Event Details</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <div class="w-8 text-center text-blue-400 mr-3">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-sm">Venue</p>
+                                    <p class="text-white">Room 113, FET</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-8 text-center text-blue-400 mr-3">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-sm">Date</p>
+                                    <p class="text-white">27th March 2025</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-8 text-center text-blue-400 mr-3">
+                                    <i class="fas fa-rupee-sign"></i>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-sm">Registration Fee</p>
+                                    <p class="text-white">₹500 per team</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-8 text-center text-blue-400 mr-3">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-sm">Team Size</p>
+                                    <p class="text-white">1-5 members</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Registration CTA -->
+                    <div class="glass-effect p-6 rounded-lg text-center mb-8">
+                        <h3 class="text-xl font-bold text-white mb-2">Ready to Change the World?</h3>
+                        <p class="text-gray-300 mb-4">Register your team now for PITCH4SUSTAIN!</p>
+                        <a href="../register.html" class="btn btn-primary w-full">
                             <i class="fas fa-user-plus mr-2"></i>Register Now
                         </a>
+                    </div>
+                    
+                    <!-- Related Events -->
+                    <div class="glass-effect p-6 rounded-lg">
+                        <h3 class="text-xl font-bold text-white mb-4">Other Tech Events</h3>
+                        <ul class="space-y-3">
+                            <li>
+                                <a href="innovathon.html" class="flex items-center p-2 rounded-lg hover:bg-gray-800 transition-colors">
+                                    <div class="w-12 h-12 rounded-lg overflow-hidden mr-3">
+                                        <img src="../../public/images/posters/innovation.jpg" alt="Innovathon" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <p class="text-white font-medium">Innovathon</p>
+                                        <p class="text-gray-400 text-sm">Innovation Challenge</p>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="ctrl-z.html" class="flex items-center p-2 rounded-lg hover:bg-gray-800 transition-colors">
+                                    <div class="w-12 h-12 rounded-lg overflow-hidden mr-3">
+                                        <img src="../../public/images/posters/ctrl+z.jpg" alt="CTRL+Z" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <p class="text-white font-medium">CTRL+Z</p>
+                                        <p class="text-gray-400 text-sm">Debugging Competition</p>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="phantom-hunt.html" class="flex items-center p-2 rounded-lg hover:bg-gray-800 transition-colors">
+                                    <div class="w-12 h-12 rounded-lg overflow-hidden mr-3">
+                                        <img src="../../public/images/posters/phnatum hunt.jpg" alt="Phantom Hunt" class="w-full h-full object-cover">
+                                    </div>
+                                    <div>
+                                        <p class="text-white font-medium">Phantom Hunt</p>
+                                        <p class="text-gray-400 text-sm">Cybersecurity Challenge</p>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -150,8 +330,7 @@
     </div>
 
     <!-- Footer -->
-    <!-- Footer -->
-    <footer class="bg-gray-900 border-t border-gray-800 py-8 mt-12">
+    <footer class="bg-gray-900 border-t border-gray-800 py-12">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
                 <div class="text-center">
@@ -188,22 +367,28 @@
                 <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
                     <i class="fab fa-facebook-f text-xl"></i>
                 </a>
-                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
-                    <i class="fab fa-twitter text-xl"></i>
-                </a>
-                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
+                <a href="https://www.instagram.com/culturalclub.fet/?igsh=ZDJ5aHExd3YwOWs4#" target="_blank" class="text-gray-400 hover:text-purple-400 transition-colors">
                     <i class="fab fa-instagram text-xl"></i>
                 </a>
                 <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
-                    <i class="fab fa-linkedin-in text-xl"></i>
-                </a>
-                <a href="#" class="text-gray-400 hover:text-purple-400 transition-colors">
-                    <i class="fab fa-youtube text-xl"></i>
+                    <i class="fab fa-twitter text-xl"></i>
                 </a>
             </div>
-            <p class="text-center text-gray-400 mb-2">&copy; 2024 INFINITY-2K25. All rights reserved.</p>
+            
+            <p class="text-center text-gray-400 mb-1">© 2025 Infinity. All rights reserved.</p>
             <p class="text-center text-gray-500 text-sm">Organized by Faculty of Engineering and Technology, Jain (Deemed-to-be University), Bangalore</p>
         </div>
     </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuButton').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.remove('hidden');
+        });
+        
+        document.getElementById('closeMenuButton').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.add('hidden');
+        });
+    </script>
 </body>
 </html>

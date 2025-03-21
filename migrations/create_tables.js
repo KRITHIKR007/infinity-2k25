@@ -1,4 +1,4 @@
-  /**
+/**
    * Database Migration - Create Tables
    * 
    * This script creates all the necessary tables in Supabase for the Infinity 2025 registration system.
@@ -211,3 +211,91 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 }
 
 export default createTables;
+
+const { createClient } = require('@supabase/supabase-js');
+
+// Initialize Supabase client with environment variables
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+async function createTables() {
+  try {
+    console.log('Starting database migrations...');
+
+    // Create registrations table
+    const { error: registrationsError } = await supabase.rpc('create_table_if_not_exists', {
+      table_name: 'registrations',
+      table_definition: `
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        university TEXT NOT NULL,
+        category TEXT NOT NULL,
+        team_name TEXT,
+        payment_method TEXT NOT NULL,
+        payment_status TEXT NOT NULL,
+        total_amount INTEGER NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+      `
+    });
+
+    if (registrationsError) {
+      throw registrationsError;
+    }
+
+    // Create selected_events table
+    const { error: eventsError } = await supabase.rpc('create_table_if_not_exists', {
+      table_name: 'selected_events',
+      table_definition: `
+        id SERIAL PRIMARY KEY,
+        registration_id TEXT NOT NULL REFERENCES registrations(id),
+        event_id TEXT NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        UNIQUE(registration_id, event_id)
+      `
+    });
+
+    if (eventsError) {
+      throw eventsError;
+    }
+
+    // Create team_members table
+    const { error: teamError } = await supabase.rpc('create_table_if_not_exists', {
+      table_name: 'team_members',
+      table_definition: `
+        id SERIAL PRIMARY KEY,
+        registration_id TEXT NOT NULL REFERENCES registrations(id),
+        name TEXT NOT NULL,
+        member_number INTEGER NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        UNIQUE(registration_id, member_number)
+      `
+    });
+
+    if (teamError) {
+      throw teamError;
+    }
+
+    // Create storage bucket for payment proofs if it doesn't exist
+    const { error: bucketError } = await supabase.storage.createBucket('payment_proofs', {
+      public: false,
+      fileSizeLimit: 5 * 1024 * 1024, // 5MB
+      allowedMimeTypes: ['image/png', 'image/jpeg', 'image/jpg']
+    });
+
+    if (bucketError && bucketError.message !== 'Bucket already exists') {
+      throw bucketError;
+    }
+
+    console.log('Database migrations completed successfully');
+  } catch (error) {
+    console.error('Migration error:', error.message);
+    process.exit(1);
+  }
+}
+
+// Run migrations
+createTables();

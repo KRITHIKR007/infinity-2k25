@@ -37,7 +37,7 @@
 </head>
 <body class="bg-gray-900 min-h-screen">
     <!-- Navigation -->
-    <nav class="glass-effect floating-navbar">
+    <nav class="fixed top-0 left-0 right-0 z-30 py-4">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
@@ -48,9 +48,12 @@
                 </div>
                 <div class="hidden md:flex space-x-8">
                     <a href="../index.html#about" class="text-gray-300 hover:text-purple-400 transition-colors">About</a>
-                    <a href="cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural</a>
                     <a href="tech.html" class="text-purple-400">Tech</a>
+                    <a href="cultural.html" class="text-gray-300 hover:text-purple-400 transition-colors">Cultural</a>
                     <a href="contact.html" class="text-gray-300 hover:text-purple-400 transition-colors">Contact</a>
+                <a href="../admin/login.html" class="inline-block py-2 px-6 rounded-lg glass-effect text-white hover:text-purple-400 transition-colors">
+                    <i class="fas fa-lock mr-2"></i>Admin
+                </a>
                     <a href="register.html" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors">Register</a>
                 </div>
             </div>
@@ -58,7 +61,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="pt-24 pb-12">
+    <div class="pt-32 pb-20 bg-[url('../public/images/tech-bg.jpeg')] bg-cover bg-fixed">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center">
                 <h1 class="text-5xl font-bold gradient-text mb-4">Technical Events</h1>
